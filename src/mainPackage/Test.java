@@ -1,13 +1,19 @@
+package mainPackage;
+
 import java.io.FileWriter;
+import java.io.FileInputStream;
 import java.io.BufferedWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
-import org.antlr.v4.runtime.CharStreams;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 
 import java.util.*;
+
+import parser.AssetLanLexer;
+import parser.AssetLanParser;
+import util.TestLexerListener;
 
 public class Test {
     public static class MyParserListener extends BaseErrorListener {
@@ -53,14 +59,18 @@ public class Test {
     }
 
     public static void main(String[] args) throws Exception {
-        CharStream input = CharStreams.fromStream(System.in);
+
+        String fileName = "input.al";   // We decided AssetLan extension to be "".al"
+
+		FileInputStream is = new FileInputStream(fileName);
+        CharStream input = CharStreams.fromStream(is);  // From Antlr4.6, ANTLRInputStream is deprecated, and CharStream is recommended instead
         AssetLanLexer lexer = new AssetLanLexer(input);
         lexer.removeErrorListeners();
-        lexer.addErrorListener(new MyLexerListener());
+        lexer.addErrorListener(new TestLexerListener());
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AssetLanParser parser = new AssetLanParser(tokens);
         parser.removeErrorListeners();  // remove ConsoleErrorListener
-        parser.addErrorListener(new MyParserListener()); // add ours
+        //parser.addErrorListener(new MyParserListener()); // add ours
         parser.program();  // parse as usual
     }
 }
