@@ -86,4 +86,42 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	public Node visitAsset(AssetContext ctx) {
 		return new AssetNode(ctx.ID().getText());
 	}
+
+	@Override
+	public Node visitFunction(FunctionContext ctx) {
+		
+		// Initialize @res with the visits to the type and its ID
+		FunNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
+		
+		// Add argument declarations
+		// We are getting a shortcut here by constructing directly the ParNode
+		// This could be done differently by visiting instead the DecContext
+		// SUPPOSITION: this contains both parameters and inner declarations!
+		// (This is because of the shared decContext)
+		for(DecContext dc : ctx.dec())
+			res.addPar( new ParNode(dc.ID().getText(), visit( dc.type() )) );
+
+		// Add assets declarations
+		for(AssetContext ac : ctx.asset())
+			res.addAsset( new AssetNode(ac.ID().getText()));
+		
+		// Add body
+		// Nested declarations should already be considered
+
+		// Create a list for the statements
+		ArrayList<Node> statementlist = new ArrayList<Node>();
+		
+		// Check whether there are actually statements
+		if(ctx.statement() != null){
+			// If there are visit each statement and add it to the @statement list
+			for(StatementContext sc : ctx.statement())
+				statementlist.add(visit(sc));
+		}
+		
+		// Add the body (e.g., the statementlist) to the function
+		res.addBody(statementlist);
+		
+		return res;		
+		
+	}
 }

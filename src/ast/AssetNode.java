@@ -11,7 +11,7 @@ public class AssetNode implements Node {
   //private Node type
   private String id;
   
-  public ProgramNode (String i) {
+  public AssetNode (String i) {
     //Type = new TypeNode(...)
     id      = i;
   }
