@@ -1,3 +1,4 @@
-*/*/*.class
-*/input.al
-*/log.txt
+src/*/*.class
+src/input.al
+src/log.txt
+src/parser/.antlr
