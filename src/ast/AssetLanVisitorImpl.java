@@ -79,6 +79,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		Node expNode = visit(ctx.exp());
 		
 		// Build the FieldNode
-		return new FieldNode(typeNode, ctx.vardec().ID().getText(), expNode);
+		return new FieldNode(typeNode, ctx.ID().getText(), expNode);
+	}
+
+	@Override
+	public Node visitAsset(AssetContext ctx) {
+		return new AssetNode(ctx.ID().getText());
 	}
 }

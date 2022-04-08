@@ -5,20 +5,19 @@ import java.util.HashMap;
 import util.Environment;
 import util.SemanticError;
 
-public class FieldNode implements Node {
+public class AssetNode implements Node {
 
-  private Node type;
+  // Probably need a fake type node (e.g., type Asset) for STEntry?
+  //private Node type
   private String id;
-  private Node exp;
   
-  public ProgramNode (Node t, String i, Node e) {
-    type    = t;
+  public ProgramNode (String i) {
+    //Type = new TypeNode(...)
     id      = i;
-    exp     = e;
   }
   
   public String toPrint(String s) {
-	return s+"Field\n" + type.toPrint(s+" ") + id + exp.toPrint(s+" ") ; 
+	return s+"Asset\n" + id + " "; 
   }
   
   @Override
@@ -31,7 +30,7 @@ public class FieldNode implements Node {
         STentry entry = new STentry(env.nestingLevel,type, env.offset--); // Introducing "entry"
         
         if ( hm.put(id,entry) != null )
-        		res.add(new SemanticError("Field id "+id+" already declared"));
+        		res.add(new SemanticError("Asset id "+id+" already declared"));
         
         res.addAll(exp.checkSemantics(env));
         
