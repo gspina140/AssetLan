@@ -27,8 +27,7 @@ public class AssignmentNode implements Node {
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel, env.offset--);
-
+       
         if(hm.get(id) != null){ // It is all good, variable has been declared in the actual scope. So the assignment can be performed
             res.addAll(exp.checkSemantics(env));
         }else{ 
