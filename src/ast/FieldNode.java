@@ -11,7 +11,7 @@ public class FieldNode implements Node {
   private String id;
   private Node exp;
   
-  public ProgramNode (Node t, String i, Node e) {
+  public FieldNode (Node t, String i, Node e) {
     type    = t;
     id      = i;
     exp     = e;
