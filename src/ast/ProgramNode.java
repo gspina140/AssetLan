@@ -27,7 +27,7 @@ public class ProgramNode implements Node {
     for (Node asset:assetlist)
       assetliststr += asset.toPrint(s+"  ");
     String functionliststr="";
-    for (Node function:functionist)
+    for (Node function:functionlist)
       functionliststr += field.toPrint(s+"  ");
 	  return s+"Program\n" + fieldliststr + assetliststr + functionliststr + initcall.toPrint(s+"  ") ; 
   }
