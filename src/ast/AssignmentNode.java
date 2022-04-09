@@ -29,7 +29,7 @@ public class AssignmentNode implements Node {
         HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
         STentry entry = new STentry(env.nestingLevel, env.offset--);
 
-        if(hm.put(id,entry) != null){ // It is all good, variable has been declared in the actual scope. So the assignment can be performed
+        if(hm.get(id) != null){ // It is all good, variable has been declared in the actual scope. So the assignment can be performed
             res.addAll(exp.checkSemantics(env));
         }else{ 
             //If the variable has been declared in an outer scope, it is still legit to perform the assignment(?)
@@ -38,7 +38,7 @@ public class AssignmentNode implements Node {
             while(nl >= 0){
                 hm = env.symTable.get(nl);
                 entry = new STentry(nl, env.offset--);
-                if(hm.put(id, entry) != null)
+                if(hm.get(id) != null)
                     res.addAll(exp.checkSemantics(env));
                 else 
                     nl--;

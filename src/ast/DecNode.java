@@ -33,7 +33,7 @@ public class DecNode implements Node{
         if ( hm.put(id,entry) != null )
     		res.add(new SemanticError("Dec id "+id+" already declared"));
         
-        // credo non ci sia più nulla da controllare... type non ci interessa
+        // credo non ci sia più nulla da controllare... type non ci interessa per ora
         return res;
     }
 }

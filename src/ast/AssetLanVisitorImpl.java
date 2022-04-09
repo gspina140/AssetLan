@@ -124,4 +124,15 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		return res;		
 		
 	}
+
+    @Override
+    public Node visitAssignment(AssignmentContext ctx){
+        return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
+    }
+
+    @Override
+    public Node visitDec(DecContext ctx){
+        return new DecNode(visit(ctx.type()), ctx.ID().getText());
+    }
+    
 }
