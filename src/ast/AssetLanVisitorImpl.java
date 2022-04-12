@@ -134,5 +134,41 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     public Node visitDec(DecContext ctx){
         return new DecNode(visit(ctx.type()), ctx.ID().getText());
     }
+
+    @Override
+    public Node visitPrint(PrintContext ctx){
+        return new PrintNode(visit(ctx.exp()));    
+    }
+
+    @Override
+    public Node visitMove(MoveContext ctx){
+        ArrayList<Integer> id = new ArrayList<Integer>();
+
+        for(Integer ids : ctx.ID())
+            id.add(ids);
+
+        return new MoveNode(id.get(0).getText(), id.get(2).getText());
+    }
+
+    @Override
+    public Node visitRet(RetContext ctx){
+        return new ReturnNode(visit(ctx.exp()));
+    }
     
+    @Override
+    public Node visitTransfer(TransferContext ctx){
+        return new TransferNode(ctx.ID().getText());
+    }
+
+    public Node visitIte(IteContext ctx){
+		ArrayList<Node> statementlist = new ArrayList<Node>();
+
+        for(StatementContext sc : ctx.statement())
+				statementlist.add(visit(sc));
+
+        if(statementlist.size() == 2) // There is an else
+            return new IteNode(visit(ctx.exp()), statementlist.get(0), statementlist.get(1));
+
+        return new IteNode(visit(ctx.exp()), statementlist.get(0));
+    }
 }
