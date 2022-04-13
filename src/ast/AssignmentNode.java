@@ -45,27 +45,7 @@ public class AssignmentNode implements Node {
                     res.add(new SemanticError("Variable id " + id+ "has not been declared"));
             }
         }
-/*
-        if(hm.get(id) != null){ // It is all good, variable has been declared in the actual scope. So the assignment can be performed
-            res.addAll(exp.checkSemantics(env));
-        }else{ 
-            //If the variable has been declared in an outer scope, it is still legit to perform the assignment(?)
-            int nl = env.nestingLevel - 1;
-            
-            while(nl >= 0){
-                hm = env.symTable.get(nl);
-                
-                if(hm.get(id) != null){
-                    res.addAll(exp.checkSemantics(env));
-                    return res;
-                }
-                else 
-                    nl--;
-            }
-            //Now all outer nesting levels has been checked, the variable has not been declared.
-            res.add(new SemanticError("Variable id " +id+ " has not been declared, cannot perform the assignment"));
-        }
-        */
+        
         return res;
     }
 
