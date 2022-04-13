@@ -28,6 +28,24 @@ public class AssignmentNode implements Node {
 
         HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
        
+        
+        if(hm.get(id) == null ){ //First ID doesn't exists, i'm not taking into account if it is an asset or a function or whatever
+            int nl = env.nestingLevel -1;
+
+            while(nl >= 0){ //Check in outer scopes
+                hm = env.symTable.get(nl);
+        
+                if(hm.get(id) == null){
+                    nl--;
+                }else{ //ID declared
+                    res.addAll(exp.checkSemantics(env));
+                    break; //Exit cycle;
+                }    
+                if(nl < 0)
+                    res.add(new SemanticError("Variable id " + id+ "has not been declared"));
+            }
+        }
+/*
         if(hm.get(id) != null){ // It is all good, variable has been declared in the actual scope. So the assignment can be performed
             res.addAll(exp.checkSemantics(env));
         }else{ 
@@ -37,15 +55,17 @@ public class AssignmentNode implements Node {
             while(nl >= 0){
                 hm = env.symTable.get(nl);
                 
-                if(hm.get(id) != null)
+                if(hm.get(id) != null){
                     res.addAll(exp.checkSemantics(env));
+                    return res;
+                }
                 else 
                     nl--;
             }
             //Now all outer nesting levels has been checked, the variable has not been declared.
             res.add(new SemanticError("Variable id " +id+ " has not been declared, cannot perform the assignment"));
         }
-        
+        */
         return res;
     }
 
