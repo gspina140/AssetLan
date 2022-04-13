@@ -2,80 +2,83 @@ grammar AssetLan;
 
 // THIS IS THE PARSER INPUT
 
-program: field* asset* function* initcall;
+program		: field* asset* function* initcall ;
+						// la portata di field e asset e' soltanto function
 
-field: type ID ('=' exp)? ';';
+field		: type ID ('=' exp)? ';' ;
 
-asset: 'asset' ID ';'; // STESSO PROBLEMA DI 'DEC'
+asset		: 'asset' ID ';' ;
 
-function: (type | 'void') ID '(' (dec (',' dec)*)? ')' '[' (
-		asset (',' asset)*
-	)? ']' '{' dec* statement* '}';
+function	: (type | 'void') ID '(' (dec)? ')' '[' (adec)? ']'
+			  '{' dec* statement* '}' ;
 
-dec: type ID ';'; // !!! UTILIZZANDO LA REGOLA DEC PER LA DEFINIZIONE DELLE VARIABILI DI UNA FUNZIONE SIAMO OBBLIGATI AD AGGIUNGERE UN ';' DOPO OGNI DICHIARAZIONE
-// ESEMPIO: f(int x,y)[]{} NON VA BENE --- f(int x; , y)[]{} VA BENE
+dec			: type ID (',' type ID)* ;
 
-statement:
-	assignment ';'
-	| move ';' // sposta un asset da una parte all'altra
-	| print ';'
-	| transfer ';' // trasferisce l'asset all' utente (chi esegue il codice)
-	| ret ';'
-	| ite
-	| call ';';
+adec		: 'asset' ID (',' 'asset' ID)*; 
 
-type: 'int' | 'bool';
+statement	: assignment ';'
+			| move ';'		// sposta un asset da una parte all'altra
+			| print ';'
+			| transfer ';'	// trasferisce l'asset all' utente (chi esegue il codice)
+			| ret ';'
+			| ite
+			| call ';';
 
-assignment: ID '=' exp;
+type		: 'int'
+			| 'bool';
 
-move: ID '-o' ID;
+assignment	: ID '=' exp;
 
-print: 'print' exp;
+move		: ID '-o' ID;
 
-transfer: 'transfer' ID;
+print		: 'print' exp;
 
-ret: 'return' (exp)?;
+transfer	: 'transfer' ID;
 
-ite: 'if' '(' exp ')' statement ('else' statement)?;
+ret			: 'return' (exp)?;
 
-call: ID '(' (exp (',' exp)*)? ')' '[' (ID (',' ID)*)? ']';
+ite			: //'if' '(' exp ')' statement ('else' statement)?;
+			  'if' '(' exp ')' (statement | '{' statement+ '}') ('else' (statement | '{' statement+ '}') )?;
+			  // Nella grammatica iniziale erano possibili soltanto uno ed un solo statement per l'if
+			  // ed uno ed un solo statement per l'else; abbiamo aggiunto la possibilità di mettere uno
+			  // o più statement per l'if e per l'else fra parentesi graffe (c-like)
+			  // (questo e' utilizzato dal programma 3 dell'esercizio 3 e dai programmi dell'esercizio 4)
 
-initcall:
-	ID '(' (exp (',' exp)*)? ')' '[' (exp (',' exp)*)? ']';
+call		: ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']';
 
-exp:
-	'(' exp ')'												# baseExp
-	| '-' exp												# negExp
-	| '!' exp												# notExp
-	| ID													# derExp
-	| left = exp op = ('*' | '/') right = exp				# binExp
-	| left = exp op = ('+' | '-') right = exp				# binExp
-	| left = exp op = ('<' | '<=' | '>' | '>=') right = exp	# binExp
-	| left = exp op = ('==' | '!=') right = exp				# binExp
-	| left = exp op = '&&' right = exp						# binExp
-	| left = exp op = '||' right = exp						# binExp
-	| call													# callExp
-	| BOOL													# boolExp
-	| NUMBER												# valExp;
+initcall	: ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']';
+
+exp			: '(' exp ')'											# baseExp
+			| '-' exp												# negExp
+			| '!' exp												# notExp
+			| ID													# derExp
+			| left = exp op = ('*' | '/')				right = exp	# binExp
+			| left = exp op = ('+' | '-') 				right = exp	# binExp
+			| left = exp op = ('<' | '<=' | '>' | '>=')	right = exp	# binExp
+			| left = exp op = ('==' | '!=')				right = exp	# binExp
+			| left = exp op = '&&'						right = exp	# binExp
+			| left = exp op = '||'						right = exp	# binExp
+			| call													# callExp
+			| BOOL													# boolExp
+			| NUMBER												# valExp;
 
 // THIS IS THE LEXER INPUT
 
 //Booleans
-BOOL: 'true' | 'false';
+BOOL		: 'true'|'false';
 
 //IDs
-fragment CHAR: 'a' ..'z' | 'A' ..'Z';
-ID: CHAR (CHAR | DIGIT)*;
+fragment CHAR		: 'a'..'z'|'A'..'Z' ;
+ID			: CHAR (CHAR | DIGIT)* ;
 
 //Numbers
-fragment DIGIT: '0' ..'9';
-NUMBER: DIGIT+;
+fragment DIGIT		: '0'..'9';
+NUMBER		: DIGIT+;
 
 //ESCAPE SEQUENCES
-WS: (' ' | '\t' | '\n' | '\r') -> skip;
-LINECOMMENTS: '//' (~('\n' | '\r'))* -> skip;
-BLOCKCOMMENTS:
-	'/*' (~('/' | '*') | '/' ~'*' | '*' ~'/' | BLOCKCOMMENTS)* '*/' -> skip;
+WS				: (' '|'\t'|'\n'|'\r')-> skip;
+LINECOMMENTS	: '//' (~('\n'|'\r'))* -> skip;
+BLOCKCOMMENTS	: '/*' (~('/'|'*')|'/'~'*'|'*'~'/'|BLOCKCOMMENTS)* '*/' -> skip;
 
 /*
  SEMANTICA DI ASSETLAN
@@ -88,17 +91,19 @@ BLOCKCOMMENTS:
  
  f(5,true)[x,y]
  
- quello che accade e` che l'asset x e y VENGONO SVUOTATI e memorizzati nei parametri formali u e v,
- rispettivamente. Quindi, a seguito dell'invocazione, i valori di x e di y sono 0.
+ quello che accade e` che l'asset x e y VENGONO SVUOTATI e memorizzati nei parametri
+ formali u e v, rispettivamente. Quindi, a seguito dell'invocazione, i valori di x e
+ di y sono 0.
  
  Gli asset possono essere spostati SOLAMENTE
  
- mediante l'operazione move x -o y il cui significato e` (a) il valore di x viene sommato a quello
- di y e il totale memorizzato in y (b) il valore di x diventa 0 (i 2 argomenti di move devono essere
- 2 asset)
+ * mediante l'operazione move x -o y il cui significato e`
+ 		(a) il valore di x viene sommato a quello di y e il totale memorizzato in y
+ 		(b) il valore di x diventa 0
+   (i 2 argomenti di move devono essere 2 asset)
  
- mediante l'operazione transfer: transfer x significa che (a) il valore di x viene trasferito al
- chiamante di initcall (b) il valore di x diventa 0
+ * mediante l'operazione transfer:	transfer x significa che
+		(a) il valore di x viene trasferito al chiamante di initcall
+		(b) il valore di x diventa 0
  
-
  */

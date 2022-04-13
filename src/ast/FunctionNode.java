@@ -52,7 +52,7 @@ public class FunctionNode implements Node {
 
             // Check assets
             for(Node a : assetlist){
-                ParNode arg = (AssetNode) a;
+                AssetNode arg = (AssetNode) a;
                 parTypes.add(arg.getType());
                 if ( hmn.put(arg.getId(),new STentry(env.nestingLevel,arg.getType(),paroffset++)) != null  )
                     System.out.println("Asset id "+arg.getId()+" already declared");                
