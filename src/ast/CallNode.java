@@ -13,12 +13,11 @@ public class CallNode implements Node {
 	private ArrayList<Node> explist;
 	
 
-	public CallNode(String id) {
-		
+	public CallNode(String id){
 		this.id= id;
-	}
+    }
 	
-	public void addIdList(String id) {
+	public void addId(String id) {
 		idlist.add(id);
 	}
 	

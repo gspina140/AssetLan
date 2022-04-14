@@ -42,8 +42,7 @@ public class InitCallNode implements Node {
         		}
         		
         	}
-       
-        	
+             	
         }else {
         	for(Node e : explist) {
         		res.addAll(e.checkSemantics(env));

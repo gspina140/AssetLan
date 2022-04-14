@@ -31,10 +31,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	
 
 	@Override
-	public Node program(programContext ctx) {
+	public Node visitProgram(ProgramContext ctx) {
 
 		// Resulting node of the right type
-		ProgLetInNode res;
+		ProgamNode res;
 		
 		// List of fields in @res
 		ArrayList<Node> fields = new ArrayList<Node>();
@@ -91,7 +91,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	public Node visitFunction(FunctionContext ctx) {
 		
 		// Initialize @res with the visits to the type and its ID
-		FunNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
+		FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
 		
 		// Add argument declarations
 		// We are getting a shortcut here by constructing directly the ParNode
@@ -126,18 +126,30 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	}
 
     @Override
-    public Node visitAssignment(AssignmentContext ctx){
-        return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
-    }
-
-    @Override
     public Node visitDec(DecContext ctx){
         return new DecNode(visit(ctx.type()), ctx.ID().getText());
     }
 
     @Override
-    public Node visitPrint(PrintContext ctx){
-        return new PrintNode(visit(ctx.exp()));    
+    public Node visitStatement(StatementContext ctx){
+        String s = ctx.getText();
+
+        if(s.matches("print(.*")){
+
+        }else if(){
+            
+        }
+
+    }
+/*
+    @Override
+    public Node visitType(TypeContext ctx){
+
+    }
+*/
+    @Override
+    public Node visitAssignment(AssignmentContext ctx){
+        return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
     }
 
     @Override
@@ -149,13 +161,18 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitRet(RetContext ctx){
-        return new ReturnNode(visit(ctx.exp()));
+    public Node visitPrint(PrintContext ctx){
+        return new PrintNode(visit(ctx.exp()));    
     }
     
     @Override
     public Node visitTransfer(TransferContext ctx){
         return new TransferNode(ctx.ID().getText());
+    }
+
+    @Override
+    public Node visitRet(RetContext ctx){
+        return new ReturnNode(visit(ctx.exp()));
     }
 
     @Override
@@ -185,5 +202,55 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
 
         return res;
+    }
+
+    @Override
+    public Node visitInitcall(InitcallContext ctx){
+        InitCallNode res = new InitCallNode(visit(ctx.ID().getText()));
+
+        for(ExpContext ec:ctx.exp())
+            res.addExp(visit(ec));
+
+        return res;
+    }
+
+    @Override
+    public Node visitBaseExp(BaseExpContext ctx){
+
+    }
+
+    @Override
+    public Node visitBinExp(BinExpContext ctx){
+
+    }
+
+    @Override
+    public Node visitDerExp(DerExpContext ctx){
+
+    }
+
+    @Override
+    public Node visitValExp(ValExpContext ctx){
+
+    }
+
+    @Override
+    public Node visitNegExp(NegExpContext ctx){
+
+    }
+
+    @Override 
+    public Node visitBoolExp(BoolExpContext ctx){
+
+    }
+
+    @Override
+    public Node visitCallExp(CallExpContext ctx){
+
+    }
+
+    @Override
+    public Node visitNotExp(NotExpContext ctx){
+
     }
 }
