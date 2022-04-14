@@ -142,12 +142,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitMove(MoveContext ctx){
-        ArrayList<Integer> id = new ArrayList<Integer>();
+        String fOp = ctx.ID().get(0).getText();
+        String sOp = ctx.ID().get(1).getText();
 
-        for(Integer ids : ctx.ID())
-            id.add(ids);
-
-        return new MoveNode(id.get(0).getText(), id.get(2).getText());
+        return new MoveNode(fOp, sOp);
     }
 
     @Override
@@ -160,11 +158,31 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new TransferNode(ctx.ID().getText());
     }
 
+    @Override
     public Node visitIte(IteContext ctx){
         IteNode res = new IteNode(visit(ctx.exp()));
 
         for(StatementContext sc: ctx.statement())
             res.addStatement(visit(sc));
+
+        return res;
+    }
+
+    @Override
+    public Node visitCall(CallContext ctx){
+        ArrayList<String> ids = new ArrayList<String>();
+
+        for(String id: ctx.ID().getText())
+            ids.add(id);
+
+        CallNode res = new CallNode(ids.get(0));
+        
+        for(int i=1; i < ids.size(); i++)
+            res.addId(ids.get(i));
+
+        for(ExpContext ec: ctx.exp())
+            res.addExp(visit(ec));
+
 
         return res;
     }

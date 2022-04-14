@@ -5,7 +5,7 @@ import java.util.HashMap;
 import util.Environment;
 import util.SemanticError;
 
-public class ReturnNode extends Node{   
+public class ReturnNode implements Node{   
 
     private Node exp;
 
