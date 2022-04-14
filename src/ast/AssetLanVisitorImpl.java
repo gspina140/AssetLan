@@ -161,14 +161,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     public Node visitIte(IteContext ctx){
-		ArrayList<Node> statementlist = new ArrayList<Node>();
+        IteNode res = new IteNode(visit(ctx.exp()));
 
-        for(StatementContext sc : ctx.statement())
-				statementlist.add(visit(sc));
+        for(StatementContext sc: ctx.statement())
+            res.addStatement(visit(sc));
 
-        if(statementlist.size() == 2) // There is an else
-            return new IteNode(visit(ctx.exp()), statementlist.get(0), statementlist.get(1));
-
-        return new IteNode(visit(ctx.exp()), statementlist.get(0));
+        return res;
     }
 }

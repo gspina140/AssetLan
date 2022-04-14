@@ -6,24 +6,33 @@ import java.util.HashMap;
 import util.Environment;
 import util.SemanticError;
 
-public class IteNode extends Node{
+public class IteNode implements Node{
     
   private Node cond;
-  private Node th;
-  private Node el;
+  private ArrayList<Node> StatementsList = new ArrayList<Node>();
+  //private ArrayList<Node> elseStatementsList = new ArrayList<Node>();
+  /*private Node th;
+  private Node el;*/
   
-  public IteNode (Node c, Node t, Node e) {
-    cond=c;
+  public IteNode (Node c/*, Node t, Node e*/) {
+    cond=c;/*
     th=t;
-    el=e;
+    el=e;*/
   }
   
   public String toPrint(String s) {
+    String str = "";
+    for(Node st:StatementsList)
+        str += st.toPrint(s+ "");    
+
     return s+"If\n" + cond.toPrint(s+"  ") 
-                    + th.toPrint(s+"  ")   
-                    + el.toPrint(s+"  "); 
+                    + str;
   }
   
+  public void addStatement(Node st){
+    StatementsList.add(st);
+  }
+
   @Override
   public ArrayList<SemanticError> checkSemantics(Environment env) {
 	  //create the result
@@ -32,10 +41,10 @@ public class IteNode extends Node{
 	  //check semantics in the condition
 	  res.addAll(cond.checkSemantics(env));
 	 	  
-	  //check semantics in the then and in the else exp
-	  res.addAll(th.checkSemantics(env));
-	  res.addAll(el.checkSemantics(env));
-	  
+	  //check semantics in the then and in the else statement
+      for(Node st:StatementsList)
+        res.addAll(st.checkSemantics(env));
+
 	  return res;
   }
   
