@@ -1,6 +1,16 @@
 package ast;
 
 import java.util.ArrayList;
+
+import org.w3c.dom.Node;
+
+import AssetLanParser.AssignExpContext;
+import AssetLanParser.CallFunContext;
+import AssetLanParser.IfElseExpContext;
+import AssetLanParser.MoveAssetContext;
+import AssetLanParser.PrintExpContext;
+import AssetLanParser.ReturnExpContext;
+import AssetLanParser.TransferAssetContext;
 import parser.*;
 import parser.AssetLanParser.AssetContext;
 import parser.AssetLanParser.AssignmentContext;
@@ -131,22 +141,78 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitStatement(StatementContext ctx){
-        String s = ctx.getText();
-
-        if(s.matches("print(.*")){
-
-        }else if(){
-            
-        }
-
+    public Node visitAssignExp(AssignExpContext ctx){
+        return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
     }
-/*
+
+    @Override 
+    public Node visitMoveAsset(MoveAssetContext ctx){
+        String fOp = ctx.ID().get(0).getText();
+        String sOp = ctx.ID().get(1).getText();
+
+        return new MoveNode(fOp, sOp);
+    }
+
+    @Override
+    public Node visitPrintExp(PrintExpContext ctx){
+        return new PrintNode(visit(ctx.exp()));    
+    }
+
+    @Override
+    public Node visitTransferAsset(TransferAssetContext ctx){
+        return new TransferNode(ctx.ID().getText());
+    }
+
+    @Override
+    public Node visitReturnExp(ReturnExpContext ctx){
+        return new ReturnNode(visit(ctx.exp()));
+    }
+
+    @Override
+    public Node visitIfElseExp(IfElseExpContext ctx){
+        IteNode res = new IteNode(visit(ctx.exp()));
+
+        for(StatementContext sc: ctx.statement())
+            res.addStatement(visit(sc));
+
+        return res;
+    }
+
+    @Override
+    public Node visitCallFun(CallFunContext ctx){
+        ArrayList<String> ids = new ArrayList<String>();
+
+        for(String id: ctx.ID().getText())
+            ids.add(id);
+
+        CallNode res = new CallNode(ids.get(0));
+        
+        for(int i=1; i < ids.size(); i++)
+            res.addId(ids.get(i));
+
+        for(ExpContext ec: ctx.exp())
+            res.addExp(visit(ec));
+
+
+        return res;
+    }
+/* type node TODO
     @Override
     public Node visitType(TypeContext ctx){
 
     }
 */
+
+/*  Since labels were added for all subrules of "statement" i think that the 
+    following methods are useless (they are just a redefinition of the previous one).
+    Maybe for "visitCallFun" there must be another implementation because this is the 
+    only subrule of "statement" that is mentioned as subrule in another rule (exp),
+    so it must be implemented again, in a completely equal way, just changing the 
+    method name with the label name, in this case will be visitCallExp.
+    I think that it would be possible to declare this function only one time,
+    and so reduce redudancy in code, just by giving the same label at both
+    the subrules where it appears. I'm not sure that this is legit anyway!!
+    
     @Override
     public Node visitAssignment(AssignmentContext ctx){
         return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
@@ -203,6 +269,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
         return res;
     }
+*/
 
     @Override
     public Node visitInitcall(InitcallContext ctx){

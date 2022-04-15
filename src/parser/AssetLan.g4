@@ -16,13 +16,13 @@ dec			: type ID (',' type ID)* ;
 
 adec		: 'asset' ID (',' 'asset' ID)*; 
 
-statement	: assignment ';'
-			| move ';'		// sposta un asset da una parte all'altra
-			| print ';'
-			| transfer ';'	// trasferisce l'asset all' utente (chi esegue il codice)
-			| ret ';'
-			| ite
-			| call ';';
+statement	: assignment ';'    #assignExp
+			| move ';'		    #moveAsset          // sposta un asset da una parte all'altra
+			| print ';'         #printExp
+			| transfer ';'	    #transferAsset      // trasferisce l'asset all' utente (chi esegue il codice)
+			| ret ';'           #returnExp
+			| ite               #ifElseExp
+			| call ';'          #callFun;
 
 type		: 'int'
 			| 'bool';

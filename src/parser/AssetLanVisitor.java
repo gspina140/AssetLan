@@ -1,6 +1,4 @@
 // Generated from AssetLan.g4 by ANTLR 4.9.3
-package parser;
-
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -42,11 +40,60 @@ public interface AssetLanVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDec(AssetLanParser.DecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AssetLanParser#statement}.
+	 * Visit a parse tree produced by {@link AssetLanParser#adec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStatement(AssetLanParser.StatementContext ctx);
+	T visitAdec(AssetLanParser.AdecContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code assignExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignExp(AssetLanParser.AssignExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code moveAsset}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitMoveAsset(AssetLanParser.MoveAssetContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code printExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitPrintExp(AssetLanParser.PrintExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code transferAsset}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTransferAsset(AssetLanParser.TransferAssetContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code returnExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitReturnExp(AssetLanParser.ReturnExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ifElseExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfElseExp(AssetLanParser.IfElseExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code callFun}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCallFun(AssetLanParser.CallFunContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AssetLanParser#type}.
 	 * @param ctx the parse tree

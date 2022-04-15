@@ -1,6 +1,4 @@
 // Generated from AssetLan.g4 by ANTLR 4.9.3
-package parser;
-
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -44,8 +42,8 @@ public class AssetLanLexer extends Lexer {
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'='", "';'", "'asset'", "'void'", "'('", "','", "')'", "'['", 
-			"']'", "'{'", "'}'", "'int'", "'bool'", "'-o'", "'print'", "'transfer'", 
+			null, "'='", "';'", "'asset'", "'void'", "'('", "')'", "'['", "']'", 
+			"'{'", "'}'", "','", "'int'", "'bool'", "'-o'", "'print'", "'transfer'", 
 			"'return'", "'if'", "'else'", "'-'", "'!'", "'*'", "'/'", "'+'", "'<'", 
 			"'<='", "'>'", "'>='", "'=='", "'!='", "'&&'", "'||'"
 		};
@@ -154,9 +152,9 @@ public class AssetLanLexer extends Lexer {
 		"\3\2\2\2G\u00c7\3\2\2\2I\u00cf\3\2\2\2K\u00d2\3\2\2\2M\u00d6\3\2\2\2O"+
 		"\u00da\3\2\2\2Q\u00e5\3\2\2\2ST\7?\2\2T\4\3\2\2\2UV\7=\2\2V\6\3\2\2\2"+
 		"WX\7c\2\2XY\7u\2\2YZ\7u\2\2Z[\7g\2\2[\\\7v\2\2\\\b\3\2\2\2]^\7x\2\2^_"+
-		"\7q\2\2_`\7k\2\2`a\7f\2\2a\n\3\2\2\2bc\7*\2\2c\f\3\2\2\2de\7.\2\2e\16"+
-		"\3\2\2\2fg\7+\2\2g\20\3\2\2\2hi\7]\2\2i\22\3\2\2\2jk\7_\2\2k\24\3\2\2"+
-		"\2lm\7}\2\2m\26\3\2\2\2no\7\177\2\2o\30\3\2\2\2pq\7k\2\2qr\7p\2\2rs\7"+
+		"\7q\2\2_`\7k\2\2`a\7f\2\2a\n\3\2\2\2bc\7*\2\2c\f\3\2\2\2de\7+\2\2e\16"+
+		"\3\2\2\2fg\7]\2\2g\20\3\2\2\2hi\7_\2\2i\22\3\2\2\2jk\7}\2\2k\24\3\2\2"+
+		"\2lm\7\177\2\2m\26\3\2\2\2no\7.\2\2o\30\3\2\2\2pq\7k\2\2qr\7p\2\2rs\7"+
 		"v\2\2s\32\3\2\2\2tu\7d\2\2uv\7q\2\2vw\7q\2\2wx\7n\2\2x\34\3\2\2\2yz\7"+
 		"/\2\2z{\7q\2\2{\36\3\2\2\2|}\7r\2\2}~\7t\2\2~\177\7k\2\2\177\u0080\7p"+
 		"\2\2\u0080\u0081\7v\2\2\u0081 \3\2\2\2\u0082\u0083\7v\2\2\u0083\u0084"+

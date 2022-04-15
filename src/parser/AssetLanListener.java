@@ -1,6 +1,4 @@
 // Generated from AssetLan.g4 by ANTLR 4.9.3
-package parser;
-
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -59,15 +57,99 @@ public interface AssetLanListener extends ParseTreeListener {
 	 */
 	void exitDec(AssetLanParser.DecContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link AssetLanParser#statement}.
+	 * Enter a parse tree produced by {@link AssetLanParser#adec}.
 	 * @param ctx the parse tree
 	 */
-	void enterStatement(AssetLanParser.StatementContext ctx);
+	void enterAdec(AssetLanParser.AdecContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link AssetLanParser#statement}.
+	 * Exit a parse tree produced by {@link AssetLanParser#adec}.
 	 * @param ctx the parse tree
 	 */
-	void exitStatement(AssetLanParser.StatementContext ctx);
+	void exitAdec(AssetLanParser.AdecContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code assignExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssignExp(AssetLanParser.AssignExpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code assignExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssignExp(AssetLanParser.AssignExpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code moveAsset}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterMoveAsset(AssetLanParser.MoveAssetContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code moveAsset}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitMoveAsset(AssetLanParser.MoveAssetContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code printExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterPrintExp(AssetLanParser.PrintExpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code printExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitPrintExp(AssetLanParser.PrintExpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code transferAsset}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterTransferAsset(AssetLanParser.TransferAssetContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code transferAsset}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitTransferAsset(AssetLanParser.TransferAssetContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code returnExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterReturnExp(AssetLanParser.ReturnExpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code returnExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitReturnExp(AssetLanParser.ReturnExpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code ifElseExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfElseExp(AssetLanParser.IfElseExpContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code ifElseExp}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfElseExp(AssetLanParser.IfElseExpContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code callFun}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void enterCallFun(AssetLanParser.CallFunContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code callFun}
+	 * labeled alternative in {@link AssetLanParser#statement}.
+	 * @param ctx the parse tree
+	 */
+	void exitCallFun(AssetLanParser.CallFunContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link AssetLanParser#type}.
 	 * @param ctx the parse tree
