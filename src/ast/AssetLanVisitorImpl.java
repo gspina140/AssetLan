@@ -108,13 +108,17 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		// This could be done differently by visiting instead the DecContext
 		// SUPPOSITION: this contains both parameters and inner declarations!
 		// (This is because of the shared decContext)
-		for(DecContext dc : ctx.dec())
+		for(DecContext dc : ctx.par)
 			res.addPar( new ParNode(dc.ID().getText(), visit( dc.type() )) );
+        
+        for(DecContext dc : ctx.innerDec)
+            res.addDec( new DecNode(visit(dc.type()), dc.ID().getText()));
 
+        /*
 		// Add assets declarations
 		for(AssetContext ac : ctx.asset())
 			res.addAsset( new AssetNode(ac.ID().getText()));
-		
+		*/
 		// Add body
 		// Nested declarations should already be considered
 
@@ -142,13 +146,14 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitADec(AdecContext ctx){
-        ADecNode res = new ADecNode();
+        /*ADecNode res = new ADecNode();
 
         for(AdecContext ac: ctx.ID()){
             res.addId(ac.getText());
         }
 
-        return res;
+        return res;*/
+        return new ADecNode(ctx.ID().getText());
     }
 
     @Override

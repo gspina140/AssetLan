@@ -64,6 +64,9 @@ public class FunctionNode implements Node {
             
             // Check body
             // Inner declarations should already have been checked with parameters cause of the shared context
+            for(Node d : declist)
+                res.addAll(d.checkSemantics(env));
+
             for(Node s : statementlist){
                 res.addAll(s.checkSemantics(env));
             }
@@ -85,6 +88,10 @@ public class FunctionNode implements Node {
 
     public void addBody(ArrayList<Node> sl) {
         statementlist = sl;
+    }
+
+    public void addDec(Node d){
+        declist.add(d);
     }
     
     public String toPrint(String s) {
