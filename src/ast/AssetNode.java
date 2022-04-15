@@ -27,12 +27,10 @@ public class AssetNode implements Node {
   	  
   		// env.offset = -2;
   		HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel,type, env.offset--); // Introducing "entry"
+        STentry entry = new STentry(env.nestingLevel, env.offset--); // Introducing "entry"
         
         if ( hm.put(id,entry) != null )
         		res.add(new SemanticError("Asset id "+id+" already declared"));
-        
-        res.addAll(exp.checkSemantics(env));
         
         return res;
 	}

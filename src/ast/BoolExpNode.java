@@ -1,20 +1,28 @@
 package ast;
 
-public class BoolExpNode {
+import java.util.ArrayList;
+
+import util.Environment;
+import util.SemanticError;
+
+public class BoolExpNode implements Node{
     private boolean val;
-  
-    public BoolNode (boolean n) {
+
+    public BoolExpNode(boolean n) {
         val=n;
     }
-  
-    public String toPrint(String s) {
-        if (val) return s+"Bool:true\n";
-        else return s+"Bool:false\n";  
-    }
-  
+
     @Override
- 	public ArrayList<SemanticError> checkSemantics(Environment env) {
- 	  return new ArrayList<SemanticError>();
- 	}
-  
+    public String toPrint(String s) {
+        if (val)
+            return s + "Bool:true\n";
+        else
+            return s + "Bool:false\n";
+    }
+
+    @Override
+    public ArrayList<SemanticError> checkSemantics(Environment env) {
+        return new ArrayList<SemanticError>();
+    }
+
 }

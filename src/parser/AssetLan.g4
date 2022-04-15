@@ -9,7 +9,7 @@ field		: type ID ('=' exp)? ';' ;
 
 asset		: 'asset' ID ';' ;
 
-function	: (type | 'void') ID '(' (dec)? ')' '[' (adec)? ']'
+function	: (type | 'void') ID '(' (par = dec)? ')' '[' (adec)? ']'
 			  '{' dec* statement* '}' ;
 
 dec			: type ID (',' type ID)* ;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class NotExpNode {
+public class NotExpNode implements Node{
     private Node exp;
 
     public NotExpNode(Node e){
@@ -19,5 +19,10 @@ public class NotExpNode {
         res.addAll(exp.checkSemantics(env));
         
         return res;
+    }
+
+    @Override
+    public String toPrint(String s) {
+        return s;
     }
 }

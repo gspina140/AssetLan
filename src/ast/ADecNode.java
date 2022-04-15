@@ -10,10 +10,8 @@ public class ADecNode implements Node{
     
     private ArrayList<String> ids = new ArrayList<String>();
 
-    public ADecNode(){}/*{
-        ids.add(i);
-    }
-*/
+    public ADecNode(){}
+
     public void addId(String s){
         ids.add(s);
     }

@@ -1,4 +1,5 @@
 package ast;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -13,7 +14,7 @@ public class FunctionNode implements Node {
     private ArrayList<Node> assetlist;
     /* Body */
     // Inner declarations should already have been considered in parlist because they share the same context
-    //private ArrayList<Node> declist;
+    private ArrayList<Node> declist;
     private ArrayList<Node> statementlist;
     
     public FunctionNode (Node t, String i) {
@@ -52,9 +53,9 @@ public class FunctionNode implements Node {
 
             // Check assets
             for(Node a : assetlist){
-                AssetNode arg = (AssetNode) a;
-                parTypes.add(arg.getType());
-                if ( hmn.put(arg.getId(),new STentry(env.nestingLevel,arg.getType(),paroffset++)) != null  )
+                ADecNode arg = (ADecNode) a;
+                //parTypes.add(arg.getType());
+                if ( hmn.put(arg.getId(),new STentry(env.nestingLevel,paroffset++)) != null  )
                     System.out.println("Asset id "+arg.getId()+" already declared");                
             }
             

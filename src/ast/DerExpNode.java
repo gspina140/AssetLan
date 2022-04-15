@@ -1,6 +1,13 @@
 package ast;
 
-public class DerExpNode {
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import util.Environment;
+import util.SemanticError;
+
+
+public class DerExpNode implements Node{
     private String id ;
 
     private STentry entry;
@@ -30,4 +37,9 @@ public class DerExpNode {
     
 	    return res;
 	}
+
+    @Override
+    public String toPrint(String s) {
+        return s;
+    }
 }

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 
 import org.w3c.dom.Node;
 
-import AssetLanParser.AssignExpContext;
-import AssetLanParser.CallFunContext;
-import AssetLanParser.IfElseExpContext;
-import AssetLanParser.MoveAssetContext;
-import AssetLanParser.PrintExpContext;
-import AssetLanParser.ReturnExpContext;
-import AssetLanParser.TransferAssetContext;
+import parser.AssetLanParser.AssignExpContext;
+import parser.AssetLanParser.CallFunContext;
+import parser.AssetLanParser.IfElseExpContext;
+import parser.AssetLanParser.MoveAssetContext;
+import parser.AssetLanParser.PrintExpContext;
+import parser.AssetLanParser.ReturnExpContext;
+import parser.AssetLanParser.TransferAssetContext;
 import parser.*;
 import parser.AssetLanParser.AssetContext;
 import parser.AssetLanParser.AssignmentContext;
@@ -277,7 +277,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
         for(ExpContext ec: ctx.exp())
             res.addExp(visit(ec));
-
 
         return res;
     }

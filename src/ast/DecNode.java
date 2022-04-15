@@ -6,7 +6,6 @@ import java.util.HashMap;
 import util.Environment;
 import util.SemanticError;
 
-// ci serve davvero questa classe?
 public class DecNode implements Node{
     
     private Node type;

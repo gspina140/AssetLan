@@ -21,4 +21,9 @@ public class BaseExpNode implements Node{
         
         return res;
     }
+    
+    @Override
+    public String toPrint(String s){
+        return s; 
+    }
 }
