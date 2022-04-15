@@ -141,6 +141,17 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitADec(AdecContext ctx){
+        ADecNode res = new ADecNode();
+
+        for(AdecContext ac: ctx.ID()){
+            res.addId(ac.getText());
+        }
+
+        return res;
+    }
+
+    @Override
     public Node visitAssignExp(AssignExpContext ctx){
         return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
     }
@@ -179,7 +190,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitCallFun(CallFunContext ctx){
+    public Node visitCallFun(CallFunContext ctx){/*
         ArrayList<String> ids = new ArrayList<String>();
 
         for(String id: ctx.ID().getText())
@@ -194,7 +205,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             res.addExp(visit(ec));
 
 
-        return res;
+        return res;*/
+        return visitCall(ctx.call());
     }
 /* type node TODO
     @Override
@@ -212,7 +224,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     I think that it would be possible to declare this function only one time,
     and so reduce redudancy in code, just by giving the same label at both
     the subrules where it appears. I'm not sure that this is legit anyway!!
-    
+*/  
     @Override
     public Node visitAssignment(AssignmentContext ctx){
         return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
@@ -269,7 +281,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
         return res;
     }
-*/
 
     @Override
     public Node visitInitcall(InitcallContext ctx){
@@ -283,41 +294,41 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitBaseExp(BaseExpContext ctx){
-
+        return new BaseExpNode(visit(ctx.exp()));
     }
 
     @Override
     public Node visitBinExp(BinExpContext ctx){
-
+        return new BinExpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
     }
 
     @Override
     public Node visitDerExp(DerExpContext ctx){
-
+        return new DerExpNode(ctx.ID().getText());
     }
 
     @Override
     public Node visitValExp(ValExpContext ctx){
-
+        return new ValExpNode(Integer.parseInt(ctx.INTEGER().getText()));
     }
 
     @Override
     public Node visitNegExp(NegExpContext ctx){
-
+        return new BaseExpNode(visit(ctx.exp()));
     }
 
     @Override 
     public Node visitBoolExp(BoolExpContext ctx){
-
+		return new BoolExpNode(Boolean.parseBoolean(ctx.getText())); 
     }
 
     @Override
     public Node visitCallExp(CallExpContext ctx){
-
+        return visitCall(ctx.call());
     }
 
     @Override
     public Node visitNotExp(NotExpContext ctx){
-
+        return new BaseExpNode(visit(ctx.exp()));
     }
 }

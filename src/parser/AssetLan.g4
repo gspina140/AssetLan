@@ -37,12 +37,12 @@ transfer	: 'transfer' ID;
 
 ret			: 'return' (exp)?;
 
-ite			: //'if' '(' exp ')' statement ('else' statement)?;
-			  'if' '(' exp ')' (statement | '{' statement+ '}') ('else' (statement | '{' statement+ '}') )?;
-			  // Nella grammatica iniziale erano possibili soltanto uno ed un solo statement per l'if
-			  // ed uno ed un solo statement per l'else; abbiamo aggiunto la possibilità di mettere uno
-			  // o più statement per l'if e per l'else fra parentesi graffe (c-like)
-			  // (questo e' utilizzato dal programma 3 dell'esercizio 3 e dai programmi dell'esercizio 4)
+ite			: 'if' '(' exp ')' (statement | '{' statement+ '}') ('else' (statement | '{' statement+ '}') )?;
+                //'if' '(' exp ')' statement ('else' statement)?;
+			    // Nella grammatica iniziale erano possibili soltanto uno ed un solo statement per l'if
+			    // ed uno ed un solo statement per l'else; abbiamo aggiunto la possibilità di mettere uno
+			    // o più statement per l'if e per l'else fra parentesi graffe (c-like)
+			    // (questo e' utilizzato dal programma 3 dell'esercizio 3 e dai programmi dell'esercizio 4)
 
 call		: ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']';
 
