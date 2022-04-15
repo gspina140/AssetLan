@@ -325,15 +325,11 @@ public class AssetLanParser extends Parser {
 	}
 
 	public static class FunctionContext extends ParserRuleContext {
+		public DecContext par;
+		public DecContext innerDec;
 		public TerminalNode ID() { return getToken(AssetLanParser.ID, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
-		}
-		public List<DecContext> dec() {
-			return getRuleContexts(DecContext.class);
-		}
-		public DecContext dec(int i) {
-			return getRuleContext(DecContext.class,i);
 		}
 		public AdecContext adec() {
 			return getRuleContext(AdecContext.class,0);
@@ -343,6 +339,12 @@ public class AssetLanParser extends Parser {
 		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
+		}
+		public List<DecContext> dec() {
+			return getRuleContexts(DecContext.class);
+		}
+		public DecContext dec(int i) {
+			return getRuleContext(DecContext.class,i);
 		}
 		public FunctionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -399,7 +401,7 @@ public class AssetLanParser extends Parser {
 			if (_la==T__11 || _la==T__12) {
 				{
 				setState(72);
-				dec();
+				((FunctionContext)_localctx).par = dec();
 				}
 			}
 
@@ -421,6 +423,7 @@ public class AssetLanParser extends Parser {
 			match(T__7);
 			setState(81);
 			match(T__8);
+			{
 			setState(85);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -428,12 +431,13 @@ public class AssetLanParser extends Parser {
 				{
 				{
 				setState(82);
-				dec();
+				((FunctionContext)_localctx).innerDec = dec();
 				}
 				}
 				setState(87);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
+			}
 			}
 			setState(91);
 			_errHandler.sync(this);

@@ -2,8 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 
-import org.w3c.dom.Node;
-
+import org.antlr.v4.runtime.tree.TerminalNode;
+import parser.AssetLanParser.AdecContext;
 import parser.AssetLanParser.AssignExpContext;
 import parser.AssetLanParser.CallFunContext;
 import parser.AssetLanParser.IfElseExpContext;
@@ -44,7 +44,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	public Node visitProgram(ProgramContext ctx) {
 
 		// Resulting node of the right type
-		ProgamNode res;
+		//ProgamNode res;
 		
 		// List of fields in @res
 		ArrayList<Node> fields = new ArrayList<Node>();
@@ -59,25 +59,21 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		 * and store them in @fields, @assets and @functions rexpectively;
 		 * Notice that, for example, the ctx.let().field() method returns a list, this is because of
 		 * the use of * or + in the grammar antlr detects this is a group and therefore returns a list */
-		for (FieldContext fldc : ctx.let().field()){
-			fields.add( visit(fldc) );	// We used fldc instead of fc to do not confuse field with function
-		}
 
-		for (AssetContext ac : ctx.let().asset()){
-			assets.add( visit(ac) );
-		}
+        for(FieldContext flc : ctx.field())
+            fields.add(visit(flc));
 
-		for (FunctionContext func : ctx.let().function()){
-			functions.add( visit(func) );
-		}
-		
+        for(AssetContext ac : ctx.asset())
+            assets.add(visit(ac));
+
+        for(FunctionContext fnc : ctx.function())
+            functions.add(visit(fnc));
+
 		// Visit initcall context
 		Node initcall = visit( ctx.initcall() );
 		
 		// Build @res accordingly with the result of the visits to its content
-		res = new ProgramNode(fields, assets, functions, initcall);
-		
-		return res;
+		return new ProgramNode(fields, assets, functions, initcall);
 	}
 
 	@Override
@@ -108,8 +104,9 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		// This could be done differently by visiting instead the DecContext
 		// SUPPOSITION: this contains both parameters and inner declarations!
 		// (This is because of the shared decContext)
-		for(DecContext dc : ctx.par)
-			res.addPar( new ParNode(dc.ID().getText(), visit( dc.type() )) );
+        
+		for(TerminalNode dc : ctx.par.ID())
+			res.addPar( new ParNode(dc.getText(), visit( dc.type() )) );
         
         for(DecContext dc : ctx.innerDec)
             res.addDec( new DecNode(visit(dc.type()), dc.ID().getText()));

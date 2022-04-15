@@ -15,7 +15,10 @@ public class ADecNode implements Node{
     //Type = new TypeNode(...)
     id      = i;
   }
-  
+
+  public String getId(){
+      return id;
+  }
   public String toPrint(String s) {
 	return s+"Asset\n" + id + " "; 
   }

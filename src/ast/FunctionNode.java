@@ -58,10 +58,10 @@ public class FunctionNode implements Node {
                 if ( hmn.put(arg.getId(),new STentry(env.nestingLevel,paroffset++)) != null  )
                     System.out.println("Asset id "+arg.getId()+" already declared");                
             }
-            
+            /*
             // Set function type
             entry.addType( new ArrowTypeNode(parTypes, type) );
-            
+            */
             // Check body
             // Inner declarations should already have been checked with parameters cause of the shared context
             for(Node d : declist)
@@ -110,8 +110,7 @@ public class FunctionNode implements Node {
             +type.toPrint(s+"  ")
             +parlstr
             +assetlstr
-            +statementlstr
-            +body.toPrint(s+"  ") ; 
+            +statementlstr ;
     }
 
     //public Node typeCheck () {}

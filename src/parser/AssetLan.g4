@@ -9,8 +9,8 @@ field		: type ID ('=' exp)? ';' ;
 
 asset		: 'asset' ID ';' ;
 
-function	: (type | 'void') ID '(' par = (dec)? ')' '[' (adec)? ']'
-			  '{' innerDec = (dec*) statement* '}' ;
+function	: (type | 'void') ID '(' (par = dec)? ')' '[' (adec)? ']'
+			  '{' (innerDec = dec*) statement* '}' ;
 
 dec			: type ID (',' type ID)* ;
 
