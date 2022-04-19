@@ -9,7 +9,7 @@ import util.SemanticError;
 public class InitCallNode implements Node {
 
 	private String id;
-	private ArrayList<Node> explist;
+	private ArrayList<Node> explist = new ArrayList<Node>();
 	
 	public InitCallNode(String id) {
 		this.id = id;

@@ -36,6 +36,8 @@ import parser.AssetLanParser.StatementContext;
 import parser.AssetLanParser.TransferContext;
 import parser.AssetLanParser.TypeContext;
 import parser.AssetLanParser.ValExpContext;
+import util.Environment;
+import util.SemanticError;
 
 public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	
@@ -80,10 +82,14 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	public Node visitField(FieldContext ctx) {
 		// Visit the type
 		Node typeNode = visit(ctx.type());
-		
-		// Visit the exp
-		Node expNode = visit(ctx.exp());
-		
+
+        Node expNode;
+		// Visit the exp if it is present
+        if(ctx.exp() != null) {
+            expNode = visit(ctx.exp());
+        }else {
+            expNode = null;
+        }
 		// Build the FieldNode
 		return new FieldNode(typeNode, ctx.ID().getText(), expNode);
 	}
@@ -117,7 +123,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
         ADecNode as;
         if(ctx.adec() != null){ //There is an asset declaration
-            as = (ADecNode) visitADec(ctx.adec());
+            as = (ADecNode) visitAdec(ctx.adec());
         }else{
             as = new ADecNode();
         }
@@ -140,9 +146,13 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             DecNode dec = new DecNode();
             decs.add(dec);
         }
-
-        FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText(), par, as, decs);
-
+        FunctionNode res;
+        if(ctx.type() != null) {
+            res = new FunctionNode(visit(ctx.type()), ctx.ID().getText(), par, as, decs);
+        }else{
+            Node type = null;
+            res = new FunctionNode(type, ctx.ID().getText(), par, as, decs);
+        }
 		// Create a list for the statements
 		ArrayList<Node> statementlist = new ArrayList<Node>();
 		
@@ -179,7 +189,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitADec(AdecContext ctx){
+    public Node visitAdec(AdecContext ctx){
         ArrayList<String> idList = new ArrayList<String>();
 
         for(int i=0; i < ctx.ID().size(); i++)
@@ -195,40 +205,42 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitAssignExp(AssignExpContext ctx){
-        return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
+        return visitAssignment(ctx.assignment());
     }
 
     @Override 
     public Node visitMoveAsset(MoveAssetContext ctx){
-        String fOp = ctx.ID().get(0).getText();
+        return visitMove(ctx.move());
+        /*String fOp = ctx.ID().get(0).getText();
         String sOp = ctx.ID().get(1).getText();
 
-        return new MoveNode(fOp, sOp);
+        return new MoveNode(fOp, sOp);*/
     }
 
     @Override
     public Node visitPrintExp(PrintExpContext ctx){
-        return new PrintNode(visit(ctx.exp()));    
+        return visitPrint(ctx.print());
     }
 
     @Override
     public Node visitTransferAsset(TransferAssetContext ctx){
-        return new TransferNode(ctx.ID().getText());
+        return visitTransfer(ctx.transfer());
     }
 
     @Override
     public Node visitReturnExp(ReturnExpContext ctx){
-        return new ReturnNode(visit(ctx.exp()));
+        return visitRet(ctx.ret());
     }
 
     @Override
     public Node visitIfElseExp(IfElseExpContext ctx){
-        IteNode res = new IteNode(visit(ctx.exp()));
+        return visitIte(ctx.ite());
+        /*IteNode res = new IteNode(visit(ctx.exp()));
 
         for(StatementContext sc: ctx.statement())
             res.addStatement(visit(sc));
 
-        return res;
+        return res;*/
     }
 
     @Override
@@ -309,8 +321,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     public Node visitCall(CallContext ctx){
         ArrayList<String> ids = new ArrayList<String>();
 
-        for(String id: ctx.ID().getText())
-            ids.add(id);
+        int n = ctx.ID().size();
+
+        for(int i=0; i < n; i++)
+            ids.add(ctx.ID(i).getText());
 
         CallNode res = new CallNode(ids.get(0));
         
@@ -325,7 +339,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitInitcall(InitcallContext ctx){
-        InitCallNode res = new InitCallNode(visit(ctx.ID().getText()));
+        InitCallNode res = new InitCallNode(ctx.ID().getText());
 
         for(ExpContext ec:ctx.exp())
             res.addExp(visit(ec));
@@ -350,7 +364,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitValExp(ValExpContext ctx){
-        return new ValExpNode(Integer.parseInt(ctx.INTEGER().getText()));
+        return new ValExpNode(Integer.parseInt(ctx.NUMBER().getText()));
     }
 
     @Override
