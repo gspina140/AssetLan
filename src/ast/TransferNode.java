@@ -24,12 +24,14 @@ public class TransferNode implements Node{
         HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
 
         if(hm.get(id) == null){
-            int nl = env.nestingLevel --;
+            int nl = env.nestingLevel - 1;
             hm = env.symTable.get(nl);
 
             while(nl >= 0){
                 if(hm.get(id) != null){
                     return res;
+                }else{
+                    nl--;
                 }
             }
 

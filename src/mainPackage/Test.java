@@ -29,7 +29,7 @@ public class Test {
 
         /* Parser */
         AssetLanParser parser = new AssetLanParser(tokens);         // Instantiate Parser
-        parser.removeErrorListeners();                              // Remove ConsoleErrorListener for parser
+        //parser.removeErrorListeners();                              // Remove ConsoleErrorListener for parser
         
         /* Visitor (semantic analysis) */
 		AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();    // Use custom visitor

@@ -14,6 +14,8 @@ public class CallNode implements Node {
 
     public CallNode(String id) {
         this.id = id;
+        idlist  = new ArrayList<String>();
+        explist = new ArrayList<Node>();
     }
 
     public void addId(String id) {
@@ -62,7 +64,7 @@ public class CallNode implements Node {
                                 }
 
                                 if (nl2 < 0) {
-                                    res.add(new SemanticError("Variable id" + s + "has not been declared"));
+                                    res.add(new SemanticError("Variable id " + s + " has not been declared"));
                                 }
                             }
                         }
@@ -71,7 +73,7 @@ public class CallNode implements Node {
                 }
 
                 if (nl < 0) {
-                    res.add(new SemanticError("Function id" + id + "has not been declared"));
+                    res.add(new SemanticError("Function id " + id + " has not been declared"));
                 }
             }
 
@@ -93,7 +95,7 @@ public class CallNode implements Node {
                         }
 
                         if (nl2 < 0) {
-                            res.add(new SemanticError("Variable id" + s + "has not been declared"));
+                            res.add(new SemanticError("Variable id " + s + " has not been declared"));
                         }
                     }
                 }

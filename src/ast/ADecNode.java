@@ -71,11 +71,11 @@ public class ADecNode implements Node{
         STentry entry = new STentry(env.nestingLevel, env.offset--); // Introducing "entry"
         
         if(hm.put(id, entry) != null)
-            res.add(new SemanticError("Asset declaration id" + id + "already declared"));
+            res.add(new SemanticError("Asset declaration id " + id + " already declared"));
 
         for(String i:ids){
             if(hm.put(i, entry) != null){
-                res.add(new SemanticError("Asset declaration id" + i + "already declared"));
+                res.add(new SemanticError("Asset declaration id " + i + " already declared"));
             }
         }
 

@@ -73,7 +73,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
 		// Visit initcall context
         Node initcall = null;
-        if(ctx.initcall() != null)
+        if(ctx.initcall().ID() != null)
 		    initcall = visit( ctx.initcall() );
 
 		// Build @res accordingly with the result of the visits to its content
@@ -104,6 +104,14 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	@Override
 	public Node visitFunction(FunctionContext ctx) {
 		
+        FunctionNode res;
+
+        if(ctx.type() != null) {
+            res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
+        }else{
+            Node type = null;
+            res = new FunctionNode(type, ctx.ID().getText());
+        }
 		// Initialize @res with the visits to the type and its ID
 	//	FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
 		
@@ -117,44 +125,32 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         //If i'm not wrong the '?' operator in the rule means optional argument, so if is present is one
         if(parNum > 0){
             par = (DecNode) visitDec(ctx.par.get(0));//new DecNode(ctx.par.get(0).type(0), ctx.par.get(0).ID(0).getText());
-/*            for(int i=1; i < parNum; i++)
-                par.addDeclaration(ctx.par.get(i).type(i), ctx.par.get(i).ID(i));*/
-        }else{
-            par = new DecNode();
+            res.addPar(par);
         }
 
         ADecNode as;
         if(ctx.adec() != null){ //There is an asset declaration
             as = (ADecNode) visitAdec(ctx.adec());
-        }else{
-            as = new ADecNode();
+            res.addAsset(as);
         }
+
         // Add body
 		// Nested declarations should already be considered
         int decNum = ctx.innerDec.size();
-        ArrayList<Node> decs = new ArrayList<Node>();
+        //ArrayList<Node> decs = new ArrayList<Node>();
 
         //There is a kleene star in the rule, declarations can be 0 or more
         if(decNum > 0){
             DecNode dec = (DecNode) visitDec(ctx.innerDec.get(0)); //new DecNode(ctx.innerDec.get(0).type(0), ctx.innerDec.get(0).ID(0).getText());
-            decs.add(dec);
+            res.addDec(dec);
 
             for(int i=1; i < decNum; i++){
                 dec = (DecNode) visitDec(ctx.innerDec.get(i));
-                decs.add(dec);
+                res.addDec(dec);
             }
 
-        }else{
-            DecNode dec = new DecNode();
-            decs.add(dec);
         }
-        FunctionNode res;
-        if(ctx.type() != null) {
-            res = new FunctionNode(visit(ctx.type()), ctx.ID().getText(), par, as, decs);
-        }else{
-            Node type = null;
-            res = new FunctionNode(type, ctx.ID().getText(), par, as, decs);
-        }
+        
 		// Create a list for the statements
 		ArrayList<Node> statementlist = new ArrayList<Node>();
 		
@@ -306,7 +302,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitRet(RetContext ctx){
-        return new ReturnNode(visit(ctx.exp()));
+        if(ctx.exp() != null)
+            return new ReturnNode(visit(ctx.exp()));
+        else
+            return new ReturnNode(null);
     }
 
     @Override

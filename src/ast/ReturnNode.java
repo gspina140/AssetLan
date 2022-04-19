@@ -19,6 +19,10 @@ public class ReturnNode implements Node{
 
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env){
-        return exp.checkSemantics(env);
+        if(exp == null){
+            return new ArrayList<SemanticError>();
+        }else {
+            return exp.checkSemantics(env);
+        }
     }
 }

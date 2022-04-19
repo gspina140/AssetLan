@@ -42,7 +42,7 @@ public class AssignmentNode implements Node {
                     break; //Exit cycle;
                 }    
                 if(nl < 0)
-                    res.add(new SemanticError("Variable id " + id+ "has not been declared"));
+                    res.add(new SemanticError("Variable id " + id+ " has not been declared"));
             }
         }
         

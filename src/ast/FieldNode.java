@@ -32,7 +32,7 @@ public class FieldNode implements Node {
         STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Introducing "entry"
 
         if (hm.put(id, entry) != null)
-            res.add(new SemanticError("Field id " + id + " already declared"));
+            res.add(new SemanticError("Id " + id + " already declared"));
 
         if(exp != null)
             res.addAll(exp.checkSemantics(env));

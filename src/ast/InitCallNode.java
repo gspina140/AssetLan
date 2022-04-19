@@ -25,7 +25,9 @@ public class InitCallNode implements Node {
         
         if(hm.get(id) == null) {
         	int nl = env.nestingLevel - 1;
-        	
+			if(nl < 0) {
+				res.add(new SemanticError("Function id " + id + " has not been declared"));
+			}
         	while(nl >= 0) {
         		hm = env.symTable.get(nl);
         		
@@ -38,7 +40,7 @@ public class InitCallNode implements Node {
         			return res;
         		}
         		if(nl < 0) {
-        			res.add(new SemanticError("Function id" + id + "has not been declared"));
+        			res.add(new SemanticError("Function id " + id + " has not been declared"));
         		}
         		
         	}

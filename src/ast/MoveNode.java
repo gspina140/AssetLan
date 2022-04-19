@@ -38,7 +38,7 @@ public class MoveNode implements Node {
                 break; //Exit cycle;
 
                 if(nl < 0)
-                    res.add(new SemanticError("Variable (asset) id " + id1 + "has not been declared"));
+                    res.add(new SemanticError("Variable (asset) id " + id1 + " has not been declared"));
             }
         }
         
@@ -54,7 +54,7 @@ public class MoveNode implements Node {
                 break; //Exit cycle;
 
                 if(nl < 0)
-                    res.add(new SemanticError("Variable (asset) id " + id2 + "has not been declared"));
+                    res.add(new SemanticError("Variable (asset) id " + id2 + " has not been declared"));
             }
         }
         

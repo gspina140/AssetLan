@@ -22,12 +22,12 @@ public class FunctionNode implements Node {
     //private ArrayList<Node> declist;
     private ArrayList<Node> statementlist;
     
-    public FunctionNode (Node t, String i, Node p, Node a, ArrayList<Node> d) {
+    public FunctionNode (Node t, String i){//, Node p, Node a, ArrayList<Node> d) {
         type         = t;
         id           = i;
-        parameters   = p;
-        assets       = a;
-        declarations = d;
+        declarations = new ArrayList<Node>();
+        parameters   = null;
+        assets       = null;
     }
   
     @Override
@@ -38,7 +38,7 @@ public class FunctionNode implements Node {
         
         //env.offset = -2;
         HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel,env.offset--); // Entry introduction
+        STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Entry introduction ---- If return type id void, there will be type==null
         
         if ( hm.put(id,entry) != null )
             res.add(new SemanticError("Function id "+id+" already declared"));
@@ -48,32 +48,21 @@ public class FunctionNode implements Node {
             HashMap<String,STentry> hmn = new HashMap<String,STentry> ();
             env.symTable.add(hmn);
             
-            int paroffset=1;
+            //int paroffset=1;
             
-            // Check args 
-            DecNode par = (DecNode) parameters;
-            
-            res.addAll(par.checkSemantics(env));
-            /*
-            for(Node p : parlist){
-                ParNode arg = (ParNode) p;
-                parTypes.add(arg.getType());
-                if ( hmn.put(p.getId(),new STentry(env.nestingLevel,arg.getType(),paroffset++)) != null  )
-                    System.out.println("Parameter id "+arg.getId()+" already declared");                
-            }*/
+            // Check args
+            if(parameters != null) {
+                DecNode par = (DecNode) parameters;
+                res.addAll(par.checkSemantics(env));
+            }
 
-            // Check assets
-            ADecNode as = (ADecNode) assets;
-            
-            res.addAll(as.checkSemantics(env));
+            if(assets != null) {
+                // Check assets
+                ADecNode as = (ADecNode) assets;
 
-            /*
-            for(Node a : assetlist){
-                ADecNode arg = (ADecNode) a;
-                //parTypes.add(arg.getType());
-                if ( hmn.put(arg.getId(),new STentry(env.nestingLevel,paroffset++)) != null  )
-                    System.out.println("Asset id "+arg.getId()+" already declared");                
-            }*/
+                res.addAll(as.checkSemantics(env));
+            }
+
             /*
             // Set function type
             entry.addType( new ArrowTypeNode(parTypes, type) );
@@ -98,23 +87,24 @@ public class FunctionNode implements Node {
         
         return res;
 	}
-  /*
+  
     public void addPar (Node p) {
-        parlist.add(p);
+        parameters = p;
     }
 
     public void addAsset (Node a) {
-        assetlist.add(a);
+        assets = a;
     }
-*/
+
     public void addBody(ArrayList<Node> sl) {
         statementlist = sl;
     }
-/*
+
     public void addDec(Node d){
-        declist.add(d);
+        declarations.add(d);
     }
 
+/*
     public String toPrint(String s) {
         String parlstr="";
         for (Node par:parlist)
