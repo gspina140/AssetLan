@@ -74,12 +74,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		// Visit initcall context
         Node initcall = null;
         if(ctx.initcall() != null)
-<<<<<<< HEAD
 		    initcall = visit( ctx.initcall() );
-=======
-		    Node initcall = visit( ctx.initcall() );
->>>>>>> main
-		
+
 		// Build @res accordingly with the result of the visits to its content
 		return new ProgramNode(fields, assets, functions, initcall);
 	}
