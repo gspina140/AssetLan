@@ -97,27 +97,51 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 	public Node visitFunction(FunctionContext ctx) {
 		
 		// Initialize @res with the visits to the type and its ID
-		FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
+	//	FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
 		
 		// Add argument declarations
 		// We are getting a shortcut here by constructing directly the ParNode
 		// This could be done differently by visiting instead the DecContext
 		// SUPPOSITION: this contains both parameters and inner declarations!
 		// (This is because of the shared decContext)
-        
-		for(TerminalNode dc : ctx.par.ID())
-			res.addPar( new ParNode(dc.getText(), visit( dc.type() )) );
-        
-        for(DecContext dc : ctx.innerDec)
-            res.addDec( new DecNode(visit(dc.type()), dc.ID().getText()));
+        int parNum = ctx.par.size();
+        DecNode par;
+        //If i'm not wrong the '?' operator in the rule means optional argument, so if is present is one
+        if(parNum > 0){
+            par = (DecNode) visitDec(ctx.par.get(0));//new DecNode(ctx.par.get(0).type(0), ctx.par.get(0).ID(0).getText());
+/*            for(int i=1; i < parNum; i++)
+                par.addDeclaration(ctx.par.get(i).type(i), ctx.par.get(i).ID(i));*/
+        }else{
+            par = new DecNode();
+        }
 
-        /*
-		// Add assets declarations
-		for(AssetContext ac : ctx.asset())
-			res.addAsset( new AssetNode(ac.ID().getText()));
-		*/
-		// Add body
+        ADecNode as;
+        if(ctx.adec() != null){ //There is an asset declaration
+            as = (ADecNode) visitADec(ctx.adec());
+        }else{
+            as = new ADecNode();
+        }
+        // Add body
 		// Nested declarations should already be considered
+        int decNum = ctx.innerDec.size();
+        ArrayList<Node> decs = new ArrayList<Node>();
+
+        //There is a kleene star in the rule, declarations can be 0 or more
+        if(decNum > 0){
+            DecNode dec = (DecNode) visitDec(ctx.innerDec.get(0)); //new DecNode(ctx.innerDec.get(0).type(0), ctx.innerDec.get(0).ID(0).getText());
+            decs.add(dec);
+
+            for(int i=1; i < decNum; i++){
+                dec = (DecNode) visitDec(ctx.innerDec.get(i));
+                decs.add(dec);
+            }
+
+        }else{
+            DecNode dec = new DecNode();
+            decs.add(dec);
+        }
+
+        FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText(), par, as, decs);
 
 		// Create a list for the statements
 		ArrayList<Node> statementlist = new ArrayList<Node>();
@@ -138,19 +162,35 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitDec(DecContext ctx){
-        return new DecNode(visit(ctx.type()), ctx.ID().getText());
+        ArrayList<Node> typeList  = new ArrayList<Node>();
+        ArrayList<String> idList = new ArrayList<String>();
+
+        for(int i=0; i < ctx.type().size(); i++){
+            typeList.add(visit(ctx.type(i)));
+            idList.add(ctx.ID(i).getText());
+        }
+
+        DecNode res = new DecNode(typeList.get(0), idList.get(0));
+
+        for(int i=1; i < typeList.size(); i++)
+            res.addDeclaration(typeList.get(i), idList.get(i));
+        
+        return res;
     }
 
     @Override
     public Node visitADec(AdecContext ctx){
-        /*ADecNode res = new ADecNode();
+        ArrayList<String> idList = new ArrayList<String>();
 
-        for(AdecContext ac: ctx.ID()){
-            res.addId(ac.getText());
-        }
+        for(int i=0; i < ctx.ID().size(); i++)
+            idList.add(ctx.ID(i).getText());
 
-        return res;*/
-        return new ADecNode(ctx.ID().getText());
+        ADecNode res = new ADecNode(idList.get(0));
+        
+        for(int i=1; i < idList.size(); i++)
+            res.addId(idList.get(i));
+
+        return res;
     }
 
     @Override

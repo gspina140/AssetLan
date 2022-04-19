@@ -16,9 +16,12 @@ public class ADecNode implements Node{
     id      = i;
   }
 
+  public ADecNode(){}
+/*
   public String getId(){
       return id;
   }
+
   public String toPrint(String s) {
 	return s+"Asset\n" + id + " "; 
   }
@@ -37,14 +40,16 @@ public class ADecNode implements Node{
         
         return res;
 	}
-  
-    /*
+    */
     private ArrayList<String> ids = new ArrayList<String>();
-
-    public ADecNode(){}
 
     public void addId(String s){
         ids.add(s);
+    }
+
+    public ArrayList<String> getID(){
+        ids.add(id);
+        return ids;
     }
 
     public String toPrint(String s){
@@ -53,7 +58,7 @@ public class ADecNode implements Node{
         for(String i:ids)
             res += i; 
 
-    	return s+"Asset declaration\n" + res; 
+    	return s+"Asset declaration\n" + id + res; 
     }
 
     @Override
@@ -65,6 +70,9 @@ public class ADecNode implements Node{
         HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
         STentry entry = new STentry(env.nestingLevel, env.offset--); // Introducing "entry"
         
+        if(hm.put(id, entry) != null)
+            res.add(new SemanticError("Asset declaration id" + id + "already declared"));
+
         for(String i:ids){
             if(hm.put(i, entry) != null){
                 res.add(new SemanticError("Asset declaration id" + i + "already declared"));
@@ -73,5 +81,4 @@ public class ADecNode implements Node{
 
         return res;
     }
-*/
 }
