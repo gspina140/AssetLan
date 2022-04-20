@@ -24,34 +24,35 @@ public class MoveNode implements Node {
 
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        HashMap<String, STentry> hm = env.symTable.get(env.nestingLevel);
+        //HashMap<String, STentry> hm = env.symTable.get(env.nestingLevel);
+        int nl = env.getNestingLevel();
         
-        if(hm.get(id1) == null ){ //First ID doesn't exists, i'm not taking into account if it is an asset or a function or whatever
-            int nl = env.nestingLevel -1;
+        if(env.checkDeclaration(id1, nl) == null ){ //First ID doesn't exists, i'm not taking into account if it is an asset or a function or whatever
+            nl--;
 
             while(nl >= 0){ //Check in outer scopes
-                hm = env.symTable.get(nl);
+                //hm = env.symTable.get(nl);
         
-                if(hm.get(id1) == null){
+                if(env.checkDeclaration(id1, nl) == null){
                     nl--;
                 }else //ID declared
-                break; //Exit cycle;
+                    break; //Exit cycle;
 
                 if(nl < 0)
                     res.add(new SemanticError("Variable (asset) id " + id1 + " has not been declared"));
             }
         }
         
-        if(hm.get(id2) == null){    
-            int nl = env.nestingLevel - 1;
+        if(env.checkDeclaration(id2, nl) == null){    
+            nl--;
 
             while(nl >= 0){
-                hm = env.symTable.get(nl);
+                //hm = env.symTable.get(nl);
         
-                if(hm.get(id2) == null){
+                if(env.checkDeclaration(id2, nl) == null){
                     nl--;
                 }else //ID declared
-                break; //Exit cycle;
+                    break; //Exit cycle;
 
                 if(nl < 0)
                     res.add(new SemanticError("Variable (asset) id " + id2 + " has not been declared"));

@@ -28,10 +28,10 @@ public class FieldNode implements Node {
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // env.offset = -2;
-        HashMap<String, STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Introducing "entry"
+        //HashMap<String, STentry> hm = env.symTable.get(env.nestingLevel);
+        //STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Introducing "entry"
 
-        if (hm.put(id, entry) != null)
+        if (env.addEntry(type, id) != null)
             res.add(new SemanticError("Id " + id + " already declared"));
 
         if(exp != null)

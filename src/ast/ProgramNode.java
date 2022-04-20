@@ -35,16 +35,17 @@ public class ProgramNode implements Node {
 
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
-        env.nestingLevel++;
-        HashMap<String, STentry> hm = new HashMap<String, STentry>();
-        env.symTable.add(hm);
+        //env.nestingLevel++;
+        //HashMap<String, STentry> hm = new HashMap<String, STentry>();
+        //env.symTable.add(hm);
+        env.enterScope();
 
         // Declare resulting list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // Check semantics in the field list
         if (fieldlist.size() > 0) {
-            env.offset = -2;
+            //env.offset = -2;
             // If there are children then check semantics for every child and save the
             // results
             for (Node n : fieldlist)
@@ -53,7 +54,7 @@ public class ProgramNode implements Node {
 
         // Check semantics in the asset list
         if (assetlist.size() > 0) {
-            env.offset = -2;
+            //env.offset = -2;
             // If there are children then check semantics for every child and save the
             // results
             for (Node n : assetlist)
@@ -62,7 +63,7 @@ public class ProgramNode implements Node {
 
         // Check semantics in the functions list
         if (functionlist.size() > 0) {
-            env.offset = -2;
+            //env.offset = -2;
             // If there are children then check semantics for every child and save the
             // results
             for (Node n : functionlist)
@@ -74,7 +75,8 @@ public class ProgramNode implements Node {
             res.addAll(initcall.checkSemantics(env));
       
         // Clean the scope, we are leaving a program scope
-        env.symTable.remove(env.nestingLevel--);
+        env.exitScope();
+        //env.symTable.remove(env.nestingLevel--);
 
         // Return the result
         return res;

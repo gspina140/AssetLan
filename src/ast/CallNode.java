@@ -44,28 +44,31 @@ public class CallNode implements Node {
     public ArrayList<SemanticError> checkSemantics(Environment env) {
 
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-        HashMap<String, STentry> hm = env.symTable.get(env.nestingLevel);
+        //HashMap<String, STentry> hm = env.symTable.get(env.nestingLevel);
 
-        if (hm.get(id) == null) {
-            int nl = env.nestingLevel - 1;
+        int nl = env.getNestingLevel();
+
+        if (env.checkDeclaration(id, nl) == null) {
+            nl--;
 
             while (nl >= 0) {
-                hm = env.symTable.get(nl);
+                //hm = env.symTable.get(nl);
 
-                if (hm.get(id) == null) {
+                if (env.checkDeclaration(id, nl) == null) {
                     nl--;
                 } else {
                     for (Node e : explist) {
                         res.addAll(e.checkSemantics(env));
                     }
                     for (String s : idlist) {
-                        if (hm.get(s) == null) {
-                            int nl2 = nl--;
+                        int nl2 = env.getNestingLevel();
+                        if (env.checkDeclaration(s, nl2) == null) {
+                            nl2--;
 
-                            HashMap<String, STentry> hm2;
+                            //HashMap<String, STentry> hm2;
                             while (nl2 >= 0) {
-                                hm2 = env.symTable.get(nl2);
-                                if (hm2.get(s) == null) {
+                                //hm2 = env.symTable.get(nl2);
+                                if (env.checkDeclaration(s, nl2) == null) {
                                     nl2--;
                                 } else {
                                     break;
@@ -90,13 +93,14 @@ public class CallNode implements Node {
                 res.addAll(e.checkSemantics(env));
             }
             for (String s : idlist) {
-                if (hm.get(s) == null) {
-                    int nl2 = env.nestingLevel;
+                int nl2 = env.getNestingLevel();
+                if (env.checkDeclaration(s, nl2) == null) {
+                    nl2--;
 
-                    HashMap<String, STentry> hm2;
+                    //HashMap<String, STentry> hm2;
                     while (nl2 >= 0) {
-                        hm2 = env.symTable.get(nl2);
-                        if (hm2.get(s) == null) {
+                        //hm2 = env.symTable.get(nl2);
+                        if (env.checkDeclaration(s, nl2) == null) {
                             nl2--;
                         } else {
                             break;

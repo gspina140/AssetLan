@@ -22,17 +22,16 @@ public class DerExpNode implements Node{
 	    //create result list
 	    ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
-	    int j=env.nestingLevel;
-	    STentry tmp=null; 
+	    int nl = env.getNestingLevel();
 
-	    while (j>=0 && tmp==null)
-    	    tmp=(env.symTable.get(j--)).get(id);
-        
-        if (tmp==null)
-            res.add(new SemanticError("Id "+id+" not declared"));
-        else{
-    	  	entry = tmp;
-    	  	nestinglevel = env.nestingLevel;
+        while (nl >= 0) {
+            if (env.checkDeclaration(id, nl) == null) {
+                nl--;
+                if(nl < 0)
+                    res.add(new SemanticError("Variable id " + id + " has not been declared"));
+            } else {
+                break;
+            }
         }
     
 	    return res;

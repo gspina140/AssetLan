@@ -45,17 +45,17 @@ public class DecNode implements Node{
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // env.offset = -2;
-        HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel,type, env.offset--); // Introducing "entry"
+        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        //STentry entry = new STentry(env.nestingLevel,type, env.offset--); // Introducing "entry"        
         
-        if ( hm.put(id,entry) != null )
+        if ( env.addEntry(type, id) != null )
     		res.add(new SemanticError("Dec id "+id+" already declared"));
         
         for(int i=0; i < typeList.size(); i++){
-            entry = new STentry(env.nestingLevel, typeList.get(i), env.offset--);
+
             String s = idList.get(i);
 
-            if( hm.put(s, entry) != null)
+            if( env.addEntry(typeList.get(i), s) != null)
                 res.add(new SemanticError("Dec id " + s + " already declared"));
 
         }

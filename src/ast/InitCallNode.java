@@ -20,17 +20,18 @@ public class InitCallNode implements Node {
 
         //Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-        HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+
+		int nl = env.getNestingLevel();
         
-        if(hm.get(id) == null) {
-        	int nl = env.nestingLevel - 1;
-			if(nl < 0) {
+        if(env.checkDeclaration(id, nl) == null) {
+			if(--nl < 0) {
 				res.add(new SemanticError("Function id " + id + " has not been declared"));
 			}
         	while(nl >= 0) {
-        		hm = env.symTable.get(nl);
+        		//hm = env.symTable.get(nl);
         		
-        		if(hm.get(id) == null) 
+        		if(env.checkDeclaration(id, nl) == null) 
         			nl--;
         		else {
         			for(Node e : explist) 
@@ -40,8 +41,7 @@ public class InitCallNode implements Node {
         		}
         		if(nl < 0) {
         			res.add(new SemanticError("Function id " + id + " has not been declared"));
-        		}
-        		
+        		}        		
         	}
              	
         }else {

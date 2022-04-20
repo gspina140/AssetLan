@@ -37,16 +37,17 @@ public class FunctionNode implements Node {
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
         //env.offset = -2;
-        HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Entry introduction ---- If return type id void, there will be type==null
-        
-        if ( hm.put(id,entry) != null )
+        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        //STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Entry introduction ---- If return type id void, there will be type==null
+
+        if ( env.addEntry(type, id) != null )
             res.add(new SemanticError("Function id "+id+" already declared"));
         else{
             // Create a new HashMap for the symTable
-            env.nestingLevel++;
-            HashMap<String,STentry> hmn = new HashMap<String,STentry> ();
-            env.symTable.add(hmn);
+            //env.nestingLevel++;
+            //HashMap<String,STentry> hmn = new HashMap<String,STentry> ();
+            //env.symTable.add(hmn);
+            env.enterScope();
             
             //int paroffset=1;
             
@@ -82,7 +83,8 @@ public class FunctionNode implements Node {
             }
             
             // Close scope
-            env.symTable.remove(env.nestingLevel--);            
+            //env.symTable.remove(env.nestingLevel--);
+            env.exitScope();        
         }
         
         return res;

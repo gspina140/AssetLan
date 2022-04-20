@@ -67,14 +67,14 @@ public class ADecNode implements Node{
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // env.offset = -2;
-        HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        STentry entry = new STentry(env.nestingLevel, env.offset--); // Introducing "entry"
+        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        //STentry entry = new STentry(env.nestingLevel, env.offset--); // Introducing "entry"
         
-        if(hm.put(id, entry) != null)
+        if(env.addEntry(null, id)!= null)
             res.add(new SemanticError("Asset declaration id " + id + " already declared"));
 
         for(String i:ids){
-            if(hm.put(i, entry) != null){
+            if(env.addEntry(null, i) != null){
                 res.add(new SemanticError("Asset declaration id " + i + " already declared"));
             }
         }

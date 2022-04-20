@@ -21,14 +21,15 @@ public class TransferNode implements Node{
     public ArrayList<SemanticError> checkSemantics(Environment env){
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        int nl = env.getNestingLevel();
 
-        if(hm.get(id) == null){
-            int nl = env.nestingLevel - 1;
-            hm = env.symTable.get(nl);
+        if(env.checkDeclaration(id, nl) == null){
+            nl--;
+            //hm = env.symTable.get(nl);
 
             while(nl >= 0){
-                if(hm.get(id) != null){
+                if(env.checkDeclaration(id, nl) != null){
                     return res;
                 }else{
                     nl--;

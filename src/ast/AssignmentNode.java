@@ -26,16 +26,16 @@ public class AssignmentNode implements Node {
         //Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-       
+        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
+        int nl = env.getNestingLevel();
         
-        if(hm.get(id) == null ){ //First ID doesn't exists, i'm not taking into account if it is an asset or a function or whatever
-            int nl = env.nestingLevel -1;
+        if(env.checkDeclaration(id, nl) == null ){ //First ID doesn't exists, i'm not taking into account if it is an asset or a function or whatever
+            nl--;
 
             while(nl >= 0){ //Check in outer scopes
-                hm = env.symTable.get(nl);
+                //hm = env.symTable.get(nl);
         
-                if(hm.get(id) == null){
+                if(env.checkDeclaration(id, nl) == null){
                     nl--;
                 }else{ //ID declared
                     res.addAll(exp.checkSemantics(env));
