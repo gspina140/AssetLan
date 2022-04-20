@@ -40,6 +40,6 @@ public class DerExpNode implements Node{
 
     @Override
     public String toPrint(String s) {
-        return s;
+        return s + "Derivate expression\n" + id; 
     }
 }

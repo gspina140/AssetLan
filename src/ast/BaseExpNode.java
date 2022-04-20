@@ -24,6 +24,6 @@ public class BaseExpNode implements Node{
     
     @Override
     public String toPrint(String s){
-        return s; 
+        return s + "Base expression\n" + exp.toPrint(s + " "); 
     }
 }

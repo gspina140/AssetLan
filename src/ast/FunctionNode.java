@@ -104,31 +104,26 @@ public class FunctionNode implements Node {
         declarations.add(d);
     }
 
-/*
+
     public String toPrint(String s) {
-        String parlstr="";
-        for (Node par:parlist)
-            parlstr+=par.toPrint(s+"  ");
-        String assetlstr="";
-        if (assetlist!=null) 
-            for (Node asset:assetlist)
-                assetlstr+=asset.toPrint(s+"  ");
+        String dec = "";
+        if(declarations.size() > 0)
+            for(Node d : declarations)
+                dec += d.toPrint(s + " ");
+        
         String statementlstr="";
         if (statementlist!=null)
             for (Node statement:statementlist)
                 statementlstr+=statement.toPrint(s+" ");
+
         return s+"Function:" + id +"\n"
-            +type.toPrint(s+"  ")
-            +parlstr
-            +assetlstr
+            +type.toPrint(s + " ")
+            +parameters.toPrint(s + " ")
+            +assets.toPrint(s + " ")
+            +dec
             +statementlstr ;
     }
-*/
-    //Just to avoid error
-    @Override
-    public String toPrint(String s){
-        return s;
-    }
+
     //public Node typeCheck () {}
     
     //public String codeGeneration() {}

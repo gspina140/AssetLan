@@ -13,7 +13,6 @@ public class InitCallNode implements Node {
 	
 	public InitCallNode(String id) {
 		this.id = id;
-	
 	}
 	
 	@Override
@@ -59,9 +58,12 @@ public class InitCallNode implements Node {
 
 	
 	@Override
-	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+	public String toPrint(String s) {
+        String e = "";
+        for(Node a : explist)
+            e += a.toPrint(s + " ");
+
+        return s + "Initialization call\n" + id + e;
 	}
 
 

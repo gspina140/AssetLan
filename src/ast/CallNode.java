@@ -27,9 +27,17 @@ public class CallNode implements Node {
     }
 
     @Override
-    public String toPrint(String indent) {
-        // TODO Auto-generated method stub
-        return null;
+    public String toPrint(String s) {    
+        String i = "";
+        String e = "";
+        
+        for(String p : idlist)
+            i += p;
+
+        for(Node a : explist)
+            e += a.toPrint(s + " ");
+
+        return s + "Call\n" + id + i + e; 
     }
 
     @Override

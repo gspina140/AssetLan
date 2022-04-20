@@ -15,9 +15,9 @@ public class BoolExpNode implements Node{
     @Override
     public String toPrint(String s) {
         if (val)
-            return s + "Bool:true\n";
+            return s + "Boolean expression : true\n";
         else
-            return s + "Bool:false\n";
+            return s + "Boolean expression : false\n";
     }
 
     @Override

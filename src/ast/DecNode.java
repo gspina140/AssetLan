@@ -23,22 +23,22 @@ public class DecNode implements Node{
     public DecNode(){} //empty constructor, usefull in some cases
 
     public String toPrint(String s){
-    	return s+"Dec\n" + type.toPrint(s+" ") + id; 
+        String t = "";
+        String i = "";
+
+        for(Node n : typeList)
+            t += n.toPrint(s + " ");
+        
+        for(String d : idList)
+            i += d;
+    	return s+"Declaration\n" + type.toPrint(s+" ") + id + t + i; 
     }
 
     public void addDeclaration(Node t, String i){
         typeList.add(t);
         idList.add(i);
     }
-/*
-    public ArrayList<Node> getType(){
-        return typeList;
-    }
 
-    public ArrayList<String> getID(){
-        return idList;
-    }
-*/
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env){
         // Create result list

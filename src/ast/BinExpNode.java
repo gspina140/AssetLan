@@ -25,6 +25,6 @@ public class BinExpNode implements Node{
     
     @Override
     public String toPrint(String s){
-        return s; 
+        return s + "Binary expression\n" + eL.toPrint(s + " ") + eR.toPrint(s + " "); 
     }
 }
