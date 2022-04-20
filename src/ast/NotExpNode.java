@@ -23,6 +23,6 @@ public class NotExpNode implements Node{
 
     @Override
     public String toPrint(String s) {
-        return s;
+        return s + "Negate expression\n" + exp.toPrint(s + " ");
     }
 }

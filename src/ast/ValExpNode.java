@@ -13,7 +13,7 @@ public class ValExpNode implements Node{
     }
 
     public String toPrint(String s) {
-      return s+"Int:" + Integer.toString(val) +"\n";
+      return s+"Value expression\n" + Integer.toString(val) + " ";
     }
 
     @Override

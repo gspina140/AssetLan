@@ -19,8 +19,7 @@ public class IteNode implements Node {
         for (Node st : StatementsList)
             str += st.toPrint(s + "");
 
-        return s + "If\n" + cond.toPrint(s + "  ")
-                + str;
+        return s + "If\n" + cond.toPrint(s + "  ") + str;
     }
 
     public void addStatement(Node st) {
