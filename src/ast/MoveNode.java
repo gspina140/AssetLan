@@ -43,6 +43,8 @@ public class MoveNode implements Node {
             }
         }
         
+        nl = env.getNestingLevel();
+        
         if(env.checkDeclaration(id2, nl) == null){    
             nl--;
 
