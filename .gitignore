@@ -4,3 +4,9 @@ src/log.txt
 src/parser/.antlr
 src/parser/*.interp
 src/parser/*.tokens
+report/*.aux
+report/*.log
+report/*.out
+report/*.gz
+report/*.toc
+report/*.pdf
