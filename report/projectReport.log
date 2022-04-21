@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2021.7.31)  9 APR 2022 12:45
-=======
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2021.7.31)  9 APR 2022 12:42
->>>>>>> main
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/Debian) (preloaded format=pdflatex 2021.7.31)  21 APR 2022 17:59
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -872,19 +868,19 @@ LaTeX Font Warning: Font shape `OT1/cmr/bx/sc' undefined
 (Font)              using `OT1/cmr/bx/n' instead on input line 125.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 129.
+(Font)              <12> on input line 133.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 129.
+(Font)              <8> on input line 133.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 129.
+(Font)              <6> on input line 133.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <14.4> on input line 138.
+(Font)              <14.4> on input line 142.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 138.
+(Font)              <7> on input line 142.
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./images//logo.png>]
-(./projectReport.toc)
+[2] (./projectReport.toc)
 \tf@toc=\write5
 \openout5 = `projectReport.toc'.
 
@@ -892,40 +888,48 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.148 \newpage
+l.152 \newpage
                [1
 
-] (./projectReport.aux)
+]pdfTeX warning (ext4): destination with the same identifier (name{page.2}) has
+ been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.156 \end{document}
+                     [2] (./projectReport.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package rerunfilecheck Info: File `projectReport.out' has not changed.
-(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
+
+Package rerunfilecheck Warning: File `projectReport.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `projectReport.out':
+(rerunfilecheck)             Before: D41D8CD98F00B204E9800998ECF8427E;0
+(rerunfilecheck)             After:  B909A5E89C3B7F145C1BF19480CB9F20;36.
  ) 
 Here is how much of TeX's memory you used:
- 20976 strings out of 481118
- 428896 string characters out of 5912510
- 738973 words of memory out of 5000000
+ 20978 strings out of 481118
+ 428911 string characters out of 5912510
+ 739973 words of memory out of 5000000
  37524 multiletter control sequences out of 15000+600000
  410954 words of font info for 51 fonts, out of 8000000 for 9000
  83 hyphenation exceptions out of 8191
- 87i,5n,88p,465b,395s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 87i,11n,88p,465b,397s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/te
 xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/f
-onts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmti12.pfb>
-<<<<<<< HEAD
-Output written on projectReport.pdf (2 pages, 203024 bytes).
-=======
-Output written on projectReport.pdf (2 pages, 203027 bytes).
->>>>>>> main
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmti12.pfb>
+Output written on projectReport.pdf (4 pages, 213767 bytes).
 PDF statistics:
- 54 PDF objects out of 1000 (max. 8388607)
- 39 compressed objects within 1 object stream
- 3 named destinations out of 1000 (max. 500000)
+ 66 PDF objects out of 1000 (max. 8388607)
+ 48 compressed objects within 1 object stream
+ 5 named destinations out of 1000 (max. 500000)
  18 words of extra memory for PDF output out of 10000 (max. 10000000)
 
