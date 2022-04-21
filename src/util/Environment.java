@@ -45,8 +45,8 @@ public class Environment {
 
 	/**
 	 * Get the scope of nesting level nl
-	 * @param int nl a nesting level
-	 * @return HashMap<String, STentry> the scope of nesting level nl
+	 * @param int a nesting level
+	 * @return the scope of nesting level nl (object of type HashMap<String, STentry>)
 	 */
 	public HashMap<String, STentry> getScope(int nl) {
 		return symTable.get(nl);
@@ -55,7 +55,7 @@ public class Environment {
 	/**
 	 * Get the current scope (e.g., the head of the list of hash-tables)
 	 * @param void
-	 * @return HashMap<String, STentry> the current scope
+	 * @return the current scope (object of type HashMap<String, STentry>)
 	 */
 	public HashMap<String, STentry> getCurrentScope() {
 		return getScope(getNestingLevel());
@@ -63,9 +63,9 @@ public class Environment {
 
 	/**
 	 * Add an entry to current scope
-	 * @param Node type the type of the symbol (can be null)
-	 * @param String id the id of the symbol
-	 * @return STentry returns the new entry if succeded, null otherwise
+	 * @param Node the type of the symbol (can be null)
+	 * @param String the id of the symbol
+	 * @return returns the new entry if succeded (object of type STentry), null otherwise
 	 */
 	public STentry addEntry(Node type, String id) {
 
@@ -83,7 +83,7 @@ public class Environment {
 	/**
 	 * Get current nesting level
 	 * @param void
-	 * @return int current nesting level
+	 * @return current nesting level
 	 */
 	public int getNestingLevel() {
 		return nestingLevel;
@@ -91,9 +91,9 @@ public class Environment {
 
 	/**
 	 * Checks if the symbol has been declared in this scope (useful for declaration look-up)
-	 * @param String id the id of the symbol to be searched
-	 * @param int nl the nesting level in which we are looking for the symbol
-	 * @return STentry returns the symbol entry if found, null otherwise
+	 * @param String the id of the symbol to be searched
+	 * @param int the nesting level in which we are looking for the symbol
+	 * @return returns the symbol entry if found (object of type STentry), null otherwise
 	 */
 	public STentry checkDeclaration(String id, int nl) {
 		HashMap<String, STentry> hm = getScope(nl);

@@ -9,8 +9,8 @@ public class SemanticError {
 	
 	/**
 	 * Class constructor
-	 * @param String msg the error message
-	 * @return SemanticError an object of type SemanticError with error string msg
+	 * @param String the error message
+	 * @return an object of type SemanticError with error string msg
 	 */
 	public SemanticError(String msg) {
 		this.msg = msg;
@@ -19,7 +19,7 @@ public class SemanticError {
 	/**
 	 * Override of the function to cast from SemanticError to String
 	 * @param void
-	 * @return String a string containing the error message
+	 * @return a string containing the error message
 	 */
 	@Override
 	public String toString() {		
