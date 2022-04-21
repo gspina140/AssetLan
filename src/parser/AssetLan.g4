@@ -3,7 +3,6 @@ grammar AssetLan;
 // THIS IS THE PARSER INPUT
 
 program		: field* asset* function* initcall ;
-						// la portata di field e asset e' soltanto function
 
 field		: type ID ('=' exp)? ';' ;
 
@@ -17,9 +16,9 @@ dec			: type ID (',' type ID)* ;
 adec		: 'asset' ID (',' 'asset' ID)*; 
 
 statement	: assignment ';'    #assignExp
-			| move ';'		    #moveAsset          // sposta un asset da una parte all'altra
+			| move ';'		    #moveAsset
 			| print ';'         #printExp
-			| transfer ';'	    #transferAsset      // trasferisce l'asset all' utente (chi esegue il codice)
+			| transfer ';'	    #transferAsset
 			| ret ';'           #returnExp
 			| ite               #ifElseExp
 			| call ';'          #callFun;
@@ -37,12 +36,9 @@ transfer	: 'transfer' ID;
 
 ret			: 'return' (exp)?;
 
+// We modified the original grammar so that it is possible to have more than
+// one statement after an 'if' or an 'else' token using curly brackets
 ite			: 'if' '(' exp ')' (statement | '{' statement+ '}') ('else' (statement | '{' statement+ '}') )?;
-                //'if' '(' exp ')' statement ('else' statement)?;
-			    // Nella grammatica iniziale erano possibili soltanto uno ed un solo statement per l'if
-			    // ed uno ed un solo statement per l'else; abbiamo aggiunto la possibilità di mettere uno
-			    // o più statement per l'if e per l'else fra parentesi graffe (c-like)
-			    // (questo e' utilizzato dal programma 3 dell'esercizio 3 e dai programmi dell'esercizio 4)
 
 call		: ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']';
 
