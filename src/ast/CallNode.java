@@ -24,7 +24,7 @@ public class CallNode implements Node {
     private ArrayList<String> idlist;
 
     /**
-     * Class constructor; it takes as parameters the id of the function and instantiates two lists
+     * Class constructor; it takes as parameter the id of the function and instantiates two lists
      * containing the espressions defining the parameters and the id of the assets respectively
      * @param id a String containing the id of the function
      * @return an object of type CallNode

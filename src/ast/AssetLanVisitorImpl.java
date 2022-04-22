@@ -214,10 +214,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     @Override 
     public Node visitMoveAsset(MoveAssetContext ctx){
         return visitMove(ctx.move());
-        /*String fOp = ctx.ID().get(0).getText();
-        String sOp = ctx.ID().get(1).getText();
-
-        return new MoveNode(fOp, sOp);*/
     }
 
     @Override
@@ -238,31 +234,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     @Override
     public Node visitIfElseExp(IfElseExpContext ctx){
         return visitIte(ctx.ite());
-        /*IteNode res = new IteNode(visit(ctx.exp()));
-
-        for(StatementContext sc: ctx.statement())
-            res.addStatement(visit(sc));
-
-        return res;*/
     }
 
     @Override
-    public Node visitCallFun(CallFunContext ctx){/*
-        ArrayList<String> ids = new ArrayList<String>();
-
-        for(String id: ctx.ID().getText())
-            ids.add(id);
-
-        CallNode res = new CallNode(ids.get(0));
-        
-        for(int i=1; i < ids.size(); i++)
-            res.addId(ids.get(i));
-
-        for(ExpContext ec: ctx.exp())
-            res.addExp(visit(ec));
-
-
-        return res;*/
+    public Node visitCallFun(CallFunContext ctx){
         return visitCall(ctx.call());
     }
 
@@ -341,10 +316,18 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return res;
     }
 
+    /**
+     * Override of the visit of a InitCall node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding InitCallNode
+     */
     @Override
     public Node visitInitcall(InitcallContext ctx){
+
+        // Create the resulting InitCall node passing the init function id
         InitCallNode res = new InitCallNode(ctx.ID().getText());
 
+        // For each expression defining a parameter or an asset, add it to the list of expression nodes
         for(ExpContext ec:ctx.exp())
             res.addExp(visit(ec));
 
