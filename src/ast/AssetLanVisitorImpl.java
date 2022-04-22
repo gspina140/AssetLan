@@ -128,9 +128,9 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             res.addPar(par);
         }
 
-        ADecNode as;
+        AdecNode as;
         if(ctx.adec() != null){ //There is an asset declaration
-            as = (ADecNode) visitAdec(ctx.adec());
+            as = (AdecNode) visitAdec(ctx.adec());
             res.addAsset(as);
         }
 
@@ -186,15 +186,27 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return res;
     }
 
+    /**
+     * Override of the visit of an Adec node
+     * All the assets declared in the scope are managed in the same node
+     * (i.e., we do not create a node for each asset declaration)
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding AdecNode
+     */
     @Override
     public Node visitAdec(AdecContext ctx){
+
+        // List of ids of the newly declared assets
         ArrayList<String> idList = new ArrayList<String>();
 
+        // Population of the list
         for(int i=0; i < ctx.ID().size(); i++)
             idList.add(ctx.ID(i).getText());
 
-        ADecNode res = new ADecNode(idList.get(0));
+        // Create a new Adec node passing the first id as an argument (at least 1 id id always declared)
+        AdecNode res = new AdecNode(idList.get(0));
         
+        // If there are other assets declarations, add them to the list
         for(int i=1; i < idList.size(); i++)
             res.addId(idList.get(i));
 
