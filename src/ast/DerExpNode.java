@@ -12,14 +12,14 @@ public class DerExpNode implements Node{
     /**
      * The derivated id
      */
-    private String id;
+    private String id ;
 
     /**
      * Class constructor; it takes as parameter the derivated
      * @param i the derivated id
      * @return an object of type DerExpNode
      */
-    public DerExpNode(String i) {
+    public DerExpNode(String i){
         id = i;
     }
 
