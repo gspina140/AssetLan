@@ -46,12 +46,15 @@ public class AdecNode implements Node{
      * @return the string containing the message
      */
     public String toPrint(String s){
+
+        // String containing the message
         String res = "";
 
+        // String of asset ids separated by tabs
         for(String id:ids)
             res += "\t" + id; 
 
-    	return s+"Asset declaration\n" + res; 
+    	return s+"Assets declarations:\t" + res; 
     }
 
     /**
