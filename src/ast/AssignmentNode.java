@@ -54,7 +54,7 @@ public class AssignmentNode implements Node {
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        // Get the current nesting level
+        // Get current nesting level
         int nl = env.getNestingLevel();
         
         // Look-up for the id

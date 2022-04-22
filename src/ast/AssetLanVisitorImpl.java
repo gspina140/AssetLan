@@ -222,6 +222,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return visitPrint(ctx.print());
     }
 
+    /**
+     * Override of the visit of a Transfer Asset node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding TransferAssetNode
+     */
     @Override
     public Node visitTransferAsset(TransferAssetContext ctx){
         return visitTransfer(ctx.transfer());
@@ -265,6 +270,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new PrintNode(visit(ctx.exp()));    
     }
     
+    /**
+     * Override of the visit of a Transfer node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding TransferNode
+     */
     @Override
     public Node visitTransfer(TransferContext ctx){
         return new TransferNode(ctx.ID().getText());
