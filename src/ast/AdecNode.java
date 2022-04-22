@@ -15,7 +15,7 @@ public class AdecNode implements Node{
     /**
      * Class constructor using the first id (it is always present)
      * @param i a String containing the id of the first asset declaration
-     * @return An object of type ADecNode
+     * @return an object of type ADecNode
      */
     public AdecNode (String id) {
         addId(id);
