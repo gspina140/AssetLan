@@ -277,10 +277,18 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             return new ReturnNode(null);
     }
 
+    /**
+     * Override of the visit of an If-Then-Else node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding IteNode
+     */
     @Override
     public Node visitIte(IteContext ctx){
+
+        // Create the resulting node passing the expression node containing the condition
         IteNode res = new IteNode(visit(ctx.exp()));
 
+        // For each statement in the 'then' and 'else' blocks, add it to the statementList
         for(StatementContext sc: ctx.statement())
             res.addStatement(visit(sc));
 
