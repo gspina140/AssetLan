@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import parser.AssetLanBaseVisitor;
 import parser.AssetLanParser.AdecContext;
 import parser.AssetLanParser.AssetContext;
 import parser.AssetLanParser.AssignExpContext;
@@ -90,7 +91,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
 		// Check if there is an expression and use the constructor accordingly
         if(ctx.exp() != null) {
-            return new FieldNode(visit(ctx.type()), ctx.ID().getText(), ctx.exp());
+            return new FieldNode(visit(ctx.type()), ctx.ID().getText(), visit(ctx.exp()));
         } else {
             return new FieldNode(visit(ctx.type()), ctx.ID().getText(), null);
         }
@@ -125,8 +126,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         }
         
         // If there are parameter declarations, visit the declaration node containing them and add it to the function node
-        if(ctx.par() != null){
-            res.addPar(visitDec(ctx.par()));
+        if(ctx.par != null){
+            res.addPar(visitDec(ctx.par));
         }
 
         // If there are asset declarations, visit the asset declaration node containing them and add it to the function node

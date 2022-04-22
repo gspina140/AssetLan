@@ -1,7 +1,6 @@
 package ast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import util.Environment;
 import util.SemanticError;
@@ -64,7 +63,7 @@ public class FieldNode implements Node {
         // If addEntry returns null, it means that another declaration with the same id
         // has been found in the same scope, and therefore an "already declared id" is provided
         if (env.addEntry(type, id) != null)
-            res.add(new SemanticError("Error when declaring field of id " + idList.get(i) +"\n" +
+            res.add(new SemanticError("Error when declaring field of id " + id +"\n" +
                                       "Id already used for declaration in the same scope"));
 
         // If there is an expression, delegate semantic check of expression to relative node
