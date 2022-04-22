@@ -74,7 +74,7 @@ public class AdecNode implements Node{
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // For every id try introducing it to the symTable and, if already declared, give an error
-        for(String id:ids){
+        for(String id : ids){
         
             // Introducing "entry"
             // If addEntry returns null, it means that another declaration with the same id
