@@ -60,8 +60,8 @@ public class DecNode implements Node{
         String d = "";
 
         for (int i = 0; i < idList.size(); i++) {
-            d += typeList(i).toPrint(s + " ");
-            d += idList(i);
+            d += typeList.get(i).toPrint(s + " ");
+            d += idList.get(i);
         }
 
     	return s+"Declaration(s):\t" + d;

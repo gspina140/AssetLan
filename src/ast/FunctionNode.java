@@ -8,126 +8,158 @@ import util.SemanticError;
 
 public class FunctionNode implements Node {
 
-    private Node type;    // Add fake type for void?
+    /**
+     * A node containing the type of the function (can be 'int' or 'bool', or null if the function returns 'void')
+     */
+    private Node type;
+
+    /**
+     * A string containing the id of the funcction
+     */
     private String id;
 
+    /**
+     * A node containing the declarations of the parameters of the function
+     */
     private Node parameters;
+
+    /**
+     * A node containing the declarations of the assets of the function
+     */
     private Node assets;
+
+    /**
+     * A list containing the inner declarations of the function
+     */
     private ArrayList<Node> declarations;
-    /*
-    private ArrayList<Node> parlist;    // Function parameters (figuring as delist in the grammar, but we also need a declist for the body)
-    private ArrayList<Node> assetlist;
-    /* Body */
-    // Inner declarations should already have been considered in parlist because they share the same context
-    //private ArrayList<Node> declist;
+
+    /**
+     * A list containing the statements of the function
+     */
     private ArrayList<Node> statementlist;
     
-    public FunctionNode (Node t, String i){//, Node p, Node a, ArrayList<Node> d) {
-        type         = t;
-        id           = i;
-        declarations = new ArrayList<Node>();
-        parameters   = null;
-        assets       = null;
+    /**
+     * The constructor of the function class
+     * @param t the type of the function (null if 'void')
+     * @param i the id of the function
+     */
+    public FunctionNode (Node t, String i){
+        type          = t;
+        id            = i;
+        parameters    = null;
+        assets        = null;
+        declarations  = new ArrayList<Node>();
+        statementlist = new ArrayList<Node>();
     }
   
+    /**
+     * Add a declaration node to the function node containing a list of parameter declarations
+     * @param p the declaration node containing the parameter declarations
+     * @return void
+     */
+    public void addPar (Node p) {
+        parameters = p;
+    }
+
+    /**
+     * Add an asset node to the function node containing a list of asset declarations
+     * @param a the asset declaration node containing the assets declarations
+     * @return void
+     */
+    public void addAsset (Node a) {
+        assets = a;
+    }
+
+    /**
+     * Add a declaration node to the list of inner declaration nodes
+     * @param d the declaration node to be added to the list of inner declaration nodes (can contain more than one declaration)
+     * @return void
+     */
+    public void addDec(Node d){
+        declarations.add(d);
+    }
+
+    /**
+     * Add a statement node to the list of statement nodes of the function node
+     * @param s the node containing the statement to be added to the list of statement nodes og the function node
+     * @return void
+     */
+    public void addStatement (Node s) {
+        statementlist.add(s);
+    }
+
+    /**
+     * Override of the toPrint method
+     * Method to print a message containing information about the node
+     * Useful for printing errors
+     * @param s a string to use as the head of the message
+     * @return the string containing the message
+     */
+    @Override
+    public String toPrint(String s) {
+
+        String dec = "";
+
+        for(Node d : declarations)
+            dec += d.toPrint(s + " ");
+        
+        String statementlstr="";
+        for (Node statement : statementlist)
+            statementlstr += statement.toPrint(s+" ");
+
+        return s + "Function:" + id +"\n"
+            + type.toPrint(s + " ")
+            + parameters.toPrint(s + " ")
+            + assets.toPrint(s + " ")
+            + dec
+            + statementlstr ;
+    }
+  
+    /**
+     * Override of the checkSemantics function
+     * Check for possible semantics errors when introducing a new function
+     * It checks if the function id has already been declared in this scope and then open a new scope;
+     * then delegates semantic checks to parameters, assets, inner declarations and statements accordingly
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return a list of semantic errors (can be empty)
+     */
     @Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
 	  
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-        
-        //env.offset = -2;
-        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        //STentry entry = new STentry(env.nestingLevel, type, env.offset--); // Entry introduction ---- If return type id void, there will be type==null
 
         if ( env.addEntry(type, id) != null )
             res.add(new SemanticError("Function id "+id+" already declared"));
-        else{
-            // Create a new HashMap for the symTable
-            //env.nestingLevel++;
-            //HashMap<String,STentry> hmn = new HashMap<String,STentry> ();
-            //env.symTable.add(hmn);
+        else {
+
+            // Enter a new scope (increase nesting level and add relative hashmap to symTable)
             env.enterScope();
-            
-            //int paroffset=1;
-            
-            // Check args
+
+            // Delegate parameter declarations semantic check to respective node
             if(parameters != null) {
-                DecNode par = (DecNode) parameters;
-                res.addAll(par.checkSemantics(env));
+                res.addAll(parameters.checkSemantics(env));
             }
 
+            // Delegate asset declarations semantic check to respective node
             if(assets != null) {
-                // Check assets
-                ADecNode as = (ADecNode) assets;
-
-                res.addAll(as.checkSemantics(env));
+                res.addAll(assets.checkSemantics(env));
             }
 
-            /*
-            // Set function type
-            entry.addType( new ArrowTypeNode(parTypes, type) );
-            */
-            // Check body
-            // Inner declarations should already have been checked with parameters cause of the shared context--NOT IN THAT VERSION!!!
-            //DecNode dec = (DecNode) declarations;
+            // Delegate inner declarations semantic check to respective nodes
             for(Node n : declarations){
-                DecNode dec = (DecNode) n;
-                res.addAll(dec.checkSemantics(env));
+                res.addAll(n.checkSemantics(env));
             }
-            /*for(Node d : declist)
-                res.addAll(d.checkSemantics(env));
-            */
+            
+            // Delegate statements semantic check to respective nodes
             for(Node s : statementlist){
                 res.addAll(s.checkSemantics(env));
             }
             
-            // Close scope
-            //env.symTable.remove(env.nestingLevel--);
+            // Close scope (remove hashmap relative to the scope and decrease nesting level)
             env.exitScope();        
         }
         
         return res;
 	}
-  
-    public void addPar (Node p) {
-        parameters = p;
-    }
-
-    public void addAsset (Node a) {
-        assets = a;
-    }
-
-    public void addBody(ArrayList<Node> sl) {
-        statementlist = sl;
-    }
-
-    public void addDec(Node d){
-        declarations.add(d);
-    }
-
-
-    public String toPrint(String s) {
-        String dec = "";
-        if(declarations.size() > 0)
-            for(Node d : declarations)
-                dec += d.toPrint(s + " ");
-        
-        String statementlstr="";
-        if (statementlist!=null)
-            for (Node statement:statementlist)
-                statementlstr+=statement.toPrint(s+" ");
-
-        return s+"Function:" + id +"\n"
-            +type.toPrint(s + " ")
-            +parameters.toPrint(s + " ")
-            +assets.toPrint(s + " ")
-            +dec
-            +statementlstr ;
-    }
-
-    //public Node typeCheck () {}
-    
-    //public String codeGeneration() {}
-  
 }  
