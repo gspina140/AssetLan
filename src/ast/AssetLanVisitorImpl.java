@@ -3,53 +3,51 @@ package ast;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
-
 import parser.AssetLanParser.AdecContext;
-import parser.AssetLanParser.AssetContext;
 import parser.AssetLanParser.AssignExpContext;
+import parser.AssetLanParser.CallFunContext;
+import parser.AssetLanParser.IfElseExpContext;
+import parser.AssetLanParser.MoveAssetContext;
+import parser.AssetLanParser.PrintExpContext;
+import parser.AssetLanParser.ReturnExpContext;
+import parser.AssetLanParser.TransferAssetContext;
+import parser.*;
+import parser.AssetLanParser.AssetContext;
 import parser.AssetLanParser.AssignmentContext;
 import parser.AssetLanParser.BaseExpContext;
 import parser.AssetLanParser.BinExpContext;
 import parser.AssetLanParser.BoolExpContext;
 import parser.AssetLanParser.CallContext;
 import parser.AssetLanParser.CallExpContext;
-import parser.AssetLanParser.CallFunContext;
 import parser.AssetLanParser.DecContext;
 import parser.AssetLanParser.DerExpContext;
 import parser.AssetLanParser.ExpContext;
 import parser.AssetLanParser.FieldContext;
 import parser.AssetLanParser.FunctionContext;
 import parser.AssetLanParser.InitcallContext;
-import parser.AssetLanParser.IfElseExpContext;
 import parser.AssetLanParser.IteContext;
-import parser.AssetLanParser.MoveAssetContext;
 import parser.AssetLanParser.MoveContext;
 import parser.AssetLanParser.NegExpContext;
 import parser.AssetLanParser.NotExpContext;
 import parser.AssetLanParser.PrintContext;
-import parser.AssetLanParser.PrintExpContext;
 import parser.AssetLanParser.ProgramContext;
 import parser.AssetLanParser.RetContext;
-import parser.AssetLanParser.ReturnExpContext;
 import parser.AssetLanParser.StatementContext;
-import parser.AssetLanParser.TransferAssetContext;
 import parser.AssetLanParser.TransferContext;
 import parser.AssetLanParser.TypeContext;
 import parser.AssetLanParser.ValExpContext;
-
 import util.Environment;
 import util.SemanticError;
 
-public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {	
+public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
+	
 
-    /**
-     * Override of the visit of a Program node
-     * @param ctx the context of the visit, containing information about the node
-     * @return the corresponding ProgramNode
-     */
 	@Override
 	public Node visitProgram(ProgramContext ctx) {
 
+		// Resulting node of the right type
+		//ProgamNode res;
+		
 		// List of fields in @res
 		ArrayList<Node> fields = new ArrayList<Node>();
 
@@ -59,15 +57,17 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		// List of functions in @res
 		ArrayList<Node> functions = new ArrayList<Node>();
 		
-		// Visit all nodes corresponding to fields inside the program context and store them in @fields
+		/* Visit all nodes corresponding to fields, assets and functions inside the program context
+		 * and store them in @fields, @assets and @functions rexpectively;
+		 * Notice that, for example, the ctx.let().field() method returns a list, this is because of
+		 * the use of * or + in the grammar antlr detects this is a group and therefore returns a list */
+
         for(FieldContext flc : ctx.field())
             fields.add(visit(flc));
 
-		// Visit all nodes corresponding to assets inside the program context and store them in @assets
         for(AssetContext ac : ctx.asset())
             assets.add(visit(ac));
 
-		// Visit all nodes corresponding to functions inside the program context and store them in @functions
         for(FunctionContext fnc : ctx.function())
             functions.add(visit(fnc));
 
@@ -94,6 +94,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         } else {
             return new FieldNode(visit(ctx.type()), ctx.ID().getText(), null);
         }
+        
+		
 	}
 
     /**
@@ -106,45 +108,71 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		return new AssetNode(ctx.ID().getText());
 	}
 
-    /**
-     * Override of the visit of a Function node
-     * @param ctx the context of the visit, containing information about the node
-     * @return the corresponding FunctionNode
-     */
 	@Override
 	public Node visitFunction(FunctionContext ctx) {
 		
-        // Declare function node
         FunctionNode res;
 
-        // Create new function node according to type (if 'void', pass null as type nodeto the constructor)
         if(ctx.type() != null) {
             res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
-        } else{
-            res = new FunctionNode(null, ctx.ID().getText());
+        }else{
+            Node type = null;
+            res = new FunctionNode(type, ctx.ID().getText());
+        }
+		// Initialize @res with the visits to the type and its ID
+	//	FunctionNode res = new FunctionNode(visit(ctx.type()), ctx.ID().getText());
+		
+		// Add argument declarations
+		// We are getting a shortcut here by constructing directly the ParNode
+		// This could be done differently by visiting instead the DecContext
+		// SUPPOSITION: this contains both parameters and inner declarations!
+		// (This is because of the shared decContext)
+        int parNum = ctx.par.size();
+        DecNode par;
+        //If i'm not wrong the '?' operator in the rule means optional argument, so if is present is one
+        if(parNum > 0){
+            par = (DecNode) visitDec(ctx.par.get(0));//new DecNode(ctx.par.get(0).type(0), ctx.par.get(0).ID(0).getText());
+            res.addPar(par);
+        }
+
+        AdecNode as;
+        if(ctx.adec() != null){ //There is an asset declaration
+            as = (AdecNode) visitAdec(ctx.adec());
+            res.addAsset(as);
+        }
+
+        // Add body
+		// Nested declarations should already be considered
+        int decNum = ctx.innerDec.size();
+        //ArrayList<Node> decs = new ArrayList<Node>();
+
+        //There is a kleene star in the rule, declarations can be 0 or more
+        if(decNum > 0){
+            DecNode dec = (DecNode) visitDec(ctx.innerDec.get(0)); //new DecNode(ctx.innerDec.get(0).type(0), ctx.innerDec.get(0).ID(0).getText());
+            res.addDec(dec);
+
+            for(int i=1; i < decNum; i++){
+                dec = (DecNode) visitDec(ctx.innerDec.get(i));
+                res.addDec(dec);
+            }
+
         }
         
-        // If there are parameter declarations, visit the declaration node containing them and add it to the function node
-        if(ctx.par() != null){
-            res.addPar(visitDec(ctx.par()));
-        }
-
-        // If there are asset declarations, visit the asset declaration node containing them and add it to the function node
-        if(ctx.adec() != null){
-            res.addAsset(visitAdec(ctx.adec()));
-        }
-
-        // If there are inner declarations, visit each declaration and add the respective node to the list in the function node
-        // Remark: each declaration node can contain more than one variable declaration (each node correspond to a line of declarations)
-        for(int i = 0; i < ctx.innerDec.size(); i++){
-            res.addDec(visitDec(ctx.innerDec.get(i)));
-        }
+		// Create a list for the statements
+		ArrayList<Node> statementlist = new ArrayList<Node>();
 		
-		// For each statement in the function body, visit it and add it to the list of statements in the function node
-        for(StatementContext sc : ctx.statement())
-            res.addStatement(visit(sc));
+		// Check whether there are actually statements
+		if(ctx.statement() != null){
+			// If there are visit each statement and add it to the @statement list
+			for(StatementContext sc : ctx.statement())
+				statementlist.add(visit(sc));
+		}
+		
+		// Add the body (e.g., the statementlist) to the function
+		res.addBody(statementlist);
 		
 		return res;		
+		
 	}
 
     /**
