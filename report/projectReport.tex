@@ -31,6 +31,7 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 % These packages are all incorporated in the memoir class to one degree or another...
+\usepackage{listings}
 
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
@@ -90,11 +91,6 @@ allcolors={BrickRed}
 
 %%% END Article customizations
 
-\title{Trudi\\[1ex] \large Usability and User Experience Design Project}
-\author{Alberto Paparella, Gabriele Spina}
-\date{} % Activate to display a given date or no date (if empty),
-% otherwise the current date is printed
-
 \begin{document}
 %\maketitle
 
@@ -123,11 +119,7 @@ allcolors={BrickRed}
 		\begin{flushleft} \Large
 			\emph{Students:}\\
 			\Large \textbf{Alberto \textsc{Paparella}}
-<<<<<<< HEAD
 			\Large \textbf{Giuseppe \textsc{Caputo}}\\
-=======
-			\Large \textbf{Giuseppe \textsc{Caputo}}
->>>>>>> main
 			\Large \textbf{Gabriele \textsc{Spina}}
 		\end{flushleft}
 	\end{minipage}	
@@ -151,6 +143,84 @@ allcolors={BrickRed}
 \addtocontents{toc}{\protect\thispagestyle{empty}}	% http://tex.stackexchange.com/questions/2995/removing-page-number-from-toc
 \newpage
 
-\section{1}
+\section{Introduction}
+This report will discuss and illustrate the implementation choices related to the design of a compiler for a specific programming language called \emph{AssetLan} (i.e., Asset Language). 
+
+\medskip
+
+\emph{Asset Language} is a simple imperative language with asset, where parameters could be either {\emph standard} or {\emph asset}, with recursion and without mutual recursion. Regarding the semantics, two types of operations are allowed on a parameter defined as {\emph asset}, and it is legit use them only in a function. To this aim, the functions could be declared  with {\emph asset} in that way:\begin{verbatim}
+void f(int a, bool b)[asset u, asset v] { body }
+\end{verbatim} 
+and called as: 
+\begin{verbatim}
+f(5,true)[x,y]
+\end{verbatim}
+At the time of the call, assets 'x' and 'y' are emptied, and their values are assigned respectively to the formal parameters 'u' e 'v', so after the call 'x' and 'y' values are 0.
+
+\medskip
+
+The value of an \emph{asset} can be \textbf{only} moved using the aforementioned 2 operations, more in specific: 
+\begin{itemize}
+\item \textbf{Move} (\emph{x -o z}) : the result of that operation is that the value of the first parameter is summed to the second one, and then it is cleaned (set to 0). This operation, as the following one, is legit only with 2 asset arguments.
+\item \textbf{Transfer} (\emph{transfer x}) : this operation transfer the value of the \emph{asset} 'x' to the caller of the function, and so it became 0.
+\end{itemize}
+
+\section{Exercises}
+\label{sec:exercices}
+The following exercises were used as guidelines/objectives for the design 
+blabalbalbal
+
+\begin{enumerate}
+\item \textbf{Lexical Errors} : the lexical analyzer must return the list of lexical errors in an output file. 
+\item \textbf{Symbol Table} : implement the table of symbols as list of hash-table or hash-table of lists. In order to check errors related to:
+\begin{itemize}
+\item undeclared functions/variables;
+\item multiple declarations of functions/variables in the same environment;
+\end{itemize}
+\end{enumerate}
+
+\subsection{Lexical Errors}
+In order to redirect the errors of the lexer to an output (log) file, we must override the base error handling strategy of ANTLR, because by default it sends the errors to the standard error (i.e., the console). To change the destination and, if desired, the content of the errors messages one must provide an implementation of interface \textsc{ANTLRErrorListener}, in Figure~\ref{fig:err} is illustrated the structure of the classes involved in error handling phase.
+\begin{figure}
+\includegraphics[width=\textwidth]{errorListener.png}
+\caption{Internal structure for error handling.}
+\label{fig:err}
+\end{figure}   
+\textsc{ANTLRErrorListener} has a \textsc{syntaxError()} method that applies both lexers and parsers, it receives all sorts of information about the location of the error as well as the error message.     
+
+\medskip
+
+The proposed solution consists in a class called \textsc{TestLexerListner} that extends the \textsc{BaseErrorListner} class in order to override the \textsc{syntaxError()} method and redirect his output to a log file, called \textsc{log.txt}. In addition, for each error, has been added the time at which it occurred, so that it is possible to distinguish errors coming from different compilation executions. 
+
+\medskip
+
+Now a test application can be implemented, it must remove the \textsc{ConsoleErrorListener} (i.e., the default strategy), and add the custom one. After that we can do the parse phase as usual.
+\ES{DISCUTERE I 3 ERRORI}
+%\lstinputlisting[language=Java]{TestLexerListener.java}
+
+
+\subsection{Symbol Table}
+The choice of the data structure for the symbol table fell on the list of hash-table, because an excessive level of nesting in the code is not expected. This can be said due to the fact that the grammar of the language does not allow the definition of code blocks, so the only way to enter in a new scope/environment is the definition of a function or an if-then-else statement. 
+
+\medskip
+
+The symbol table has been declared as a private field in a specific class called \textsc{Environment}. In order to access/modify it, has been implemented a certain number of methods:
+\begin{itemize}
+\item \textsc{enterScope()} : increase the nesting level and add a new entry (i.e., an hash-table) to the list. 
+\item \textsc{exitScope()} : decrease nesting level and remove the last hash-table in the list.
+\item \textsc{getScope()}/\textsc{getCurrentScope()} : get the scope of current nesting level or of a specified one.
+\item \textsc{addEntry} : add an entry to the current scope.
+\item \textsc{getNestingLevel()} : getter for nesting level field.
+\item \textsc{checkDeclaration()} : checks if the symbol has been declared in this scope. 
+\end{itemize}
+
+\medskip
+
+To manage the symbol table, it is necessary to visit the AST in order to insert the declarations of variables / functions / assets within the data structure. To this aim, it has been extended the \textsc{AssetLanBaseVisitor} class to override the methods auto-generated meant to visit the AST. For each rule of the grammar, it has been defined a new class representing a node of the tree with his specific components. Moreover, there are the method to manage this objects and most important the method \textsc{checkSemantics()} that checks for errors specified in Section~\ref{sec:exercices}.
+
+\medskip
+
+In the \textsc{AssetLanBaseVisitor} there is a visit method for each rule of the grammar, the work done on each one of this consisted in the construction of the related node with the help of the ANTLR's rule contexts. 
+
 
 \end{document}
