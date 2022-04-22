@@ -280,6 +280,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new TransferNode(ctx.ID().getText());
     }
 
+    /**
+     * Override of the visit of a Return node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding ReturnNode
+     */
     @Override
     public Node visitRet(RetContext ctx){
         if(ctx.exp() != null)
