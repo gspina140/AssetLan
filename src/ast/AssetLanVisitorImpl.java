@@ -372,6 +372,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new DerExpNode(ctx.ID().getText());
     }
 
+    /**
+     * Override of the visit of a Value Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding ValExpNode
+     */
     @Override
     public Node visitValExp(ValExpContext ctx){
         return new ValExpNode(Integer.parseInt(ctx.NUMBER().getText()));
