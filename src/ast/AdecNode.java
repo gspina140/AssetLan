@@ -10,14 +10,15 @@ public class AdecNode implements Node{
     /**
      * The list of ids (it contains at least one element)
      */
-    private ArrayList<String> ids = new ArrayList<String>();
+    private ArrayList<String> ids;
     
     /**
      * Class constructor using the first id (it is always present)
      * @param i a String containing the id of the first asset declaration
-     * @return an object of type ADecNode
+     * @return an object of type AdecNode
      */
     public AdecNode (String id) {
+        ids = new ArrayList<String>();
         addId(id);
     }
     

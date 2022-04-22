@@ -324,22 +324,31 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return res;
     }
 
+    /**
+     * Override of the visit of a Call node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding CallNode
+     */
     @Override
     public Node visitCall(CallContext ctx){
+
+        // Temporary list containing the id of the function and the ids of the function assets
         ArrayList<String> ids = new ArrayList<String>();
 
-        int n = ctx.ID().size();
-
-        for(int i=0; i < n; i++)
+        // Populate the temporary list
+        for(int i=0; i < ctx.ID().size(); i++)
             ids.add(ctx.ID(i).getText());
 
+        // Create the result node assigning the function id (first id in the tmeporary list)
         CallNode res = new CallNode(ids.get(0));
-        
-        for(int i=1; i < ids.size(); i++)
-            res.addId(ids.get(i));
 
+        // Add espressions defining the parameters to the node
         for(ExpContext ec: ctx.exp())
             res.addExp(visit(ec));
+        
+        // Add assets id to the node
+        for(int i=1; i < ids.size(); i++)
+            res.addId(ids.get(i));
 
         return res;
     }
