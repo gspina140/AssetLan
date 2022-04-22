@@ -96,6 +96,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		return new FieldNode(typeNode, ctx.ID().getText(), expNode);
 	}
 
+    /**
+     * Override of the visit of an Asset node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding AssetNode
+     */
 	@Override
 	public Node visitAsset(AssetContext ctx) {
 		return new AssetNode(ctx.ID().getText());
@@ -272,23 +277,12 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return res;*/
         return visitCall(ctx.call());
     }
-/* type node TODO
-    @Override
-    public Node visitType(TypeContext ctx){
 
-    }
-*/
-
-/*  Since labels were added for all subrules of "statement" i think that the 
-    following methods are useless (they are just a redefinition of the previous one).
-    Maybe for "visitCallFun" there must be another implementation because this is the 
-    only subrule of "statement" that is mentioned as subrule in another rule (exp),
-    so it must be implemented again, in a completely equal way, just changing the 
-    method name with the label name, in this case will be visitCallExp.
-    I think that it would be possible to declare this function only one time,
-    and so reduce redudancy in code, just by giving the same label at both
-    the subrules where it appears. I'm not sure that this is legit anyway!!
-*/  
+    /**
+     * Override of the visit of an Assignment node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding AssignmentNode
+     */
     @Override
     public Node visitAssignment(AssignmentContext ctx){
         return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
