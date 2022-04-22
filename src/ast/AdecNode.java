@@ -72,11 +72,13 @@ public class AdecNode implements Node{
 
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-        
-        // Introducing "entry"
-        // If addEntry returns null, it means that another declaration with the same id
-        // has been found in the same scope, and therefore an "already declared id" is provided
+
+        // For every id try introducing it to the symTable and, if already declared, give an error
         for(String id:ids){
+        
+            // Introducing "entry"
+            // If addEntry returns null, it means that another declaration with the same id
+            // has been found in the same scope, and therefore an "already declared id" is provided
             if(env.addEntry(null, id) != null){
                 res.add(new SemanticError("Error when declaring asset of id " + id +"\n" +
                                           "Id already used for declaration in the same scope"));

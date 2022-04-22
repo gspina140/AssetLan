@@ -122,7 +122,7 @@ public class CallNode implements Node {
         
         // Look-up for each asset id
         for (String a : idlist) {
-            if (env.checkDeclaration(a, nl2) == null) {
+            if (env.checkDeclaration(a, nl) == null) {
 
                 // Could not find the function id in the current scope
                 // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)

@@ -7,57 +7,88 @@ import util.Environment;
 import util.SemanticError;
 
 public class DecNode implements Node{
-    //Since in the dec rule at least one declaration must exist, we construct the node with it
-    private Node type;
-    private String id;
 
-    //Then there is a kleene star, so 0 or more declarations remaining, we store them in 2 lists
-    private ArrayList<Node>   typeList = new ArrayList<Node>();
-    private ArrayList<String> idList   = new ArrayList<String>();
+    /**
+     * A list containing the types of the declared variables (can be 'int' or 'bool')
+     * It contains at least one value
+     * tyepList[i] corresponds to the type of declaration of id idList[i]
+     */
+    private ArrayList<Node> typeList;
 
+    /**
+     * A list containing the ids of the newly declared variables
+     * It contains at least one id
+     */
+    private ArrayList<String> idList;
+
+    /**
+     * Class constructor using the first declaration (it is always present) id ad type
+     * @param t a node containing the type of the first declaration
+     * @param i a String containing the id of the first declaration
+     * @return an object of type DecNode
+     */
     public DecNode(Node t, String i){
-        type = t;
-        id   = i;
+        typeList = new ArrayList<Node>();
+        idList = new ArrayList<String>();
+        addDeclaration(t,i);
     }
 
-    public DecNode(){} //empty constructor, usefull in some cases
-
-    public String toPrint(String s){
-        String t = "";
-        String i = "";
-
-        for(Node n : typeList)
-            t += n.toPrint(s + " ");
-        
-        for(String d : idList)
-            i += d;
-    	return s+"Declaration\n" + type.toPrint(s+" ") + id + t + i; 
-    }
-
+    /**
+     * Add declaration to the node
+     * It adds the type to the typeList and the id to the idList
+     * tyepList[i] corresponds to the type of declaration of id idList[i]
+     * @param t a node containing the type of the declaration
+     * @param i a String containing the id of the declaration
+     * @return void
+     */
     public void addDeclaration(Node t, String i){
         typeList.add(t);
         idList.add(i);
     }
 
+    /**
+     * Override of the toPrint method
+     * Method to print a message containing information about the node
+     * Useful for printing errors
+     * @param s a string to use as the head of the message
+     * @return the string containing the message
+     */
+    @Override
+    public String toPrint(String s){
+
+        // String containing information about the declarations in the form type + id
+        String d = "";
+
+        for (int i = 0; i < idList.size(); i++) {
+            d += typeList(i).toPrint(s + " ");
+            d += idList(i);
+        }
+
+    	return s+"Declaration(s):\t" + d;
+    }
+
+    /**
+     * Override of the checkSemantics function
+     * Check for possible semantics errors when introducing new declarations
+     * It checks if the ids have already been used in this scope and if so it provides an error
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return a list of semantic errors (can be empty)
+     */
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env){
+
         // Create result list
-        ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-
-        // env.offset = -2;
-        //HashMap<String,STentry> hm = env.symTable.get(env.nestingLevel);
-        //STentry entry = new STentry(env.nestingLevel,type, env.offset--); // Introducing "entry"        
+        ArrayList<SemanticError> res = new ArrayList<SemanticError>();  
         
-        if ( env.addEntry(type, id) != null )
-    		res.add(new SemanticError("Dec id "+id+" already declared"));
-        
-        for(int i=0; i < typeList.size(); i++){
+        // For every id try introducing it to the symTable and, if already declared, give an error
+        for(int i = 0; i < typeList.size(); i++){
 
-            String s = idList.get(i);
-
-            if( env.addEntry(typeList.get(i), s) != null)
-                res.add(new SemanticError("Dec id " + s + " already declared"));
-
+            // Introducing "entry"
+            // If addEntry returns null, it means that another declaration with the same id
+            // has been found in the same scope, and therefore an "already declared id" is provided
+            if( env.addEntry(typeList.get(i), idList.get(i)) != null)
+                res.add(new SemanticError("Error when declaring variable of id " + idList.get(i) +"\n" +
+                                          "Id already used for declaration in the same scope"));
         }
 
         return res;

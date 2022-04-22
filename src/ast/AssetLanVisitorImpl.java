@@ -173,19 +173,33 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		
 	}
 
+    /**
+     * Override of the visit of a Dec node
+     * All the declarations in the scope are managed in the same node
+     * (i.e., we do not create a node for each asset declaration)
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding DecNode
+     */
     @Override
     public Node visitDec(DecContext ctx){
+
+        // List of types of new declarations
         ArrayList<Node> typeList  = new ArrayList<Node>();
+
+        // List of ids of new declarations
         ArrayList<String> idList = new ArrayList<String>();
 
+        // Population of typeList and idList
         for(int i=0; i < ctx.type().size(); i++){
             typeList.add(visit(ctx.type(i)));
             idList.add(ctx.ID(i).getText());
         }
 
+        // Creation of resulting node with type and id of the first declaration (which is always present)
         DecNode res = new DecNode(typeList.get(0), idList.get(0));
 
-        for(int i=1; i < typeList.size(); i++)
+        // If there are more than one declaration, add respective types and ids to the lists
+        for(int i = 1; i < typeList.size(); i++)
             res.addDeclaration(typeList.get(i), idList.get(i));
         
         return res;
