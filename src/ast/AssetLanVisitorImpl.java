@@ -389,6 +389,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new BaseExpNode(visit(ctx.exp()));
     }
 
+    /**
+     * Override of the visit of a Boolean Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding BoolExpNode
+     */
     @Override 
     public Node visitBoolExp(BoolExpContext ctx){
 		return new BoolExpNode(Boolean.parseBoolean(ctx.getText())); 
