@@ -80,22 +80,20 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		return new ProgramNode(fields, assets, functions, initcall);
 	}
 
-    /**
-     * Override of the visit of a Field node
-     * @param ctx the context of the visit, containing information about the node
-     * @return the corresponding FieldNode
-     */
 	@Override
 	public Node visitField(FieldContext ctx) {
+		// Visit the type
+		Node typeNode = visit(ctx.type());
 
-		// Check if there is an expression and use the constructor accordingly
+        Node expNode;
+		// Visit the exp if it is present
         if(ctx.exp() != null) {
-            return new FieldNode(visit(ctx.type()), ctx.ID().getText(), ctx.exp());
-        } else {
-            return new FieldNode(visit(ctx.type()), ctx.ID().getText(), null);
+            expNode = visit(ctx.exp());
+        }else {
+            expNode = null;
         }
-        
-		
+		// Build the FieldNode
+		return new FieldNode(typeNode, ctx.ID().getText(), expNode);
 	}
 
     /**

@@ -53,16 +53,14 @@ public class DerExpNode implements Node{
 
         // Look-up for the derivated id
         while (nl >= 0) {
-            if (env.checkDeclaration(id, nl) != null) {
+            if (env.checkDeclaration(id, nl--) != null) {
                 // Id found
                 break;
-            } else {
-                nl--;
             }
         }
 
         // At this point, if nl is less than 0 it means the id has not been found and an error should be provided
-        if(nl < 0)
+        if(nl < -1)
             res.add(new SemanticError("Variable id " + id + " has not been declared"));
     
 	    return res;
