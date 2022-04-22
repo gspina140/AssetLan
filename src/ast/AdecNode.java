@@ -56,7 +56,7 @@ public class AdecNode implements Node{
         for(String id:ids)
             res += "\t" + id; 
 
-    	return s+"Assets declarations:\t" + res; 
+    	return s+"Asset(s) declaration(s):\t" + res; 
     }
 
     /**

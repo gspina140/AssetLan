@@ -30,7 +30,7 @@ public class BaseExpNode implements Node{
      */
     @Override
     public String toPrint(String s){
-        return s + "Base expression: " + exp.toPrint(s + " "); 
+        return s + "Base expression:\t" + exp.toPrint(s + " "); 
     }
 
     /**

@@ -38,7 +38,7 @@ public class AssignmentNode implements Node {
      */
     @Override
     public String toPrint(String s){
-        return s + "Assignment: " + id + exp.toPrint(s + " "); 
+        return s + "Assignment:\t" + id + exp.toPrint(s + " "); 
     }
 
     /**

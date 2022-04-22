@@ -364,6 +364,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new BaseExpNode(visit(ctx.exp()));
     }
 
+    /**
+     * Override of the visit of a Binary Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding BinExpNode
+     */
     @Override
     public Node visitBinExp(BinExpContext ctx){
         return new BinExpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
