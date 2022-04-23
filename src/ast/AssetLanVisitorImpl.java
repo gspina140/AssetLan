@@ -403,6 +403,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new ValExpNode(Integer.parseInt(ctx.NUMBER().getText()));
     }
 
+    /**
+     * Override of the visit of a Negative Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding NegExpNode
+     */
     @Override
     public Node visitNegExp(NegExpContext ctx){
         return new BaseExpNode(visit(ctx.exp()));
