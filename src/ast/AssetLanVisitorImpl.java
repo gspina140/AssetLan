@@ -428,6 +428,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return visitCall(ctx.call());
     }
 
+    /**
+     * Override of the visit of a Not Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding NotExpNode
+     */
     @Override
     public Node visitNotExp(NotExpContext ctx){
         return new BaseExpNode(visit(ctx.exp()));

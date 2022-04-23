@@ -38,7 +38,7 @@ public class NegExpNode implements Node{
      * Method to check the semantics of the node
      * It delegate the check to the expression node
      * @param env the environment where the node is included
-     * @return void
+     * @return a list of semantic errors (can be empty)
      */
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env){
