@@ -270,6 +270,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new MoveNode(fOp, sOp);
     }
 
+    /**
+     * Override of the visit of a Print node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding PrintNode
+     */
     @Override
     public Node visitPrint(PrintContext ctx){
         return new PrintNode(visit(ctx.exp()));    
