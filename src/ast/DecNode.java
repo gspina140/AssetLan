@@ -21,7 +21,7 @@ public class DecNode implements Node{
     private ArrayList<String> idList;
 
     /**
-     * Class constructor using the first declaration (it is always present) id ad type
+     * Class constructor using the first declaration (it is always present) id and type
      * @param t a node containing the type of the first declaration
      * @param i a String containing the id of the first declaration
      * @return an object of type DecNode

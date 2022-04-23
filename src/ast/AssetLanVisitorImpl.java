@@ -257,9 +257,14 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return new AssignmentNode(ctx.ID().getText(), visit(ctx.exp()));
     }
 
+    /**
+     * Override of the visit of a Move node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding MoveNode
+     */
     @Override
     public Node visitMove(MoveContext ctx){
-        String fOp = ctx.ID().get(0).getText();
+        String fOp = ctx.ID().get(0).getText(); // Get from context the id of the assets to move
         String sOp = ctx.ID().get(1).getText();
 
         return new MoveNode(fOp, sOp);
