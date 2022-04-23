@@ -248,6 +248,23 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
     }
 
     /**
+     * Override of the visit of a Type node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding TypeNode
+     */
+    @Override
+    public Node visitType(TypeContext ctx){
+
+        // Check if type is integer or boolean
+        if(ctx.getText().equals("int"))
+            return new IntTypeNode();
+        else if(ctx.getText().equals("bool"))
+            return new BoolTypeNode();
+        
+        return null;
+    }
+
+    /**
      * Override of the visit of an Assignment node
      * @param ctx the context of the visit, containing information about the node
      * @return the corresponding AssignmentNode
