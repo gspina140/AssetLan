@@ -48,7 +48,7 @@ public class Environment {
 	 * @param nl a nesting level
 	 * @return the scope of nesting level nl (object of type HashMap<String, STentry>)
 	 */
-	public HashMap<String, STentry> getScope(int nl) {
+	private HashMap<String, STentry> getScope(int nl) {
 		return symTable.get(nl);
 	}
 
@@ -57,7 +57,7 @@ public class Environment {
 	 * @param void
 	 * @return the current scope (object of type HashMap<String, STentry>)
 	 */
-	public HashMap<String, STentry> getCurrentScope() {
+	private HashMap<String, STentry> getCurrentScope() {
 		return getScope(getNestingLevel());
 	}
 

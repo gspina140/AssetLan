@@ -47,22 +47,10 @@ public class DerExpNode implements Node{
 	    // Create result list
 	    ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
-        // Get current nesting level
-	    int nl = env.getNestingLevel();
-
-        // Look-up for the derivated id
-        while (nl >= 0) {
-            if (env.checkDeclaration(id, nl) != null) {
-                // Id found
-                break;
-            } else {
-                nl--;
-            }
-        }
-
-        // At this point, if nl is less than 0 it means the id has not been found and an error should be provided
-        if(nl < 0)
-            res.add(new SemanticError("Variable id " + id + " has not been declared"));
+        // Look-up for the id
+        if (!env.lookup(id))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Identifier " + id + " han not been declared"));
     
 	    return res;
 	}

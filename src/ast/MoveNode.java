@@ -47,45 +47,15 @@ public class MoveNode implements Node {
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        // Get the current nesting level
-        int nl = env.getNestingLevel();
-        
         // Look-up for the first id
-        if(env.checkDeclaration(id1, nl) == null ){ 
-            
-            // Could not find the first id in the current scope
-            // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)
-            while(--nl >= 0){ 
-                if(env.checkDeclaration(id1, nl) != null){
-                    break;  // Id found
-                }
-            }
+        if (!env.lookup(id1))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Asset " + id1 + " han not been declared"));
 
-            // At this point, if nl is less than 0 it means the first id has not been found and an error should be provided
-            if (nl < 0) {
-                res.add(new SemanticError("Variable (asset) id " + id1 + " has not been declared"));
-            }
-        }
-        
-        // Reset nl to current nesting level
-        nl = env.getNestingLevel();
-        
         // Look-up for the second id
-        if(env.checkDeclaration(id2, nl) == null){    
-
-            // Could not find the second id in the current scope
-            // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)
-            while(--nl >= 0){
-                if(env.checkDeclaration(id2, nl) != null){
-                    break;  // Id found
-                }
-            }
-
-            // At this point, if nl is less than 0 it means the second id has not been found and an error should be provided
-            if(nl < 0){
-                res.add(new SemanticError("Variable (asset) id " + id2 + " has not been declared"));
-            }
-        }
+        if (!env.lookup(id2))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Asset " + id2 + " han not been declared"));
         
         return res;
     }

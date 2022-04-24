@@ -422,7 +422,12 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
      */
     @Override
     public Node visitValExp(ValExpContext ctx){
-        return new ValExpNode(Integer.parseInt(ctx.NUMBER().getText()));
+        try{
+            return new ValExpNode(Integer.parseInt(ctx.NUMBER().getText()));
+        }catch (NumberFormatException e){   // The number exceeds the dimension of an integer
+            System.err.println("Warning: dimension of NUMBER token is too long\n");
+            return null;
+        }
     }
 
     /**

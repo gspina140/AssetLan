@@ -53,26 +53,11 @@ public class AssignmentNode implements Node {
 
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-
-        // Get current nesting level
-        int nl = env.getNestingLevel();
         
-        // Look-up for the id
-        if(env.checkDeclaration(id, nl) == null ){
-
-            // Could not find the id of the left side of the assignment in the current scope
-            // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)
-            while(--nl >= 0){
-                if(env.checkDeclaration(id, nl) != null){
-                    // Id found
-                    break;
-                }
-            }
-
-            // At this point, if nl is less than 0 it means the id has not been found and an error should be provided
-            if(nl < 0)
-                res.add(new SemanticError("Variable id " + id+ " has not been declared"));
-        }
+        // Look-up for the  id
+        if (!env.lookup(id))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Identifier (assignment) of " + id + " has not been declared"));
         
         // Delegate semantic check of expression to relative node
         res.addAll(exp.checkSemantics(env));

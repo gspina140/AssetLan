@@ -91,51 +91,22 @@ public class CallNode implements Node {
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        // Get the current nesting level
-        int nl = env.getNestingLevel();
-
         // Look-up for the function id
-        if (env.checkDeclaration(id, nl) == null) {
-
-            // Could not find the function id in the current scope
-            // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)
-            while (--nl >= 0) {
-                if (env.checkDeclaration(id, nl) != null) {
-                    break;  // Id found
-                }
-            }
-
-            // At this point, if nl is less than 0 it means the id has not been found and an error should be provided
-            if (nl < 0) {
-                res.add(new SemanticError("Function id " + id + " has not been declared"));
-            }
-        }
+        if (!env.lookup(id))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Function " + id + " han not been declared"));
 
         // Delegate semantic check of expressions that define the parameters to relative nodes
         for (Node e : explist) {
             res.addAll(e.checkSemantics(env));
         }
-
-        // Reset nl to current nesting level
-        nl = env.getNestingLevel();
         
         // Look-up for each asset id
         for (String a : idlist) {
-            if (env.checkDeclaration(a, nl) == null) {
-
-                // Could not find the function id in the current scope
-                // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)
-                while (--nl >= 0) {
-                    if (env.checkDeclaration(a, nl) != null) {
-                        break;
-                    }
-
-                    // At this point, if nl is less than 0 it means the id has not been found and an error should be provided
-                    if (nl < 0) {
-                        res.add(new SemanticError("Asset id " + a + " has not been declared"));
-                    }
-                }
-            }
+            // Look-up for the asset id a
+            if (!env.lookup(a))
+                // The id has not been found and an error should be provided
+                res.add(new SemanticError("Asset " + a + " han not been declared"));
         }
 
         return res;

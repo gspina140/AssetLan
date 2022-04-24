@@ -69,24 +69,11 @@ public class InitCallNode implements Node {
 
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-
-		// Get the current nesting level
-		int nl = env.getNestingLevel();
         
 		// Look-up for the function id
-		while(nl >= 0) {
-			if(env.checkDeclaration(id, nl) != null) {
-				// Id found
-				break;
-			} else {
-				nl--;
-			}     		
-		}
-			
-		// At this point, if nl is less than 0 it means the id has not been found and an error should be provided
-		if(nl < 0) {
-			res.add(new SemanticError("Function id " + id + " has not been declared"));
-		}
+        if (!env.lookup(id))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Function " + id + " han not been declared"));
              	
         // Delegate semantic check of expressions that define the parameters and the assets to relative nodes
 		for(Node e : explist) {

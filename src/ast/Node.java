@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
-
     
-// Node interface, every node must implement this interface
+/**
+ * Node interface, every node must implement this interface
+ */
 public interface Node {
 
     /**
@@ -25,9 +26,4 @@ public interface Node {
      * @return a list of semantic errors (can be empty)
      */
     ArrayList<SemanticError> checkSemantics(Environment env);
-
-    // Node typeCheck();
-
-    // String codeGeneration();
-
 }

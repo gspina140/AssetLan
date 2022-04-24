@@ -152,7 +152,11 @@ public class FunctionNode implements Node {
             
             // Delegate statements semantic check to respective nodes
             for(Node s : statementlist){
-                res.addAll(s.checkSemantics(env));
+                try {
+                    res.addAll(s.checkSemantics(env));
+                } catch (NullPointerException e) {
+                    System.err.println("Warning: could not resolve statement\n");
+                }
             }
             
             // Close scope (remove hashmap relative to the scope and decrease nesting level)
