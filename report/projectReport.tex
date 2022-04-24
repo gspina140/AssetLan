@@ -168,36 +168,39 @@ The value of an \emph{asset} can \textbf{only} be moved using the two aforementi
 
 \section{Exercises}
 \label{sec:exercices}
-The following exercises were used as guidelines/objectives for the design 
-blabalbalbal
+The following exercises were used as guidelines/objectives for the design of the compiler:
 
 \begin{enumerate}
-\item \textbf{Lexical Errors} : the lexical analyzer must return the list of lexical errors in an output file. 
-\item \textbf{Symbol Table} : implement the table of symbols as list of hash-table or hash-table of lists. In order to check errors related to:
+\item \textbf{Lexical Errors}: the lexical analyzer must return the list of lexical errors in an output file. 
+\item \textbf{Symbol Table}: implement the table of symbols as list of hash-table or hash-table of lists, in order to check errors related to:
 \begin{itemize}
 \item undeclared functions/variables;
-\item multiple declarations of functions/variables in the same environment;
+\item multiple declarations of functions/variables in the same environment.
 \end{itemize}
 \end{enumerate}
 
 \subsection{Lexical Errors}
-In order to redirect the errors of the lexer to an output (log) file, we must override the base error handling strategy of ANTLR, because by default it sends the errors to the standard error (i.e., the console). To change the destination and, if desired, the content of the errors messages one must provide an implementation of interface \textsc{ANTLRErrorListener}, in Figure~\ref{fig:err} is illustrated the structure of the classes involved in error handling phase.
+In order to redirect the errors of the lexer to an output (log) file, one should override the base error handling strategy of ANTLR, which, by default, redirects the errors to the standard error (i.e., the console). To change the destination and, eventually, the content of error messages, one should provide an implementation of an \textsc{ANTLRErrorListener} subclass; Figure~\ref{fig:err} shows the structure of the classes involved in the error handling phase.
 \begin{figure}
 \includegraphics[width=\textwidth]{errorListener.png}
 \caption{Internal structure for error handling.}
 \label{fig:err}
 \end{figure}   
-\textsc{ANTLRErrorListener} has a \textsc{syntaxError()} method that applies both lexers and parsers, it receives all sorts of information about the location of the error as well as the error message.     
+More specifically, \textsc{ANTLRErrorListener} provides a \textsc{syntaxError()} method that applies to both the lexer and the parser, which receives all sorts of information about the location of the error as well as the error message and which recognizer caught the error (i.e., if the error occurred in the lexical or the syntactic analysis).   
 
 \medskip
 
-The proposed solution consists in a class called \textsc{TestLexerListner} that extends the \textsc{BaseErrorListner} class in order to override the \textsc{syntaxError()} method and redirect his output to a log file, called \textsc{log.txt}. In addition, for each error, has been added the time at which it occurred, so that it is possible to distinguish errors coming from different compilation executions. 
+The proposed solution consists of a class called \textsc{TestLexerListner} which extends the \textsc{BaseErrorListner} class in order to override the \textsc{syntaxError()} method and redirect his output to a log file, called \verb|log.txt|. Furthermore, for each error, it prints the date and time at which it occurred, so that it is possible to distinguish between errors coming from different compilation executions. 
 
 \medskip
 
-Now a test application can be implemented, it must remove the \textsc{ConsoleErrorListener} (i.e., the default strategy), and add the custom one. After that we can do the parse phase as usual.
+At this point, one can simply remove the \textsc{ConsoleErrorListener} (i.e., the default strategy) for the lexer and bind the custom listener instead, adding the following lines to the main function intended to launch the analysis and relative compilation (in the project, defined in the \verb|Test| class implemented in \verb|src/mainpackage/Test.java|):
+\begin{lstlisting}
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(new TestLexerListener());
+\end{lstlisting}
 
-A lexical errror is a sequence of characters that does not match the pattern of any token.
+A lexical error is defined as a sequence of characters that does not match the pattern of any token. The following examples show the output messages printed to the \verb|log.txt| file when a lexical error is found.
 \ES{DISCUTERE I 3 ERRORI}
 %\lstinputlisting[language=Java]{TestLexerListener.java}
 
