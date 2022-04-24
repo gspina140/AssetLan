@@ -164,7 +164,7 @@ At the time of the call, assets \verb|x| and \verb|y| are emptied and their valu
 
 The value of an \emph{asset} can \textbf{only} be moved using the two aforementioned operations, more specifically: 
 \begin{itemize}
-\item \textbf{Move operation} (\verb|x -o z|): the value of the parameter \verb|x| is added to the value of the parameter \verb|z| and store in \verb|z|, then the value of the parameter \verb|x| is set to 0.
+\item \textbf{Move operation} (\verb|x -o z|): the value of the parameter \verb|x| is added to the value of the parameter \verb|z| and stored in \verb|z|, then the value of the parameter \verb|x| is set to 0;
 \item \textbf{Transfer operation} (\verb|transfer x|): this operation transfers the value of the asset \verb|x| to the caller of the function, then its value is set to 0.
 \end{itemize}
 
@@ -174,7 +174,7 @@ The following exercises were used as guidelines/objectives for the design of the
 
 \begin{enumerate}
 \item \textbf{Lexical Errors}: the lexical analyzer must return the list of lexical errors in an output file. 
-\item \textbf{Symbol Table}: implement the table of symbols as list of hash-table or hash-table of lists, in order to check errors related to:
+\item \textbf{Symbol Table}: implement the table of symbols as a list of hash-tables or a hash-table of lists, in order to check errors related to:
 \begin{itemize}
 \item undeclared functions/variables;
 \item multiple declarations of functions/variables in the same environment.
@@ -188,26 +188,26 @@ In order to redirect the errors of the lexer to an output (log) file, one should
 \caption{Internal structure for error handling\cite{reference}.}
 \label{fig:err}
 \end{figure}   
-More specifically, \textsc{ANTLRErrorListener} provides a \textsc{syntaxError()} method that applies to both the lexer and the parser, which receives all sorts of information about the location of the error as well as the error message and which recognizer caught the error (i.e., if the error occurred in the lexical or the syntactic analysis).   
+More specifically, \textsc{ANTLRErrorListener} provides a \textsc{syntaxError()} method that applies to both the lexer and the parser, which receives all sorts of information about the location of the error, as well as the error message and which recognizer caught the error (i.e., if the error occurred during the lexical or the syntactic analysis).   
 
 \medskip
 
-The proposed solution consists of a class called \textsc{TestLexerListner} which extends the \textsc{BaseErrorListner} class in order to override the \textsc{syntaxError()} method and redirect his output to a log file, called \verb|log.txt|. Furthermore, for each error, it prints the date and time at which it occurred, so that it is possible to distinguish between errors coming from different compilation executions. 
+The proposed solution consists of a class, called \textsc{TestLexerListner}, which extends the \textsc{BaseErrorListener} class in order to override the \textsc{syntaxError()} method and redirect his output to a log file, named \verb|log.txt|. Furthermore, for each error, it prints the date and time at which it occurred, so that it is possible to distinguish between errors coming from different compilation executions. 
 
 \medskip
 
-At this point, one can simply remove the \textsc{ConsoleErrorListener} (i.e., the default strategy) for the lexer and bind the custom listener instead, adding the following lines to the main function intended to launch the analysis and relative compilation (in the project, defined in the \verb|Test| class implemented in \verb|src/mainpackage/Test.java|):
+At this point, one can simply remove the \textsc{ConsoleErrorListener} (i.e., the default strategy) for the lexer and bind the custom listener instead, adding the following lines to the main function intended to launch the analysis and relative compilation (in the project, defined in the \verb|Test| class, implemented in \verb|src/mainpackage/Test.java|):
 \begin{lstlisting}
     lexer.removeErrorListeners();
     lexer.addErrorListener(new TestLexerListener());
 \end{lstlisting}
 
-A lexical error is defined as a sequence of characters that does not match the pattern of any token. In our language this can be caused only when the lexer founds a character which is not defined in the grammar, and therefore it cannot derive the token. 
+A lexical error is defined as a sequence of characters that does not match the pattern of any token. In our language, this can only happen when the lexer founds a character which is not defined in the grammar, and therefore it cannot derive the relative token. 
 
 \clearpage
 
 
-The following examples show the output messages printed to the \verb|log.txt| file when a lexical error is found :
+The following examples show the output messages printed to the \verb|log.txt| file when a lexical error is found:
 \begin{enumerate}
 \item
 	\begin{itemize}
@@ -251,30 +251,32 @@ f()[]
 \end{enumerate}
 
 \subsection{Symbol Table}
-The choice of the data structure for the symbol table fell on the list of hash-table, because an excessive level of nesting in the code is not expected. This can be said due to the fact that the grammar of the language does not allow the definition of code blocks and neither mutual recursion, so the only way to enter in a new scope/environment is the definition of a function or an if-then-else statement. That leads to a language that frequently enter and exits scopes, so we want to reduce the complexity of these particular operations, accepting an higher complexity for the look-up of an identifier. In fact, given the implementation of a symbol table as a list of hash-tables, the cost for entering and exiting a scope is O(1), while the cost for the look-up operation is O(depth of nesting). (While the hash-table of lists that has O(1) cost for all operation, for the exit from a scope that has a cost proportional to the number of names in the symbol table). 
+The choice of the data structure for the symbol table fell on the list of hash-tables because an excessive level of nesting in the code is not expected. This is due to the fact that the grammar of the language does not allow the definition of {code blocks}~\cite{codeblocks} (i.e., using curly brackets to define a new scope explicitly, as in SimpLanPlus) and mutual recursion is not conceived; therefore, the only way to enter in a new scope is the definition of a new function. That leads to a language that frequently enters and exits scopes, so it has been decided to opt for a solution that could reduce the complexity of these particular operations, accepting a higher complexity for the look-up of an identifier. Given the implementation of a symbol table as a list of hash-tables, the cost for entering and exiting a scope is \(O(1)\), while the cost for the look-up operation is \(O(depth_{nesting})\).
 
 \medskip
 
 The symbol table has been declared as a private field in a specific class, called \textsc{Environment}. In order to access/modify it, the following methods have been implemented:
 \begin{itemize}
-\item \textsc{enterScope()} : increase the nesting level and add a new entry (i.e., an hash-table) to the list. 
-\item \textsc{exitScope()} : decrease nesting level and remove the last hash-table in the list.
-\item \textsc{getScope()}/\textsc{getCurrentScope()} : get the scope of current nesting level or of a specified one.
-\item \textsc{addEntry} : add an entry to the current scope.
-\item \textsc{getNestingLevel()} : getter for nesting level field.
-\item \textsc{checkDeclaration()} : checks if the symbol has been declared in this scope. 
-\item \textsc{lookup()} : look-up for the declaration of a given id in the current scope or in an enclosing one. 
+\item \textsc{enterScope()}: increases the nesting level and adds a new entry (i.e., an hash-table) to the list. 
+\item \textsc{exitScope()}: decreases the nesting level and removes the last hash-table from the list.
+\item \textsc{getScope(nestingLevel)}/\textsc{getCurrentScope()}: returns the scope relative to the specified nesting level/relative to the current nesting level.
+\item \textsc{addEntry(type, identifier)}: adds an entry with specified type and id to the hash-table relative to the current scope.
+\item \textsc{getNestingLevel()}: getter for nesting level field.
+\item \textsc{checkDeclaration(identifier, nestingLevel)}: checks if the symbol has been declared in the specified scope (retrieved from nesting level). 
+\item \textsc{lookup(identifier)}: look-up for the declaration of a given id in the current scope or an enclosing one. 
 \end{itemize}
 
 \medskip
 
-To manage the symbol table, it is necessary to visit the Abstract Syntax Tree in order to insert the declarations of variables / functions / assets within the data structure. To this aim, the \textsc{AssetLanBaseVisitor} class has been extended to override the auto-generated methods meant to visit the AST. For each rule of the grammar, it has been defined a new class representing a node of the tree with its specific components and relative methods to manage the objects. Among these, \textsc{checkSemantics()} controls for errors specified in Section~\ref{sec:exercices}.
+To manage the symbol table, it is necessary to visit the Abstract Syntax Tree in order to insert the declarations of variables / functions / assets within the data structure. To this aim, the \textsc{AssetLanBaseVisitor} class has been extended to override the auto-generated methods meant to visit the AST. For each rule in the grammar, it has been defined a new class representing the relative node of the tree with its specific components and methods. Among these, \textsc{checkSemantics(environment)} searches for semantic errors, such as multiple declarations of variables and functions, as well as undeclared ones.
 
 \medskip
 
-In the \textsc{AssetLanBaseVisitor} there is a visit method for each rule of the grammar, the work done on each one of this consisted in the construction of the related node with the help of the ANTLR's rule contexts. 
+In the \textsc{AssetLanBaseVisitor} there is a visit method for each rule in the grammar meant to construct the relative node with the help of the ANTLR's rule contexts. 
 
 \medskip
+
+The following example shows the output for a program which contains both types of errors (one multiple declaration error and one usage of undeclared variable error):
 
 \begin{enumerate}
 \item
@@ -296,21 +298,25 @@ You had: 2 errors:
 	Asset d has not been declared
 		\end{lstlisting}
 		
-	The first error is caused by the declaration of variable "a" at line 4, it has been already declared as parameter in the function.
-	The second error is caused from the fact that asset "d" has never been declared.
+	The first error is caused by the declaration of variable \verb|a| at line 4, which has already been declared as parameter in the function.
+	The second error is caused by the fact that asset \verb|d| has never been declared.
 	\end{itemize}
 \end{enumerate}
 
 \section{Conclusion}
-In this report the implementation choices of a compiler for the Asset Language were discussed. 
+In this report, the implementation choices for the development of a compiler for the Asset Language have been discussed.
 
 \medskip
 
-There are several ways to improve the given solutions, among these one could add information about the line where an Id is declared to the symbol table, in order to improve the error message. In this version, the symbol table is implemented in a way that it does not handle the type checking, so the look-up operation for an Id don't take into account the type of the variable / function or the kind of operation in which it is involved.
+Regarding the lexical error handling strategy, a common lexical error regards the length of integer number definitions. It has been decided to keep the default error handling strategy provided by Java instead of changing the grammar limiting the length of numbers.
 
 \medskip
 
-Also the bytecode generation and relative interpreter are missing.
+There are several ways to improve the given solutions. Among these, one could add information about the line where an identifier has been declared to the symbol table, in order to improve the error message. In this version, the symbol table is implemented in a way that does not handle type checking, so the look-up operation for an identifier does not take into account the type of the variable / function or the kind of operation in which it is involved.
+
+\medskip
+
+Also, the bytecode generation and relative interpreter are missing.
 
 
 \begin{thebibliography}{9}
@@ -322,6 +328,9 @@ Mogensen, {Torben {\AE}gidius} (1999), Basics of Compiler Design, Kursusbog
 
 \bibitem{patterns}
 Parr, Terence (2013) , Language Implementation Patterns: Create Your Own Domain-Specific and General Programming Languages.
+
+\bibitem{codeblocks}
+Wikipedia contributors. Block (programming). Wikipedia, The Free Encyclopedia. January 12, 2022, 03:55 UTC. 
 \end{thebibliography}
 
 \end{document}
