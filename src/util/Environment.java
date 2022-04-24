@@ -85,7 +85,7 @@ public class Environment {
 	 * @param void
 	 * @return current nesting level
 	 */
-	public int getNestingLevel() {
+	private int getNestingLevel() {
 		return nestingLevel;
 	}
 
@@ -95,7 +95,7 @@ public class Environment {
 	 * @param nl the nesting level in which we are looking for the symbol
 	 * @return returns the symbol entry if found (object of type STentry), null otherwise
 	 */
-	public STentry checkDeclaration(String id, int nl) {
+	private STentry checkDeclaration(String id, int nl) {
 		HashMap<String, STentry> hm = getScope(nl);
 		return hm.get(id);
 	}
