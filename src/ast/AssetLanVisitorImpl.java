@@ -207,16 +207,31 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return res;
     }
 
+    /**
+     * Override of the visit of an Assignment node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding AssignmentNode
+     */
     @Override
     public Node visitAssignExp(AssignExpContext ctx){
         return visitAssignment(ctx.assignment());
     }
 
+    /**
+     * Override of the visit of a Move Asset node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding MoveAssetNode
+     */
     @Override 
     public Node visitMoveAsset(MoveAssetContext ctx){
         return visitMove(ctx.move());
     }
 
+    /**
+     * Override of the visit of a Print Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding PrintExpNode
+     */
     @Override
     public Node visitPrintExp(PrintExpContext ctx){
         return visitPrint(ctx.print());
@@ -232,16 +247,31 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return visitTransfer(ctx.transfer());
     }
 
+    /**
+     * Override of the visit of a Return Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding ReturnExpNode
+     */
     @Override
     public Node visitReturnExp(ReturnExpContext ctx){
         return visitRet(ctx.ret());
     }
 
+    /**
+     * Override of the visit of an If-Then-Else expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding IfElseExpNode
+     */
     @Override
     public Node visitIfElseExp(IfElseExpContext ctx){
         return visitIte(ctx.ite());
     }
 
+    /**
+     * Override of the visit of a Call Function node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding CallFunNode
+     */
     @Override
     public Node visitCallFun(CallFunContext ctx){
         return visitCall(ctx.call());
@@ -450,6 +480,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 		return new BoolExpNode(Boolean.parseBoolean(ctx.getText())); 
     }
 
+    /**
+     * Override of the visit of a Call Expression node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding CallExpNode
+     */
     @Override
     public Node visitCallExp(CallExpContext ctx){
         return visitCall(ctx.call());
