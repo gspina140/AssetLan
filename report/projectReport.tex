@@ -101,13 +101,13 @@ allcolors={BrickRed}
 	\centering
 	\includegraphics[width=\textwidth]{logo.png}\\
 	\vspace*{1cm}
-	\Large \textsc{Corso di Laurea Magistrale in Informatica}
+	\Large \textsc{Second Cycle Degree in Computer Science}
 	
 	\vspace*{10mm}
 	\hrule width \hsize \kern 1mm \hrule width \hsize height 2pt
 	\vspace*{5mm}
 	\Huge \emph{\textbf{Asset Language}}\\
-	\large \emph{\textbf{Compilers and Interpreters Project}}\\
+	\large \emph{\textbf{Compilers and Interpreters  Course Project}}\\
 	\large \emph{\textbf{Report on design choices}}
 	\vspace*{5mm}
 	\hrule width \hsize height 2pt
@@ -118,15 +118,15 @@ allcolors={BrickRed}
 	\begin{minipage}{0.45\textwidth}
 		\begin{flushleft} \Large
 			\emph{Students:}\\
-			\Large \textbf{Alberto \textsc{Paparella}}
-			\Large \textbf{Giuseppe \textsc{Caputo}}\\
-			\Large \textbf{Gabriele \textsc{Spina}}
+			\Large \textbf{Giuseppe \textsc{CAPUTO}}\\
+			\Large \textbf{Alberto \textsc{PAPARELLA}}
+			\Large \textbf{Gabriele \textsc{SPINA}}
 		\end{flushleft}
 	\end{minipage}	
 	\begin{minipage}{0.45\textwidth}
 		\begin{flushright} \Large
 			\emph{Professor:}\\
-			\Large \textbf{Prof. Cosimo \textsc{Laneve}}
+			\Large \textbf{Prof. Cosimo \textsc{LANEVE}}
 		\end{flushright}
 	\end{minipage}
 	
@@ -144,25 +144,26 @@ allcolors={BrickRed}
 \newpage
 
 \section{Introduction}
-This report will discuss and illustrate the implementation choices related to the design of a compiler for a specific programming language called \emph{AssetLan} (i.e., Asset Language). 
+This report will discuss the implementation choices related to the design of a compiler and relative interpreter for a specific programming language, called \emph{AssetLan} (i.e., Asset Language). 
 
 \medskip
 
-\emph{Asset Language} is a simple imperative language with asset, where parameters could be either {\emph standard} or {\emph asset}, with recursion and without mutual recursion. Regarding the semantics, two types of operations are allowed on a parameter defined as {\emph asset}, and it is legit use them only in a function. To this aim, the functions could be declared  with {\emph asset} in that way:\begin{verbatim}
-void f(int a, bool b)[asset u, asset v] { body }
+\emph{Asset Language} is a simple imperative language with assets, where parameters could be either {\emph standard} or {\emph assets}, with recursion and without mutual recursion. Regarding the semantics, two types of operations are allowed on a parameter defined as an {\emph asset}, and it is legit to use them only in a function. To this aim, a function can be declared  with {\emph assets} in the following way:
+\begin{verbatim}
+    void f(int a, bool b)[asset u, asset v] { body }
 \end{verbatim} 
 and called as: 
 \begin{verbatim}
-f(5,true)[x,y]
+    f(5,true)[x,y]
 \end{verbatim}
-At the time of the call, assets 'x' and 'y' are emptied, and their values are assigned respectively to the formal parameters 'u' e 'v', so after the call 'x' and 'y' values are 0.
+At the time of the call, assets \verb|x| and \verb|y| are emptied and their values are assigned respectively to the formal parameters \verb|u| and \verb|v|; therefore, after the call, the values of assets \verb|x| and \verb|y| are both equal to 0.
 
 \medskip
 
-The value of an \emph{asset} can be \textbf{only} moved using the aforementioned 2 operations, more in specific: 
+The value of an \emph{asset} can \textbf{only} be moved using the two aforementioned operations, more specifically: 
 \begin{itemize}
-\item \textbf{Move} (\emph{x -o z}) : the result of that operation is that the value of the first parameter is summed to the second one, and then it is cleaned (set to 0). This operation, as the following one, is legit only with 2 asset arguments.
-\item \textbf{Transfer} (\emph{transfer x}) : this operation transfer the value of the \emph{asset} 'x' to the caller of the function, and so it became 0.
+\item \textbf{Move operation} (\verb|x -o z|): the value of the parameter \verb|x| is added to the value of the parameter \verb|z| and store in \verb|z|, then the value of the parameter \verb|x| is set to 0.
+\item \textbf{Transfer operation} (\verb|transfer x|): this operation transfers the value of the asset \verb|x| to the caller of the function, then its value is set to 0.
 \end{itemize}
 
 \section{Exercises}
