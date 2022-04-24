@@ -43,6 +43,8 @@
 \lhead{}\chead{}\rhead{}
 \lfoot{}\cfoot{\thepage}\rfoot{}
 
+%\usepackage{biblatex}
+
 %%% SECTION TITLE APPEARANCE
 \usepackage{sectsty}
 \allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
@@ -183,7 +185,7 @@ The following exercises were used as guidelines/objectives for the design of the
 In order to redirect the errors of the lexer to an output (log) file, one should override the base error handling strategy of ANTLR, which, by default, redirects the errors to the standard error (i.e., the console). To change the destination and, eventually, the content of error messages, one should provide an implementation of an \textsc{ANTLRErrorListener} subclass; Figure~\ref{fig:err} shows the structure of the classes involved in the error handling phase.
 \begin{figure}
 \includegraphics[width=\textwidth]{errorListener.png}
-\caption{Internal structure for error handling.}
+\caption{Internal structure for error handling\cite{reference}.}
 \label{fig:err}
 \end{figure}   
 More specifically, \textsc{ANTLRErrorListener} provides a \textsc{syntaxError()} method that applies to both the lexer and the parser, which receives all sorts of information about the location of the error as well as the error message and which recognizer caught the error (i.e., if the error occurred in the lexical or the syntactic analysis).   
@@ -200,17 +202,60 @@ At this point, one can simply remove the \textsc{ConsoleErrorListener} (i.e., th
     lexer.addErrorListener(new TestLexerListener());
 \end{lstlisting}
 
-A lexical error is defined as a sequence of characters that does not match the pattern of any token. The following examples show the output messages printed to the \verb|log.txt| file when a lexical error is found.
-\ES{DISCUTERE I 3 ERRORI}
-%\lstinputlisting[language=Java]{TestLexerListener.java}
+A lexical error is defined as a sequence of characters that does not match the pattern of any token. In our language this can be caused only when the lexer founds a character which is not defined in the grammar, and therefore it cannot derive the token. 
 
+\clearpage
+
+
+The following examples show the output messages printed to the \verb|log.txt| file when a lexical error is found :
+\begin{enumerate}
+\item
+	\begin{itemize}
+		\item Code tested: \begin{lstlisting}
+int a = "s";   
+f()[]
+		\end{lstlisting}
+		\item Output on \textsc{log.txt}: \begin{lstlisting}
+20-04-2022 15:33:13: 
+    Found Lexical error at line 1 at position 8: 
+    token recognition error at: '"'
+20-04-2022 15:33:14: 
+    Found Lexical error at line 1 at position 10: 
+    token recognition error at: '"'
+		\end{lstlisting}
+	\end{itemize}
+\item
+\begin{itemize}
+\item Code tested: \begin{lstlisting}
+int main()[]{}
+ma$n()[]
+\end{lstlisting}
+\item Output on \textsc{log.txt}: \begin{lstlisting}
+20-04-2022 15:48:56: 
+    Found Lexical error at line 2 at position 2: 
+    token recognition error at: '$'
+\end{lstlisting}
+\end{itemize}
+\item
+	\begin{itemize}
+	\item Code tested: \begin{lstlisting}
+int a:
+f()[]
+	\end{lstlisting}
+	\item Output on \textsc{log.txt}: \begin{lstlisting}
+20-04-2022 15:55:52: 
+    Found Lexical error at line 1 at position 5: 
+    token recognition error at: ':'
+	\end{lstlisting}
+	\end{itemize}
+\end{enumerate}
 
 \subsection{Symbol Table}
-The choice of the data structure for the symbol table fell on the list of hash-table, because an excessive level of nesting in the code is not expected. This can be said due to the fact that the grammar of the language does not allow the definition of code blocks, so the only way to enter in a new scope/environment is the definition of a function or an if-then-else statement. 
+The choice of the data structure for the symbol table fell on the list of hash-table, because an excessive level of nesting in the code is not expected. This can be said due to the fact that the grammar of the language does not allow the definition of code blocks and neither mutual recursion, so the only way to enter in a new scope/environment is the definition of a function or an if-then-else statement. That leads to a language that frequently enter and exits scopes, so we want to reduce the complexity of these particular operations, accepting an higher complexity for the look-up of an identifier. In fact, given the implementation of a symbol table as a list of hash-tables, the cost for entering and exiting a scope is O(1), while the cost for the look-up operation is O(depth of nesting). (While the hash-table of lists that has O(1) cost for all operation, for the exit from a scope that has a cost proportional to the number of names in the symbol table). 
 
 \medskip
 
-The symbol table has been declared as a private field in a specific class called \textsc{Environment}. In order to access/modify it, has been implemented a certain number of methods:
+The symbol table has been declared as a private field in a specific class, called \textsc{Environment}. In order to access/modify it, the following methods have been implemented:
 \begin{itemize}
 \item \textsc{enterScope()} : increase the nesting level and add a new entry (i.e., an hash-table) to the list. 
 \item \textsc{exitScope()} : decrease nesting level and remove the last hash-table in the list.
@@ -218,16 +263,65 @@ The symbol table has been declared as a private field in a specific class called
 \item \textsc{addEntry} : add an entry to the current scope.
 \item \textsc{getNestingLevel()} : getter for nesting level field.
 \item \textsc{checkDeclaration()} : checks if the symbol has been declared in this scope. 
-\item \textsc{lookup()} : Look-up for the declaration of a given id in the current scope or in an enclosing one. 
+\item \textsc{lookup()} : look-up for the declaration of a given id in the current scope or in an enclosing one. 
 \end{itemize}
 
 \medskip
 
-To manage the symbol table, it is necessary to visit the AST in order to insert the declarations of variables / functions / assets within the data structure. To this aim, it has been extended the \textsc{AssetLanBaseVisitor} class to override the methods auto-generated meant to visit the AST. For each rule of the grammar, it has been defined a new class representing a node of the tree with his specific components. Moreover, there are the method to manage this objects and most important the method \textsc{checkSemantics()} that checks for errors specified in Section~\ref{sec:exercices}.
+To manage the symbol table, it is necessary to visit the Abstract Syntax Tree in order to insert the declarations of variables / functions / assets within the data structure. To this aim, the \textsc{AssetLanBaseVisitor} class has been extended to override the auto-generated methods meant to visit the AST. For each rule of the grammar, it has been defined a new class representing a node of the tree with its specific components and relative methods to manage the objects. Among these, \textsc{checkSemantics()} controls for errors specified in Section~\ref{sec:exercices}.
 
 \medskip
 
 In the \textsc{AssetLanBaseVisitor} there is a visit method for each rule of the grammar, the work done on each one of this consisted in the construction of the related node with the help of the ANTLR's rule contexts. 
 
+\medskip
+
+\begin{enumerate}
+\item
+	\begin{itemize}
+		\item Code tested: \begin{lstlisting}
+int a;
+asset b;
+int main(int a)[asset c]{
+    int a;
+    c -o d;
+}
+main()[2]
+		\end{lstlisting}
+		\item Output on console: \begin{lstlisting}
+You had: 2 errors:
+	Error when declaring variable of id a,
+	Id already used for declaration in the same scope
+	
+	Asset d has not been declared
+		\end{lstlisting}
+		
+	The first error is caused by the declaration of variable "a" at line 4, it has been already declared as parameter in the function.
+	The second error is caused from the fact that asset "d" has never been declared.
+	\end{itemize}
+\end{enumerate}
+
+\section{Conclusion}
+In this report the implementation choices of a compiler for the Asset Language were discussed. 
+
+\medskip
+
+There are several ways to improve the given solutions, among these one could add information about the line where an Id is declared to the symbol table, in order to improve the error message. In this version, the symbol table is implemented in a way that it does not handle the type checking, so the look-up operation for an Id don't take into account the type of the variable / function or the kind of operation in which it is involved.
+
+\medskip
+
+Also the bytecode generation and relative interpreter are missing.
+
+
+\begin{thebibliography}{9}
+\bibitem{reference}
+Parr, Terence (2013) , The definitive ANTLR 4 reference.
+
+\bibitem{basics}
+Mogensen, {Torben {\AE}gidius} (1999), Basics of Compiler Design, Kursusbog 
+
+\bibitem{patterns}
+Parr, Terence (2013) , Language Implementation Patterns: Create Your Own Domain-Specific and General Programming Languages.
+\end{thebibliography}
 
 \end{document}
