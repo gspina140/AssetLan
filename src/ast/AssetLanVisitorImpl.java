@@ -59,6 +59,9 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
 		// List of functions in @res
 		ArrayList<Node> functions = new ArrayList<Node>();
+
+        // Node containing initcall in @res
+        Node initcall = null;
 		
 		// Visit all nodes corresponding to fields inside the program context and store them in @fields
         for(FieldContext flc : ctx.field())
@@ -73,9 +76,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             functions.add(visit(fnc));
 
 		// Visit initcall context
-        Node initcall = null;
-        if(ctx.initcall().ID() != null)
-		    initcall = visit(ctx.initcall());
+        try {
+            initcall = visit(ctx.initcall());
+        } catch (NullPointerException e) {
+            System.err.println("Warning: missing initcall\n");
+        }
 
 		// Build @res accordingly with the result of the visits to its content
 		return new ProgramNode(fields, assets, functions, initcall);
