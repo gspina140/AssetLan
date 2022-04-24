@@ -79,7 +79,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         try {
             initcall = visit(ctx.initcall());
         } catch (NullPointerException e) {
-            System.err.println("Warning: missing initcall\n");
+            System.err.println("Warning: an error has occured when trying to visit initcall node\n");
         }
 
 		// Build @res accordingly with the result of the visits to its content
