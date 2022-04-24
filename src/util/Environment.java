@@ -45,7 +45,7 @@ public class Environment {
 
 	/**
 	 * Get the scope of nesting level nl
-	 * @param int a nesting level
+	 * @param nl a nesting level
 	 * @return the scope of nesting level nl (object of type HashMap<String, STentry>)
 	 */
 	public HashMap<String, STentry> getScope(int nl) {
@@ -91,12 +91,41 @@ public class Environment {
 
 	/**
 	 * Checks if the symbol has been declared in this scope (useful for declaration look-up)
-	 * @param String the id of the symbol to be searched
-	 * @param int the nesting level in which we are looking for the symbol
+	 * @param id the id of the symbol to be searched
+	 * @param nl the nesting level in which we are looking for the symbol
 	 * @return returns the symbol entry if found (object of type STentry), null otherwise
 	 */
 	public STentry checkDeclaration(String id, int nl) {
 		HashMap<String, STentry> hm = getScope(nl);
 		return hm.get(id);
+	}
+
+	/**
+	 * Look-up for the declaration of a given id in the current scope or in an enclosing one
+	 * Useful when we found the use of an id to check if it has been declared or not
+	 * In a program, every di must be declared before use in the current scope or an enclosing one
+	 * @param id the id to be searched
+	 * @return 'true' if the id has been found, 'false' otherwise
+	 */
+	public Boolean lookup(String id) {
+
+		// Get current nesting level
+        int nl = getNestingLevel();
+
+        // Look-up for the id
+		while(nl >= 0){
+            if(checkDeclaration(id, nl) != null){
+                // Id found
+                return true;
+            } else {
+                // Could not find the id in the current scope
+                // Try searching in the enclosing scopes
+				// (iteratively decrease the nesting level and check them)
+                nl--;
+            }
+        }
+
+        // If this point is reached, it means that the id has not been found
+		return false;
 	}
 }

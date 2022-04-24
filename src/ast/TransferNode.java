@@ -27,6 +27,7 @@ public class TransferNode implements Node{
      * @param s a string to use as the head of the message
      * @return the string containing the message
      */
+    @Override
     public String toPrint(String s){
         return s + "Transfer:\t" + id;
     }
@@ -43,24 +44,11 @@ public class TransferNode implements Node{
 
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
-        
-        // Get current nesting level
-        int nl = env.getNestingLevel();
 
-        // Look-up for the id
-        while(nl >= 0){
-            if(env.checkDeclaration(id, nl) != null){
-                // Id found
-                return res;
-            } else {
-                // Could not find the id of the left side of the assignment in the current scope
-                // Try searching in the enclosing scopes (iterative decrease the nesting level and check them)
-                nl--;
-            }
-        }
-
-        // If this point is reached, it means that the id has not been found and an error should be provided
-        res.add(new SemanticError("Asset " + id + " han not been declared"));
+        // Look-up for the asset id
+        if (!env.lookup(id))
+            // The id has not been found and an error should be provided
+            res.add(new SemanticError("Asset " + id + " han not been declared"));
 
         return res;
     }
