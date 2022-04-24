@@ -43,8 +43,6 @@
 \lhead{}\chead{}\rhead{}
 \lfoot{}\cfoot{\thepage}\rfoot{}
 
-%\usepackage{biblatex}
-
 %%% SECTION TITLE APPEARANCE
 \usepackage{sectsty}
 \allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
@@ -89,7 +87,6 @@ allcolors={BrickRed}
 
 \usepackage{tikz}
 \usetikzlibrary{shapes,trees,fit,decorations.pathreplacing,arrows.meta}
-
 
 %%% END Article customizations
 
@@ -138,7 +135,6 @@ allcolors={BrickRed}
 
 % Table of contents
 \addtocontents{toc}{~\hfill\textbf{Page}\par}	% https://texblog.org/2011/09/09/10-ways-to-customize-tocloflot/
-\pagestyle{empty}
 \clearpage
 \tableofcontents
 \thispagestyle{empty}
@@ -168,6 +164,16 @@ The value of an \emph{asset} can \textbf{only} be moved using the two aforementi
 \item \textbf{Transfer operation} (\verb|transfer x|): this operation transfers the value of the asset \verb|x| to the caller of the function, then its value is set to 0.
 \end{itemize}
 
+\section{Usage}
+
+\subsection{Launching from command line}
+
+Tu use the compiler, go to folder \verb|/src| and compile all java files in the sub directories with \verb|javac */*.java| (it is assumed that antlr4 has already been added to java classpath).
+To execute the compiler on a file with \verb|.al| extension, place the file in the \verb|/src| directory and call the Test class, which contains the main function, as follows: \verb|java mainpackage.Test input.al|, where \verb|input.al| is an example of file name.
+
+\subsection{Launching from IDE}
+To launch the analysis from an IDE (e.g., Eclipse), open the \verb|src| folder as a new project and add antlr4 to the build path according to the IDE settings. Then, create a new launch configuration to tell the IDE where the main class is, which can be found int \verb|/src/mainpackage/Test.java|, and the command line arguments, in this case the input file with \verb|.al| extension (e.g., \verb|input.al|).
+
 \section{Exercises}
 \label{sec:exercices}
 The following exercises were used as guidelines/objectives for the design of the compiler:
@@ -184,7 +190,7 @@ The following exercises were used as guidelines/objectives for the design of the
 \subsection{Lexical Errors}
 In order to redirect the errors of the lexer to an output (log) file, one should override the base error handling strategy of ANTLR, which, by default, redirects the errors to the standard error (i.e., the console). To change the destination and, eventually, the content of error messages, one should provide an implementation of an \textsc{ANTLRErrorListener} subclass; Figure~\ref{fig:err} shows the structure of the classes involved in the error handling phase.
 \begin{figure}
-\includegraphics[width=\textwidth]{errorListener.png}
+\includegraphics[width=0.95\textwidth]{errorListener.png}
 \caption{Internal structure for error handling\cite{reference}.}
 \label{fig:err}
 \end{figure}   
@@ -202,10 +208,11 @@ At this point, one can simply remove the \textsc{ConsoleErrorListener} (i.e., th
     lexer.addErrorListener(new TestLexerListener());
 \end{lstlisting}
 
+\medskip
+
 A lexical error is defined as a sequence of characters that does not match the pattern of any token. In our language, this can only happen when the lexer founds a character which is not defined in the grammar, and therefore it cannot derive the relative token. 
 
-\clearpage
-
+\medskip
 
 The following examples show the output messages printed to the \verb|log.txt| file when a lexical error is found:
 \begin{enumerate}
@@ -249,6 +256,8 @@ f()[]
 	\end{lstlisting}
 	\end{itemize}
 \end{enumerate}
+
+\clearpage
 
 \subsection{Symbol Table}
 The choice of the data structure for the symbol table fell on the list of hash-tables because an excessive level of nesting in the code is not expected. This is due to the fact that the grammar of the language does not allow the definition of {code blocks}~\cite{codeblocks} (i.e., using curly brackets to define a new scope explicitly, as in SimpLanPlus) and mutual recursion is not conceived; therefore, the only way to enter in a new scope is the definition of a new function. That leads to a language that frequently enters and exits scopes, so it has been decided to opt for a solution that could reduce the complexity of these particular operations, accepting a higher complexity for the look-up of an identifier. Given the implementation of a symbol table as a list of hash-tables, the cost for entering and exiting a scope is \(O(1)\), while the cost for the look-up operation is \(O(depth_{nesting})\).
@@ -318,6 +327,7 @@ There are several ways to improve the given solutions. Among these, one could ad
 
 Also, the bytecode generation and relative interpreter are missing.
 
+\clearpage
 
 \begin{thebibliography}{9}
 \bibitem{reference}
