@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
+import util.AssetLanlib;
 import util.Environment;
 import util.SemanticError;
 
@@ -128,22 +129,30 @@ public class FunctionNode implements Node {
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
-        if ( env.addEntry(type, id) != null )
+        if ( env.addEntry(null, id) != null )
             res.add(new SemanticError("Function id "+id+" already declared"));
         else {
+
+            STentry entry = env.lookup(id);
 
             // Enter a new scope (increase nesting level and add relative hashmap to symTable)
             env.enterScope();
 
+            ArrayList<Node> parTypes = new ArrayList<>();
             // Delegate parameter declarations semantic check to respective node
             if(parameters != null) {
                 res.addAll(parameters.checkSemantics(env));
+                parTypes = ((DecNode)parameters).getTypeList();
             }
 
+            int noa = 0;    // number of assets
             // Delegate asset declarations semantic check to respective node
             if(assets != null) {
                 res.addAll(assets.checkSemantics(env));
+                noa = ((AdecNode)assets).getNumberOfAssets();
             }
+
+            entry.addType( new ArrowTypeNode(parTypes, noa, type));
 
             // Delegate inner declarations semantic check to respective nodes
             for(Node n : declarations){
@@ -165,4 +174,32 @@ public class FunctionNode implements Node {
         
         return res;
 	}
+
+    @Override
+    public Node typeCheck() {
+        if (parameters != null)
+            parameters.typeCheck();
+        if (assets != null)
+            assets.typeCheck();
+        for (Node declaration:declarations)
+            declaration.typeCheck();
+
+        boolean returnFound = false;    // Flag (ho trovato il return node)
+        for (Node statement:statementlist) {
+            statement.typeCheck();
+            if (statement instanceof ReturnNode) {
+                if (! (AssetLanlib.isSubtype(statement.typeCheck(), type))) {
+                    System.out.println("incompatible value for function "+id);
+                    System.exit(0);
+                }
+                returnFound = true;
+            }
+        }
+        if (type != null && !returnFound) {
+            System.out.println("No return value for function of type " + type + " found.\n");
+            System.exit(0);
+        }
+
+        return null;
+    }
 }  

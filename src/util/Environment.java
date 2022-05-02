@@ -105,18 +105,19 @@ public class Environment {
 	 * Useful when we found the use of an id to check if it has been declared or not
 	 * In a program, every di must be declared before use in the current scope or an enclosing one
 	 * @param id the id to be searched
-	 * @return 'true' if the id has been found, 'false' otherwise
+	 * @return the STentry if the id has been found, null otherwise
 	 */
-	public Boolean lookup(String id) {
+	public STentry lookup(String id) {
 
 		// Get current nesting level
         int nl = getNestingLevel();
 
         // Look-up for the id
 		while(nl >= 0){
-            if(checkDeclaration(id, nl) != null){
+			STentry tmp = checkDeclaration(id, nl);
+            if(tmp != null){
                 // Id found
-                return true;
+                return tmp;
             } else {
                 // Could not find the id in the current scope
                 // Try searching in the enclosing scopes
@@ -126,6 +127,6 @@ public class Environment {
         }
 
         // If this point is reached, it means that the id has not been found
-		return false;
+		return null;
 	}
 }

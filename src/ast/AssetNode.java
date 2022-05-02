@@ -12,6 +12,8 @@ public class AssetNode implements Node {
      */
     private String id;
 
+    private Node type;
+
     /**
      * The class constructor; it take as argument the asset id
      * @param i the asset id
@@ -19,6 +21,7 @@ public class AssetNode implements Node {
      */
     public AssetNode(String i) {
         id = i;
+        type = new AssetTypeNode();
     }
 
     /**
@@ -58,9 +61,14 @@ public class AssetNode implements Node {
         // Introducing "entry"
         // If addEntry returns null, it means that another declaration with the same id
         // has been found in the same scope, and therefore an "already declared id" is provided
-        if (env.addEntry(null, id) != null)
+        if (env.addEntry(type, id) != null)
         res.add(new SemanticError("Error when declaring asset of id " + id +"\n" +
                                   "Id already used for declaration in the same scope"));
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        return null;
     }
 }

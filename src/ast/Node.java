@@ -26,4 +26,6 @@ public interface Node {
      * @return a list of semantic errors (can be empty)
      */
     ArrayList<SemanticError> checkSemantics(Environment env);
+
+    Node typeCheck();
 }

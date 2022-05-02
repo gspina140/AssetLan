@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
+import util.AssetLanlib;
 
 public class CallNode implements Node {
 
@@ -22,6 +23,10 @@ public class CallNode implements Node {
      */
     private ArrayList<String> idlist;
 
+    private STentry entry;
+
+    private ArrayList<STentry> aentries;
+
     /**
      * Class constructor; it takes as parameter the id of the function and instantiates two lists
      * containing the espressions defining the parameters and the id of the assets respectively
@@ -32,6 +37,7 @@ public class CallNode implements Node {
         this.id = id;
         idlist  = new ArrayList<String>();
         explist = new ArrayList<Node>();
+        this.entry = null;
     }
 
     /**
@@ -92,7 +98,8 @@ public class CallNode implements Node {
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // Look-up for the function id
-        if (!env.lookup(id))
+        entry = env.lookup(id);
+        if (entry == null)
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Function " + id + " han not been declared"));
 
@@ -103,12 +110,41 @@ public class CallNode implements Node {
         
         // Look-up for each asset id
         for (String a : idlist) {
+            aentries.add(env.lookup(a));
             // Look-up for the asset id a
-            if (!env.lookup(a))
+            if (aentries.get(aentries.size()) == null)
                 // The id has not been found and an error should be provided
                 res.add(new SemanticError("Asset " + a + " han not been declared"));
         }
 
         return res;
     }
+
+    @Override
+    public Node typeCheck() {
+        ArrayList<Node> parlist = ((ArrowTypeNode)entry.getType()).getParList();
+        int noa = ((ArrowTypeNode)entry.getType()).getNoa();
+        if (parlist.size() != explist.size()) {
+            System.out.println("Wrong number of parameters for function "+id);
+            System.exit(0);
+        }
+        for (int i = 0; i < explist.size(); i++) {
+            if (! (AssetLanlib.isSubtype(explist.get(i).typeCheck(),parlist.get(i) ) ) ) {
+                System.out.println("Error type in expression " + explist.get(i) + "Expecting: " + parlist.get(i));
+                System.exit(0);
+            }
+        }
+        if (idlist.size() != noa) {
+            System.out.println("Wrong number of assets for function "+id);
+            System.exit(0);
+        }
+        for (int i = 0; i < aentries.size(); i++) {
+            if (! (aentries.get(i).getType() instanceof AssetTypeNode) ) {
+                System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
+                System.exit(0);
+            }
+        }
+        return null;
+    }
+
 }

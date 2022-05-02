@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
+import util.AssetLanlib;
 
 public class AssignmentNode implements Node {
     
@@ -17,6 +18,8 @@ public class AssignmentNode implements Node {
      */
     private Node exp;
 
+    private STentry entry;
+
     /**
      * Class constructor; it takes as parameters both an id and an expression
      * @param i the id of the variable we are assigning to
@@ -24,8 +27,9 @@ public class AssignmentNode implements Node {
      * @return an object of type AssignmentNode
      */
     public AssignmentNode(String i, Node e){
-        id  = i;
-        exp = e;
+        id    = i;
+        exp   = e;
+        entry = null;
     }
 
     /**
@@ -55,7 +59,8 @@ public class AssignmentNode implements Node {
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
         // Look-up for the  id
-        if (!env.lookup(id))
+        entry = env.lookup(id);
+        if (entry == null)
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Identifier (assignment) of " + id + " has not been declared"));
         
@@ -63,5 +68,14 @@ public class AssignmentNode implements Node {
         res.addAll(exp.checkSemantics(env));
         
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        if (! (AssetLanlib.isSubtype(entry.getType(), exp.typeCheck())) ) {
+            System.out.println("incompatible value for variable "+id);
+            System.exit(0);
+        }
+        return null;
     }
 }

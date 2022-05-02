@@ -48,4 +48,9 @@ public class ReturnNode implements Node {
             return new ArrayList<SemanticError>();
         }
     }
+
+    @Override
+    public Node typeCheck() {
+        return exp.typeCheck();
+    }
 }

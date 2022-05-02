@@ -112,4 +112,15 @@ public class ProgramNode implements Node {
         // Return the result
         return res;
     }
+
+    @Override
+    public Node typeCheck () {
+        for (Node field:fieldlist)
+            field.typeCheck();
+        for (Node asset:assetlist)
+            asset.typeCheck();
+        for (Node function:functionlist)
+            function.typeCheck();
+        return initcall.typeCheck();
+    }
 }

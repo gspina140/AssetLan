@@ -77,4 +77,12 @@ public class IteNode implements Node {
 
         return res;
     }
+
+    @Override
+    public Node typeCheck() {
+        cond.typeCheck();
+        for (Node statement:statementsList)
+            statement.typeCheck();
+        return null;
+    }
 }

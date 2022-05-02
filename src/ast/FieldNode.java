@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
+import util.AssetLanlib;
 
 public class FieldNode implements Node {
 
@@ -71,5 +72,14 @@ public class FieldNode implements Node {
             res.addAll(exp.checkSemantics(env));
 
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        if (! (AssetLanlib.isSubtype(exp.typeCheck(),type)) ) {
+            System.out.println("incompatible value for variable "+id);
+            System.exit(0);
+        }
+        return null;
     }
 }

@@ -52,4 +52,9 @@ public class BaseExpNode implements Node{
         
         return res;
     }
+
+    @Override
+    public Node typeCheck() {
+        return exp.typeCheck();
+    }
 }

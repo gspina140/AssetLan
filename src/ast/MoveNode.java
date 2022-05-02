@@ -12,6 +12,8 @@ public class MoveNode implements Node {
      */
     private String id1, id2;
 
+    private STentry entry1, entry2;
+
     /**
      * Class constructor; it takes as parameters the ids 
      * @param i1 a String containing the id of the first operator
@@ -47,16 +49,31 @@ public class MoveNode implements Node {
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
+        entry1 = env.lookup(id1);
         // Look-up for the first id
-        if (!env.lookup(id1))
+        if (entry1 == null)
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Asset " + id1 + " han not been declared"));
 
+        entry2 = env.lookup(id2);
         // Look-up for the second id
-        if (!env.lookup(id2))
+        if (entry2 == null)
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Asset " + id2 + " han not been declared"));
         
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        if(! (entry1.getType() instanceof AssetTypeNode) ) {
+            System.out.println("Left id of operation move must be an asset");
+            System.exit(0);
+        }
+        if(! (entry2.getType() instanceof AssetTypeNode) ) {
+            System.out.println("Right id of operation move must be an asset");
+            System.exit(0);
+        }
+        return null;
     }
 }

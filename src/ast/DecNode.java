@@ -45,6 +45,10 @@ public class DecNode implements Node{
         idList.add(i);
     }
 
+    public ArrayList<Node> getTypeList() {
+        return this.typeList;
+    }
+
     /**
      * Override of the toPrint method
      * Method to print a message containing information about the node
@@ -91,5 +95,10 @@ public class DecNode implements Node{
         }
 
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        return null;
     }
 }

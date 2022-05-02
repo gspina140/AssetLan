@@ -40,6 +40,10 @@ public class AdecNode implements Node{
         return ids;
     }
 
+    public int getNumberOfAssets() {
+        return ids.size();
+    }
+
     /**
      * Override of the toPrint method
      * Method to print a message containing information about the node
@@ -79,12 +83,17 @@ public class AdecNode implements Node{
             // Introducing "entry"
             // If addEntry returns null, it means that another declaration with the same id
             // has been found in the same scope, and therefore an "already declared id" is provided
-            if(env.addEntry(null, id) != null){
+            if(env.addEntry(new AssetTypeNode(), id) != null){
                 res.add(new SemanticError("Error when declaring asset of id " + id +"\n" +
                                           "Id already used for declaration in the same scope"));
             }
         }
 
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        return null;
     }
 }

@@ -10,6 +10,8 @@ public class TransferNode implements Node{
      * A string containing the id of the asset to transfer from
      */
     private String id;
+
+    private STentry entry;
     
     /**
      * The class constructor; it take as parameter a string containing an asset id
@@ -46,10 +48,20 @@ public class TransferNode implements Node{
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
 
         // Look-up for the asset id
-        if (!env.lookup(id))
+        entry = env.lookup(id);
+        if (entry == null)
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Asset " + id + " han not been declared"));
 
         return res;
+    }
+
+    @Override
+    public Node typeCheck() {
+        if (entry.getType() instanceof AssetTypeNode) {
+            System.out.println("Transfer operation requires an asset");
+            System.exit(0);
+        }
+        return null;
     }
 }
