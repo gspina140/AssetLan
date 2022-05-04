@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
+import util.AssetLanlib;
 import util.Environment;
 import util.SemanticError;
 
@@ -12,10 +13,11 @@ public class InitCallNode implements Node {
      */
 	private String id;
 
-	/**
-     * The expressions defining the parameters and the assets of the function
-     */
-	private ArrayList<Node> explist;
+    private Node parameters;
+
+    private Node assets;
+
+    private STentry entry;
 	
 	/**
      * Class constructor; it takes as parameter the id of the function and instantiates
@@ -23,18 +25,10 @@ public class InitCallNode implements Node {
      * @param id a String containing the id of the function
      * @return an object of type InitCallNode
      */
-	public InitCallNode(String id) {
-		this.id = id;
-		explist = new ArrayList<Node>();
-	}
-	
-	/**
-	 * Add an expression node to the list of espression nodes defining the parameters and the assets of the function
-	 * @param n the node to be added to the list
-	 * @return void
-	 */
-	public void addExp(Node n) {
-		explist.add(n);
+	public InitCallNode(String id, Node par, Node as) {
+		this.id    = id;
+		parameters = par;
+        assets     = as;
 	}
 
 	/**
@@ -46,14 +40,7 @@ public class InitCallNode implements Node {
      */
 	@Override
 	public String toPrint(String s) {
-
-		// String containing the expressions that define the parameters and the assets
-        String e = "";
-
-        for(Node a : explist)
-            e += a.toPrint(s + " ");
-
-        return s + "Initialization call:\t" + id + e;
+        return s + "Initialization call:\t" + id + parameters.toPrint(s + " ") + assets.toPrint(s + " ");
 	}
 	
 	/**
@@ -70,16 +57,56 @@ public class InitCallNode implements Node {
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
+        entry = env.lookup(id);
 		// Look-up for the function id
-        if (!env.lookup(id))
+        if (entry == null)
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Function " + id + " han not been declared"));
              	
         // Delegate semantic check of expressions that define the parameters and the assets to relative nodes
-		for(Node e : explist) {
-			res.addAll(e.checkSemantics(env));
-		}
-			
+		res.addAll(parameters.checkSemantics(env));
+
+        res.addAll(assets.checkSemantics(env));
+
         return res;
 	}
+
+
+    @Override
+    public Node typeCheck(){
+
+        ArrayList<Node> parlist = ((ArrowTypeNode)entry.getType()).getParList();
+
+		ArrayList<Node> pars = ((ExpListNode)parameters).getExps();
+
+        ArrayList<Node> aslist = ((ExpListNode)assets).getExps();
+
+        int noa = ((ArrowTypeNode)entry.getType()).getNoa();
+
+        if(parlist.size() != pars.size()){
+            System.out.println("Error: wrong number of parameters in initialization call for function " + id);
+            System.exit(0);
+        }
+
+        for(int i = 0; i < pars.size(); i++){
+            if(! (AssetLanlib.isSubtype(parlist.get(i), pars.get(i).typeCheck()))){
+                System.out.println("Type error, expression : " + pars.get(i) + "expecting: " + parlist.get(i));
+                System.exit(0);
+            }
+        }
+
+        if(aslist.size() != noa){
+            System.out.println("Error: wrong number of assets in initialization call for function " + id);
+            System.exit(0);
+        }
+
+        for(int i = 0; i < aslist.size(); i++){
+            if(! (aslist.get(i).typeCheck() instanceof AssetTypeNode)){
+                System.out.println("Type error, expression : " + aslist.get(i) + "is not of an asset");
+                System.exit(0);
+            }
+        }
+
+        return null;
+    }
 }

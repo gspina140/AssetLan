@@ -18,6 +18,7 @@ import parser.AssetLanParser.CallFunContext;
 import parser.AssetLanParser.DecContext;
 import parser.AssetLanParser.DerExpContext;
 import parser.AssetLanParser.ExpContext;
+import parser.AssetLanParser.ExplistContext;
 import parser.AssetLanParser.FieldContext;
 import parser.AssetLanParser.FunctionContext;
 import parser.AssetLanParser.InitcallContext;
@@ -389,12 +390,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             ids.add(ctx.ID(i).getText());
 
         // Create the result node assigning the function id (first id in the tmeporary list)
-        CallNode res = new CallNode(ids.get(0));
+        CallNode res = new CallNode(ids.get(0), visitExplist(ctx.explist()));
 
-        // Add espressions defining the parameters to the node
-        for(ExpContext ec: ctx.exp())
-            res.addExp(visit(ec));
-        
         // Add assets id to the node
         for(int i=1; i < ids.size(); i++)
             res.addId(ids.get(i));
@@ -409,16 +406,25 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
      */
     @Override
     public Node visitInitcall(InitcallContext ctx){
+        return new InitCallNode(ctx.ID().getText(), visitExplist(ctx.parameters), visitExplist(ctx.assets));
+    }
 
-        // Create the resulting InitCall node passing the init function id
-        InitCallNode res = new InitCallNode(ctx.ID().getText());
+    @Override
+    public Node visitExplist(ExplistContext ctx){
+        ArrayList<Node> exps = new ArrayList<>();
 
-        // For each expression defining a parameter or an asset, add it to the list of expression nodes
-        for(ExpContext ec:ctx.exp())
-            res.addExp(visit(ec));
+        for(ExpContext ec : ctx.exp()){
+            exps.add(visit(ec));
+        }
+
+        ExpListNode res = new ExpListNode(exps.get(0));
+
+        for(int i=1; i<exps.size(); i++)
+            res.addExp(exps.get(i));
 
         return res;
     }
+
 
     /**
      * Override of the visit of a Base Expression node

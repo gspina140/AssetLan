@@ -16,7 +16,7 @@ public class CallNode implements Node {
     /**
      * The expressions defining the parameters
      */
-    private ArrayList<Node> explist;
+    private Node expressions;
 
     /**
      * The ids of the function assets
@@ -33,20 +33,11 @@ public class CallNode implements Node {
      * @param id a String containing the id of the function
      * @return an object of type CallNode
      */
-    public CallNode(String id) {
+    public CallNode(String id, Node exp) {
         this.id = id;
         idlist  = new ArrayList<String>();
-        explist = new ArrayList<Node>();
+        expressions = exp;
         this.entry = null;
-    }
-
-    /**
-     * Add expression node to the list of expressions that define the parameters
-     * @param n the node containing the expression
-     * @return void
-     */
-    public void addExp(Node n) {
-        explist.add(n);
     }
 
     /**
@@ -68,19 +59,13 @@ public class CallNode implements Node {
     @Override
     public String toPrint(String s) { 
 
-        // String containing the expressions that define the parameters
-        String e = "";   
-
         // String containing the ids of the assets
         String i = "";
 
-        for(Node a : explist)
-            e += a.toPrint(s + " ");
-        
         for(String p : idlist)
             i += p;
 
-        return s + "Call:\t" + id + e + i; 
+        return s + "Call:\t" + id + expressions.toPrint(s + " ") + i; 
     }
 
     /**
@@ -104,9 +89,7 @@ public class CallNode implements Node {
             res.add(new SemanticError("Function " + id + " han not been declared"));
 
         // Delegate semantic check of expressions that define the parameters to relative nodes
-        for (Node e : explist) {
-            res.addAll(e.checkSemantics(env));
-        }
+        res.addAll(expressions.checkSemantics(env));
         
         // Look-up for each asset id
         for (String a : idlist) {
@@ -122,28 +105,37 @@ public class CallNode implements Node {
 
     @Override
     public Node typeCheck() {
+
         ArrayList<Node> parlist = ((ArrowTypeNode)entry.getType()).getParList();
+
+        ArrayList<Node> pars = ((ExpListNode)expressions).getExps();
+
         int noa = ((ArrowTypeNode)entry.getType()).getNoa();
-        if (parlist.size() != explist.size()) {
+
+        if (parlist.size() != pars.size()) {
             System.out.println("Wrong number of parameters for function "+id);
             System.exit(0);
         }
-        for (int i = 0; i < explist.size(); i++) {
-            if (! (AssetLanlib.isSubtype(explist.get(i).typeCheck(),parlist.get(i) ) ) ) {
-                System.out.println("Error type in expression " + explist.get(i) + "Expecting: " + parlist.get(i));
+
+        for (int i = 0; i < pars.size(); i++) {
+            if (! (AssetLanlib.isSubtype(pars.get(i).typeCheck(), parlist.get(i) ) ) ) {
+                System.out.println("Error type in expression " + pars.get(i) + "Expecting: " + parlist.get(i));
                 System.exit(0);
             }
         }
+
         if (idlist.size() != noa) {
             System.out.println("Wrong number of assets for function "+id);
             System.exit(0);
         }
+
         for (int i = 0; i < aentries.size(); i++) {
             if (! (aentries.get(i).getType() instanceof AssetTypeNode) ) {
                 System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
                 System.exit(0);
             }
         }
+
         return null;
     }
 

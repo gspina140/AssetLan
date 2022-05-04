@@ -1,4 +1,4 @@
-// Generated from parser/AssetLan.g4 by ANTLR 4.7.1
+// Generated from AssetLan.g4 by ANTLR 4.9.3
 package parser;
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -242,6 +242,16 @@ public interface AssetLanListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInitcall(AssetLanParser.InitcallContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link AssetLanParser#explist}.
+	 * @param ctx the parse tree
+	 */
+	void enterExplist(AssetLanParser.ExplistContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link AssetLanParser#explist}.
+	 * @param ctx the parse tree
+	 */
+	void exitExplist(AssetLanParser.ExplistContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code baseExp}
 	 * labeled alternative in {@link AssetLanParser#exp}.

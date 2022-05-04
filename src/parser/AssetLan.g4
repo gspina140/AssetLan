@@ -40,9 +40,11 @@ ret			: 'return' (exp)?;
 // one statement after an 'if' or an 'else' token using curly brackets
 ite			: 'if' '(' exp ')' (statement | '{' statement+ '}') ('else' (statement | '{' statement+ '}') )?;
 
-call		: ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']';
+call		: ID '(' (explist)? ')' '[' (ID (',' ID)* )? ']';
 
-initcall	: ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']';
+initcall	: ID '(' (parameters = explist )? ')' '[' (assets = explist )? ']';
+
+explist     : exp (',' exp)* ;
 
 exp			: '(' exp ')'											# baseExp
 			| '-' exp												# negExp

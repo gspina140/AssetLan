@@ -56,12 +56,4 @@ public class BinExpNode implements Node{
 
         return res;
     }
-
-    @Override
-    public Node typeCheck() {
-        if (! (AssetLanlib.isSubtype(entry.getType(), exp.typeCheck())) ) {
-            System.out.println("incompatible value for variable "+id);
-            System.exit(0);
-        }
-    }
 }
