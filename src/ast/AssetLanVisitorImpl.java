@@ -78,7 +78,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
 		// Visit initcall context
         try {
-            initcall = visit(ctx.initcall());
+            initcall = visitInitcall(ctx.initcall());
         } catch (NullPointerException e) {
             System.err.println("Warning: an error has occured when trying to visit initcall node\n");
         }
@@ -406,7 +406,16 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
      */
     @Override
     public Node visitInitcall(InitcallContext ctx){
-        return new InitCallNode(ctx.ID().getText(), visitExplist(ctx.parameters), visitExplist(ctx.assets));
+
+        InitCallNode res = new InitCallNode(ctx.ID().getText());
+
+        if(ctx.parameters != null)
+            res.addPar(visitExplist(ctx.parameters));
+
+        if(ctx.assets != null)
+            res.addAs(visitExplist(ctx.assets));
+
+        return res;
     }
 
     @Override
@@ -443,7 +452,36 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
      */
     @Override
     public Node visitBinExp(BinExpContext ctx){
-        return new BinExpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+        String s =ctx.op.getText();
+
+        switch(s){
+            case "+":
+                return new PlusMinusNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "-":
+                return new PlusMinusNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "*":
+                return new MultDivNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "/":
+                return new MultDivNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "==":
+                return new EqualDiffNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "!=":
+                return new EqualDiffNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "<":
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "<=":
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case ">":
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case ">=":
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "&&":
+                return new LogicOpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            case "||":
+                return new LogicOpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+            default:
+                return null;
+        }
     }
 
     /**

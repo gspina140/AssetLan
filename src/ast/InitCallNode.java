@@ -25,11 +25,19 @@ public class InitCallNode implements Node {
      * @param id a String containing the id of the function
      * @return an object of type InitCallNode
      */
-	public InitCallNode(String id, Node par, Node as) {
+	public InitCallNode(String id) {
 		this.id    = id;
-		parameters = par;
-        assets     = as;
+		parameters = null;
+        assets     = null;
 	}
+
+    public void addPar(Node p) {
+        parameters = p;
+    }
+
+    public void addAs(Node as) {
+        assets = as;
+    }
 
 	/**
      * Override of the toPrint method
@@ -64,22 +72,29 @@ public class InitCallNode implements Node {
             res.add(new SemanticError("Function " + id + " han not been declared"));
              	
         // Delegate semantic check of expressions that define the parameters and the assets to relative nodes
-		res.addAll(parameters.checkSemantics(env));
+		if(parameters != null)
+            res.addAll(parameters.checkSemantics(env));
 
-        res.addAll(assets.checkSemantics(env));
+        if(assets != null)
+            res.addAll(assets.checkSemantics(env));
 
         return res;
 	}
-
 
     @Override
     public Node typeCheck(){
 
         ArrayList<Node> parlist = ((ArrowTypeNode)entry.getType()).getParList();
+        
+        ArrayList<Node> pars = new ArrayList<Node>();
 
-		ArrayList<Node> pars = ((ExpListNode)parameters).getExps();
+        if(parameters != null)
+		    pars = ((ExpListNode)parameters).getExps();
 
-        ArrayList<Node> aslist = ((ExpListNode)assets).getExps();
+        ArrayList<Node> aslist= new ArrayList<Node>();
+        
+        if(assets != null)
+            aslist = ((ExpListNode)assets).getExps();
 
         int noa = ((ArrowTypeNode)entry.getType()).getNoa();
 
@@ -107,6 +122,6 @@ public class InitCallNode implements Node {
             }
         }
 
-        return null;
+        return ((ArrowTypeNode) entry.getType()).getRet();
     }
 }

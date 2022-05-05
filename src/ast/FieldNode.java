@@ -76,10 +76,13 @@ public class FieldNode implements Node {
 
     @Override
     public Node typeCheck() {
-        if (! (AssetLanlib.isSubtype(exp.typeCheck(),type)) ) {
-            System.out.println("incompatible value for variable "+id);
-            System.exit(0);
-        }
+        
+        if(exp != null)
+            if (! (AssetLanlib.isSubtype(exp.typeCheck(),type)) ) {
+                System.out.println("incompatible value for variable "+id);
+                System.exit(0);
+            }
+        
         return null;
     }
 }

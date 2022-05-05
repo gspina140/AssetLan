@@ -48,10 +48,16 @@ public class DerExpNode implements Node{
 	    ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
         // Look-up for the id
-        if (!env.lookup(id))
+        if (env.lookup(id) == null) 
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Identifier " + id + " han not been declared"));
     
 	    return res;
 	}
+
+
+    @Override
+    public Node typeCheck() {
+        return null;
+    }
 }

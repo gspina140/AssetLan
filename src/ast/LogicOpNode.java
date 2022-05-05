@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
+import util.AssetLanlib;
 
-public class BinExpNode implements Node{
-
+public class LogicOpNode implements Node{
+    
     /**
      * Nodes containing the expression on the left (eL) and on the right (eR) side of the operator, respectively
      */
@@ -18,7 +19,7 @@ public class BinExpNode implements Node{
      * @param e2 the node containing the expression on the right side of the operator
      * @return an object of type BinExpNode
      */
-    public BinExpNode(Node e1, Node e2){
+    public LogicOpNode(Node e1, Node e2){
         eL = e1;
         eR = e2;
     }
@@ -55,5 +56,22 @@ public class BinExpNode implements Node{
         res.addAll(eR.checkSemantics(env));
 
         return res;
+    }
+
+    /**
+     * Override of the typeCheck function
+     * It checks if the type of the expression is correct
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return the type of the expression
+     */
+    @Override
+    public Node typeCheck(){
+
+        if (! (AssetLanlib.isSubtype(eL.typeCheck(), new BoolTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new BoolTypeNode()))){
+            System.out.println("Both operator of logic operation (i.e., && - ||) must be of type boolean");
+            System.exit(0);
+        }
+
+        return new BoolTypeNode();
     }
 }

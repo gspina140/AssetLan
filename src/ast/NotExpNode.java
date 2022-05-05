@@ -52,4 +52,14 @@ public class NotExpNode implements Node{
         return res;
     }
 
+    @Override
+    public Node typeCheck() {   //We are checking that the expression to be applyied the not operator is boolean (maybe it could be an integer??)
+
+        if(! (exp.typeCheck() instanceof BoolTypeNode)){
+            System.out.println("Error: cannot apply not operator (!) to a non-boolean expression");
+            System.exit(0);
+        }
+
+        return null;
+    }
 }

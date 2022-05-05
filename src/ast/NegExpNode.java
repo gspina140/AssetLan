@@ -52,4 +52,14 @@ public class NegExpNode implements Node{
         return res;
     }
     
+    @Override
+    public Node typeCheck() {
+
+        if(! (exp.typeCheck() instanceof IntTypeNode)){
+            System.out.println("Error: cannot negate a non-integer expression");
+            System.exit(0);
+        }
+
+        return null;
+    }
 }
