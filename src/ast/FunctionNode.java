@@ -2,6 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 
+import javax.lang.model.util.ElementScanner6;
+
 import util.AssetLanlib;
 import util.Environment;
 import util.SemanticError;
@@ -107,12 +109,25 @@ public class FunctionNode implements Node {
         for (Node statement : statementlist)
             statementlstr += statement.toPrint(s+" ");
 
-        return s + "Function:" + id +"\n"
-            + type.toPrint(s + " ")
-            + parameters.toPrint(s + " ")
-            + assets.toPrint(s + " ")
-            + dec
-            + statementlstr ;
+        String res = "";
+        if(parameters != null && assets != null)
+            return s + "Function: " + id 
+                + type.toPrint(s) + "\tParameter(s) " 
+                + parameters.toPrint(s) + "\t"
+                + assets.toPrint(s) + "\n\t"
+                + dec + "\t"
+                + statementlstr + "\t";
+        else if(parameters != null && assets == null)
+            return s + "Function: " + id 
+                + type.toPrint(s) + "\tParameter(s) "
+                + parameters.toPrint(s) + "\n\t"
+                + dec + "\t"
+                + statementlstr + "\t";
+        else
+            return s + "Function: " + id 
+                + type.toPrint(s) + "\n\t"
+                + dec + "\t"
+                + statementlstr;
     }
   
     /**
@@ -177,10 +192,13 @@ public class FunctionNode implements Node {
 
     @Override
     public Node typeCheck() {
+
         if (parameters != null)
             parameters.typeCheck();
+
         if (assets != null)
             assets.typeCheck();
+
         for (Node declaration:declarations)
             declaration.typeCheck();
 

@@ -28,7 +28,7 @@ public class ValExpNode implements Node{
      * @return the string containing the message
      */
     public String toPrint(String s) {
-      return s + "Value expression:\t" + Integer.toString(val) + " ";
+      return s + "value : " + Integer.toString(val) + " ";
     }
 
     /**

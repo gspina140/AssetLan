@@ -91,9 +91,10 @@ public class Test {
             for (SemanticError e : err)
                 System.out.println("\t" + e);
         }else{
-            //System.out.println("Visualizing AST...");
-            //System.out.println(ast.toPrint(""));
+            System.out.println("\n ###################### \n\nVisualizing AST... \n");
+            System.out.println(ast.toPrint(""));
 
+            System.out.println("\n ###################### \n\nStarting type checking... \n");
             Node type = ast.typeCheck(); //type-checking bottom-up 
             System.out.println(type.toPrint("Type checking ok! Type of the program is: "));
 

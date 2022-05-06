@@ -44,7 +44,7 @@ public class FieldNode implements Node {
      */
     @Override
     public String toPrint(String s) {
-        return s + "Field\t" + type.toPrint(s + " ") + id + exp.toPrint(s + " ");
+        return s + "Field: " + id + type.toPrint(s) + "\t"  + exp.toPrint(s);
     }
 
     /**

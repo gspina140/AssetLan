@@ -63,11 +63,11 @@ public class DecNode implements Node{
         String d = "";
 
         for (int i = 0; i < idList.size(); i++) {
-            d += typeList.get(i).toPrint(s + " ");
             d += idList.get(i);
+            d += typeList.get(i).toPrint(s);
         }
 
-    	return s+"Declaration(s):\t" + d;
+    	return s+"Declaration(s): " + d;
     }
 
     /**

@@ -50,16 +50,20 @@ public class ProgramNode implements Node {
      * @return the string containing the message
      */
     public String toPrint(String s) {
-        String fieldliststr = "";
+
+        String fieldliststr = "\n";
         for (Node field : fieldlist)
-            fieldliststr += field.toPrint(s + "  ");
-        String assetliststr = "";
+            fieldliststr += field.toPrint(s + " ");
+
+        String assetliststr = "\n";
         for (Node asset : assetlist)
-            assetliststr += asset.toPrint(s + "  ");
-        String functionliststr = "";
+            assetliststr += asset.toPrint(s + " ");
+
+        String functionliststr = "\n";
         for (Node function : functionlist)
-            functionliststr += function.toPrint(s + "  ");
-        return s + "Program\n" + fieldliststr + assetliststr + functionliststr + initcall.toPrint(s + "  ");
+            functionliststr += function.toPrint(s + " ");
+            
+        return s + "Program\n" + fieldliststr + assetliststr + functionliststr + "\n\n" + initcall.toPrint(s + " ") + "\n";
     }
 
     /**

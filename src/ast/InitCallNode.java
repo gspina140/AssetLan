@@ -48,8 +48,14 @@ public class InitCallNode implements Node {
      */
 	@Override
 	public String toPrint(String s) {
-        return s + "Initialization call:\t" + id + parameters.toPrint(s + " ") + assets.toPrint(s + " ");
-	}
+
+        if(parameters != null && assets != null)
+            return s + "Initialization call:\t" + id + parameters.toPrint(s + " ") + assets.toPrint(s + " ");
+        else if(parameters != null && assets == null)
+            return s + "Initialization call:\t" + id + parameters.toPrint(s + " ");    
+        else
+            return s + "Initialization call:\t" + id;
+    }
 	
 	/**
      * Override of the checkSemantics function
@@ -83,45 +89,53 @@ public class InitCallNode implements Node {
 
     @Override
     public Node typeCheck(){
+                                   
+	    ArrowTypeNode t=null;
+        if (entry.getType() instanceof ArrowTypeNode) t=(ArrowTypeNode) entry.getType(); 
+        else {
+          System.out.println("Invocation of a non-function "+id);
+          System.exit(0);
+        }
 
-        ArrayList<Node> parlist = ((ArrowTypeNode)entry.getType()).getParList();
+        ArrayList<Node> parlist = t.getParList();
         
         ArrayList<Node> pars = new ArrayList<Node>();
 
-        if(parameters != null)
+        if(parameters != null){
 		    pars = ((ExpListNode)parameters).getExps();
+
+            if(parlist.size() != pars.size()){
+                System.out.println("Error: wrong number of parameters in initialization call for function " + id);
+                System.exit(0);
+            }
+    
+            for(int i = 0; i < pars.size(); i++){
+                if(! (AssetLanlib.isSubtype((pars.get(i)).typeCheck(), parlist.get(i)))){
+                    System.out.println("Type error, expression : " + pars.get(i) + "expecting: " + parlist.get(i));
+                    System.exit(0);
+                }
+            }
+        }
 
         ArrayList<Node> aslist= new ArrayList<Node>();
         
-        if(assets != null)
+        if(assets != null){
             aslist = ((ExpListNode)assets).getExps();
 
-        int noa = ((ArrowTypeNode)entry.getType()).getNoa();
+            int noa = ((ArrowTypeNode)entry.getType()).getNoa();
 
-        if(parlist.size() != pars.size()){
-            System.out.println("Error: wrong number of parameters in initialization call for function " + id);
-            System.exit(0);
-        }
-
-        for(int i = 0; i < pars.size(); i++){
-            if(! (AssetLanlib.isSubtype(parlist.get(i), pars.get(i).typeCheck()))){
-                System.out.println("Type error, expression : " + pars.get(i) + "expecting: " + parlist.get(i));
+            if(aslist.size() != noa){
+                System.out.println("Error: wrong number of assets in initialization call for function " + id);
                 System.exit(0);
             }
-        }
 
-        if(aslist.size() != noa){
-            System.out.println("Error: wrong number of assets in initialization call for function " + id);
-            System.exit(0);
-        }
-
-        for(int i = 0; i < aslist.size(); i++){
-            if(! (aslist.get(i).typeCheck() instanceof AssetTypeNode)){
-                System.out.println("Type error, expression : " + aslist.get(i) + "is not of an asset");
-                System.exit(0);
+            for(int i = 0; i < aslist.size(); i++){
+                if(! (aslist.get(i).typeCheck() instanceof AssetTypeNode)){
+                    System.out.println("Type error, expression : " + aslist.get(i) + "is not of an asset");
+                    System.exit(0);
+                }
             }
         }
-
         return ((ArrowTypeNode) entry.getType()).getRet();
     }
 }

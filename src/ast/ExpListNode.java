@@ -10,6 +10,7 @@ public class ExpListNode implements Node{
     private ArrayList<Node> expList;
 
     public ExpListNode (Node e) {
+        expList = new ArrayList<Node>();
         expList.add(e);
     }
 
