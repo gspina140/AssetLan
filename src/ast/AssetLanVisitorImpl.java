@@ -390,7 +390,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
             ids.add(ctx.ID(i).getText());
 
         // Create the result node assigning the function id (first id in the tmeporary list)
-        CallNode res = new CallNode(ids.get(0), visitExplist(ctx.explist()));
+        CallNode res = new CallNode(ids.get(0));
+
+        if(ctx.explist() != null){
+            res.addExp(visitExplist(ctx.explist()));
+        }
 
         // Add assets id to the node
         for(int i=1; i < ids.size(); i++)
@@ -420,6 +424,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
     @Override
     public Node visitExplist(ExplistContext ctx){
+
         ArrayList<Node> exps = new ArrayList<>();
 
         for(ExpContext ec : ctx.exp()){
@@ -427,7 +432,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         }
 
         ExpListNode res = new ExpListNode(exps.get(0));
-
+        
         for(int i=1; i<exps.size(); i++)
             res.addExp(exps.get(i));
 

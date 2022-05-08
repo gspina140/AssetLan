@@ -59,7 +59,7 @@ public class AdecNode implements Node{
 
         // String of asset ids separated by tabs
         for(String id:ids)
-            res += id; 
+            res += id + " "; 
 
     	return s+"Asset(s) declaration(s): " + res; 
     }

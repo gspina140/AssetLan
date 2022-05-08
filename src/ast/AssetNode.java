@@ -42,7 +42,7 @@ public class AssetNode implements Node {
      */
     @Override
     public String toPrint(String s) {
-        return s + "Asset declaration:\t" + id;
+        return s + "\nAsset declaration: " + id;
     }
 
     /**

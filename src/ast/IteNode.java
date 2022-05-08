@@ -51,7 +51,7 @@ public class IteNode implements Node {
         for (Node st : statementsList)
             str += st.toPrint(s + "");
 
-        return s + "If\n" + "Conditions:\t" + cond.toPrint(s + "  ") + "\nStatements:\t" + str;
+        return s + "If-Then-Else\n\t\t\t" + "Condition: " + cond.toPrint(s + "  ") + "\n\t\t\tStatements:\t" + str;
     }
 
     /**

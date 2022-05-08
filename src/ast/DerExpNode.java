@@ -13,6 +13,8 @@ public class DerExpNode implements Node{
      */
     private String id;
 
+    private STentry entry;
+
     /**
      * Class constructor; it takes as parameter the derivated
      * @param i the derivated id
@@ -31,7 +33,7 @@ public class DerExpNode implements Node{
      */
     @Override
     public String toPrint(String s) {
-        return s + "Derivated id:\t" + id; 
+        return s + "Id:\t" + id; 
     }
 
     /**
@@ -47,8 +49,9 @@ public class DerExpNode implements Node{
 	    // Create result list
 	    ArrayList<SemanticError> res = new ArrayList<SemanticError>();
         
+        entry = env.lookup(id);
         // Look-up for the id
-        if (env.lookup(id) == null) 
+        if (entry == null) 
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Identifier " + id + " han not been declared"));
     
@@ -58,6 +61,6 @@ public class DerExpNode implements Node{
 
     @Override
     public Node typeCheck() {
-        return null;
+        return entry.getType();
     }
 }

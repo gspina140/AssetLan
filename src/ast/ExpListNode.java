@@ -30,7 +30,7 @@ public class ExpListNode implements Node{
             res += e.toPrint(s + "  ");
         }
         
-        return s;
+        return res;
     }
 
     @Override

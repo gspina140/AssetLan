@@ -50,9 +50,11 @@ public class InitCallNode implements Node {
 	public String toPrint(String s) {
 
         if(parameters != null && assets != null)
-            return s + "Initialization call:\t" + id + parameters.toPrint(s + " ") + assets.toPrint(s + " ");
+            return s + "Initialization call:\t" + id + ", parameters " + parameters.toPrint(s + " ") + ", assets " + assets.toPrint(s + " ");
         else if(parameters != null && assets == null)
-            return s + "Initialization call:\t" + id + parameters.toPrint(s + " ");    
+            return s + "Initialization call:\t" + id + ", parameters " + parameters.toPrint(s + " ");    
+        else if(parameters == null && assets != null)
+            return s + "Initialization call:\t" + id + ", assets " + assets.toPrint(s + " ");
         else
             return s + "Initialization call:\t" + id;
     }
@@ -122,7 +124,7 @@ public class InitCallNode implements Node {
         if(assets != null){
             aslist = ((ExpListNode)assets).getExps();
 
-            int noa = ((ArrowTypeNode)entry.getType()).getNoa();
+            int noa = t.getNoa();
 
             if(aslist.size() != noa){
                 System.out.println("Error: wrong number of assets in initialization call for function " + id);
@@ -130,12 +132,12 @@ public class InitCallNode implements Node {
             }
 
             for(int i = 0; i < aslist.size(); i++){
-                if(! (aslist.get(i).typeCheck() instanceof AssetTypeNode)){
+                if(! (aslist.get(i).typeCheck() instanceof AssetTypeNode || aslist.get(i).typeCheck() instanceof IntTypeNode)){ //For initialization calls, integers or assets variables are allowed
                     System.out.println("Type error, expression : " + aslist.get(i) + "is not of an asset");
                     System.exit(0);
                 }
             }
         }
-        return ((ArrowTypeNode) entry.getType()).getRet();
+        return t.getRet();
     }
 }

@@ -33,7 +33,7 @@ public class PlusMinusNode implements Node{
      */
     @Override
     public String toPrint(String s){
-        return s + "Binary expression:\tLeft side," + eL.toPrint(s) +
+        return s + "Expression:\tLeft side," + eL.toPrint(s) +
                                     "\tRight side," + eR.toPrint(s); 
     }
 

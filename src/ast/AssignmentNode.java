@@ -41,7 +41,7 @@ public class AssignmentNode implements Node {
      */
     @Override
     public String toPrint(String s){
-        return s + "Assignment:\t" + id + exp.toPrint(s + " "); 
+        return s + "Assignment:\t" + id + " equals-> "+ exp.toPrint(s + " "); 
     }
 
     /**
@@ -72,10 +72,14 @@ public class AssignmentNode implements Node {
 
     @Override
     public Node typeCheck() {
-        if (! (AssetLanlib.isSubtype(entry.getType(), exp.typeCheck())) ) {
-            System.out.println("incompatible value for variable "+id);
-            System.exit(0);
-        }
+
+        // It is possible to assign the value of an asset to an integer (see program 2 of exercise 3)
+        if (! (entry.getType() instanceof IntTypeNode && exp.typeCheck() instanceof AssetTypeNode)) 
+            if (! (AssetLanlib.isSubtype(entry.getType(), exp.typeCheck())) ) {
+                System.out.println("Incompatible value for variable "+id);
+                System.exit(0);
+            }
+        
         return null;
     }
 }

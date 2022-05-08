@@ -34,8 +34,8 @@ public class EqualDiffNode implements Node{
      */
     @Override
     public String toPrint(String s){
-        return s + "Binary expression:\tLeft expression:\t" + eL.toPrint(s + " ") +
-                                    "\tRight expression:\t" + eR.toPrint(s + " "); 
+        return s + "Expression:\tLeft side," + eL.toPrint(s + " ") +
+                                    "\tRight side," + eR.toPrint(s + " "); 
     }
 
     /**
@@ -68,13 +68,14 @@ public class EqualDiffNode implements Node{
     @Override
     public Node typeCheck(){
 
-        if (! (AssetLanlib.isSubtype(eL.typeCheck(), new IntTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new IntTypeNode()))){
-            System.out.println("Both operator of comparison operation (i.e., == - !=) must be of type int");
+        if(! ( AssetLanlib.isSubtype(eL.typeCheck(), new IntTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new IntTypeNode())) ){
+            System.out.println("Both operator of comparison operation (i.e., == , !=) must be of the same type");
             System.exit(0);
-        }
+        }else
+            return new BoolTypeNode();
 
         if (! (AssetLanlib.isSubtype(eL.typeCheck(), new BoolTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new BoolTypeNode()))){
-            System.out.println("Both operator of comparison operation (i.e., == - !=) must be of type boolean");
+            System.out.println("Both operator of comparison operation (i.e., == , !=) must be of the same type");
             System.exit(0);
         }
 

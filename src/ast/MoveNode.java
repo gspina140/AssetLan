@@ -33,7 +33,7 @@ public class MoveNode implements Node {
      * @return the string containing the message
      */
     public String toPrint(String s){
-        return s + "Move\n" + id1 + " " + id2;
+        return s + "Move: " + id1 + " to " + id2;
     }
 
     /**

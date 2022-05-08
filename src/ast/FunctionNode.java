@@ -99,6 +99,12 @@ public class FunctionNode implements Node {
      */
     @Override
     public String toPrint(String s) {
+        String res = "";
+
+        if(type == null)
+            res += "\nFunction: " + id + " Void\n";
+        else
+            res += "\nFunction: " + id + " " + type.toPrint("") + "\n";
 
         String dec = "";
 
@@ -107,25 +113,26 @@ public class FunctionNode implements Node {
         
         String statementlstr="";
         for (Node statement : statementlist)
-            statementlstr += statement.toPrint(s+" ");
+            statementlstr += statement.toPrint(s+" ") + "\n\t\t";
 
-        String res = "";
         if(parameters != null && assets != null)
-            return s + "Function: " + id 
-                + type.toPrint(s) + "\tParameter(s) " 
+            return s + res + "\tParameter(s) " 
                 + parameters.toPrint(s) + "\t"
                 + assets.toPrint(s) + "\n\t"
                 + dec + "\t"
                 + statementlstr + "\t";
         else if(parameters != null && assets == null)
-            return s + "Function: " + id 
-                + type.toPrint(s) + "\tParameter(s) "
+            return s + res + "\tParameter(s) "
                 + parameters.toPrint(s) + "\n\t"
                 + dec + "\t"
                 + statementlstr + "\t";
+        else if(parameters == null && assets != null)
+            return s + res + "\t"
+                + assets.toPrint(s) + "\n\t"
+                + dec + "\t"
+                + statementlstr + "\t";
         else
-            return s + "Function: " + id 
-                + type.toPrint(s) + "\n\t"
+            return s + res + "\t"
                 + dec + "\t"
                 + statementlstr;
     }

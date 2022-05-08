@@ -33,10 +33,11 @@ public class CallNode implements Node {
      * @param id a String containing the id of the function
      * @return an object of type CallNode
      */
-    public CallNode(String id, Node exp) {
+    public CallNode(String id) {
         this.id = id;
         idlist  = new ArrayList<String>();
-        expressions = exp;
+        aentries = new ArrayList<STentry>();
+        expressions = null;
         this.entry = null;
     }
 
@@ -47,6 +48,10 @@ public class CallNode implements Node {
      */
     public void addId(String id) {
         idlist.add(id);
+    }
+
+    public void addExp(Node e){
+        expressions = e;
     }
 
     /**
@@ -63,9 +68,12 @@ public class CallNode implements Node {
         String i = "";
 
         for(String p : idlist)
-            i += p;
+            i += p + " ";
 
-        return s + "Call:\t" + id + expressions.toPrint(s + " ") + i; 
+        if(expressions != null)
+            return s + "Call:\t" + id + ", parameters " + expressions.toPrint(s + " ") + ", assets " + i; 
+        else
+            return s + "Call:\t" + id + ", assets " + i; 
     }
 
     /**
@@ -93,11 +101,14 @@ public class CallNode implements Node {
         
         // Look-up for each asset id
         for (String a : idlist) {
-            aentries.add(env.lookup(a));
+            STentry aentry = env.lookup(a);
+            
             // Look-up for the asset id a
-            if (aentries.get(aentries.size()) == null)
+            if (aentry == null)
                 // The id has not been found and an error should be provided
                 res.add(new SemanticError("Asset " + a + " han not been declared"));
+            
+            aentries.add(aentry);
         }
 
         return res;
@@ -106,37 +117,49 @@ public class CallNode implements Node {
     @Override
     public Node typeCheck() {
 
-        ArrayList<Node> parlist = ((ArrowTypeNode)entry.getType()).getParList();
-
-        ArrayList<Node> pars = ((ExpListNode)expressions).getExps();
-
-        int noa = ((ArrowTypeNode)entry.getType()).getNoa();
-
-        if (parlist.size() != pars.size()) {
-            System.out.println("Wrong number of parameters for function "+id);
-            System.exit(0);
+        ArrowTypeNode t=null;
+        if (entry.getType() instanceof ArrowTypeNode) t=(ArrowTypeNode) entry.getType(); 
+        else {
+          System.out.println("Invocation of a non-function "+id);
+          System.exit(0);
         }
 
-        for (int i = 0; i < pars.size(); i++) {
-            if (! (AssetLanlib.isSubtype(pars.get(i).typeCheck(), parlist.get(i) ) ) ) {
-                System.out.println("Error type in expression " + pars.get(i) + "Expecting: " + parlist.get(i));
+        ArrayList<Node> parlist = t.getParList();
+        ArrayList<Node> pars = new ArrayList<Node>();
+
+        if(expressions != null) {
+            pars = ((ExpListNode)expressions).getExps();
+
+            if (parlist.size() != pars.size()) {
+                System.out.println("Wrong number of parameters for function "+id);
                 System.exit(0);
+            }
+
+            for (int i = 0; i < pars.size(); i++) {
+                if (! (AssetLanlib.isSubtype(pars.get(i).typeCheck(), parlist.get(i) ) ) ) {
+                    System.out.println("Error type in expression " + pars.get(i) + "Expecting: " + parlist.get(i));
+                    System.exit(0);
+                }
             }
         }
 
-        if (idlist.size() != noa) {
-            System.out.println("Wrong number of assets for function "+id);
-            System.exit(0);
-        }
+        int noa = t.getNoa();
 
-        for (int i = 0; i < aentries.size(); i++) {
-            if (! (aentries.get(i).getType() instanceof AssetTypeNode) ) {
-                System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
+        if(idlist.size() > 0) {
+            if (idlist.size() != noa) {
+                System.out.println("Wrong number of assets for function "+id);
                 System.exit(0);
+            }
+
+            for (int i = 0; i < aentries.size(); i++) {
+                if (! (aentries.get(i).getType() instanceof AssetTypeNode) ) {
+                    System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
+                    System.exit(0);
+                }
             }
         }
 
-        return null;
+        return t.getRet();
     }
 
 }

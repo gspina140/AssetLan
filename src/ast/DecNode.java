@@ -64,7 +64,7 @@ public class DecNode implements Node{
 
         for (int i = 0; i < idList.size(); i++) {
             d += idList.get(i);
-            d += typeList.get(i).toPrint(s);
+            d += typeList.get(i).toPrint(s) + " ";
         }
 
     	return s+"Declaration(s): " + d;

@@ -31,7 +31,7 @@ public class TransferNode implements Node{
      */
     @Override
     public String toPrint(String s){
-        return s + "Transfer:\t" + id;
+        return s + "Transfer:\t" + id + "\n";
     }
 
     /**
@@ -58,7 +58,7 @@ public class TransferNode implements Node{
 
     @Override
     public Node typeCheck() {
-        if (entry.getType() instanceof AssetTypeNode) {
+        if (! (entry.getType() instanceof AssetTypeNode)) {
             System.out.println("Transfer operation requires an asset");
             System.exit(0);
         }
