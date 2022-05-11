@@ -29,7 +29,7 @@ public class PrintNode implements Node {
      * @return the string containing the message
      */
     public String toPrint(String s) {
-        return s + "Print\n" + exp.toPrint(s + "  ");
+        return s + "Print\n\t\t\t" + exp.toPrint(s);
     }
 
     /**

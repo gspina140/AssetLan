@@ -109,11 +109,11 @@ public class FunctionNode implements Node {
         String dec = "";
 
         for(Node d : declarations)
-            dec += d.toPrint(s + " ");
+            dec += d.toPrint(s + "");
         
         String statementlstr="";
         for (Node statement : statementlist)
-            statementlstr += statement.toPrint(s+" ") + "\n\t\t";
+            statementlstr += statement.toPrint(s+"") + "\n\t\t";
 
         if(parameters != null && assets != null)
             return s + res + "\tParameter(s) " 
@@ -213,9 +213,11 @@ public class FunctionNode implements Node {
         for (Node statement:statementlist) {
             statement.typeCheck();
             if (statement instanceof ReturnNode) {
-                if (! (AssetLanlib.isSubtype(statement.typeCheck(), type))) {
-                    System.out.println("incompatible value for function "+id);
-                    System.exit(0);
+                if ( ! (statement.typeCheck() == null && type == null) ) {
+                    if (! (AssetLanlib.isSubtype(statement.typeCheck(), type))) {
+                        System.out.println("incompatible value for function "+id);
+                        System.exit(0);
+                    }           
                 }
                 returnFound = true;
             }

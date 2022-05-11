@@ -33,8 +33,8 @@ public class LogicOpNode implements Node{
      */
     @Override
     public String toPrint(String s){
-        return s + "Binary expression:\tLeft expression:\t" + eL.toPrint(s + " ") +
-                                    "\tRight expression:\t" + eR.toPrint(s + " "); 
+        return s + "Expression:\tLeft expression: " + eL.toPrint(s + " ") +
+                                    "\tRight expression: " + eR.toPrint(s + " "); 
     }
 
     /**

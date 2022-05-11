@@ -34,8 +34,8 @@ public class MultDivNode implements Node{
      */
     @Override
     public String toPrint(String s){
-        return s + "Binary expression:\tLeft expression:\t" + eL.toPrint(s + " ") +
-                                    "\tRight expression:\t" + eR.toPrint(s + " "); 
+        return s + "Expression:\tLeft side: " + eL.toPrint(s + "") +
+                                    "\tRight side: " + eR.toPrint(s + ""); 
     }
 
     /**

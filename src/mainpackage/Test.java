@@ -64,7 +64,7 @@ public class Test {
                                "File must have '.al' extension\n" +
                                "Exiting.\n"); 
             return;
-        }        
+        }
 
         /* Setting the stream */
 		FileInputStream is = new FileInputStream(fileName);         // Program to compile is in a file
@@ -79,6 +79,9 @@ public class Test {
         /* Parser */
         AssetLanParser parser = new AssetLanParser(tokens);         // Instantiate Parser; parser errors will still be printed to console as default
         
+        /* */
+        System.out.println("\n\nAssetLan compilation\n\n");
+
         /* Visitor (semantic analysis) */
 		AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();    // Use custom visitor
 		Node ast = visitor.visit(parser.program());                 // AST generation
