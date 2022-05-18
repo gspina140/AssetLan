@@ -70,10 +70,18 @@ public class MoveNode implements Node {
             System.out.println("Left id of operation move must be an asset");
             System.exit(0);
         }
+
+
         if(! (entry2.getType() instanceof AssetTypeNode) ) {
             System.out.println("Right id of operation move must be an asset");
             System.exit(0);
         }
+
+        if (! ((AssetTypeNode)entry1.getType()).isEmpty() ){
+            ((AssetTypeNode)entry1.getType()).empty();
+            ((AssetTypeNode)entry2.getType()).fill();
+        }
+
         return null;
     }
 }

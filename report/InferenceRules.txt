@@ -1,0 +1,206 @@
+---Come è fatto l'ambiete? cioè una singola entrata della tabella
+\Gamma,n : Id -> (T, n') || Id -> (x1->T1 ... xn->T1) -> (y1->asset ... yn->asset) ->T    T={Int, Bool, Asset}
+
+\\Usiamo catena di frame pointers-------------
+
+
+\Gamma,n |- F  : \Gamma', n'  \\field
+
+\Gamma,n |- Fn : \Gamma', n'  \\function
+
+\Gamma,n |- D  : \Gamma', n'  \\dec
+
+\Gamma,n |- Ad : \Gamma', n'  \\assetdec
+
+\Gamma   |- St : T   \\Statement
+
+\Gamma   |- A  : T    \\Assignment  
+
+\Gamma   |- M  : Asset  \\Move
+
+\Gamma   |- P  
+
+\Gamma   |- Tr : Asset  \\Transfer
+
+\Gamma,n |- R  : \Gamma',n' \\Return
+
+\Gamma,n   |- Ite : \Gamma,n
+
+\Gamma   |- Call  : T
+
+\Gamma   |- InitC : T
+
+\Gamma   |- Exp   : Exp',T     
+
+-----------------------------------
+
+
+[],0 |- F : \Gamma,n    \Gamma,n |- Ad : \Gamma1, n1     \Gamma1,n1 |- Fn : \Gamma2,n2   \Gamma2 |- InitC : T   
+---------------------------------------------------------------------------------------------------------------[Prg]  
+                                    [],0 |- F* Ad* Fn* InitC : T  
+
+
+Offsets---- Int->4byte ---- Bool->1byte ----- Asset->4byte
+
+
+x \notin \Dom(\Gamma)               \Gamma |- e: int  
+-------------------------------------------------------[IntF]
+   \Gamma,n |- int x = e; : \Gamma[x -> (int,n)],n+4  
+   
+   
+x \notin \Dom(\Gamma)               \Gamma |- e: bool  
+-------------------------------------------------------[BoolF]
+   \Gamma,n |- bool x = e; : \Gamma[x -> (bool,n)],n+1  
+   
+ 
+
+x \notin \Dom(\Gamma)               \Gamma |- e: asset  
+-------------------------------------------------------[Asset]
+   \Gamma,n |- asset x = e; : \Gamma[x -> (asset,n)],n+4   										
+   
+   
+   
+   															\Gamma''',n''' |- e:T
+ 															------------------------------
+															\Gamma''',n''' |- return e: T	 																------------------------------										
+                                                                                                                                  .
+ 																  .	
+                        x \notin \Dom(\Gamma) 									      		  .
+               [Dec]				[Adec]		                      [Dec]	                       ------------------------------
+\Gamma.[],0 |- d d' : \Gamma.Gamma',n'   \Gamma',n' |- a a': \Gamma'',n''   \Gamma'',n'' |- d d1: \Gamma''',n'''          \Gamma''',n''' |- S S'
+ --------------------------------------------------------------------------------------------------------------------------------------------------------[Function]
+ \Gamma,n |- T x ( d d' ) [ a a'] { d1 d1' S S' } : \Gamma[ x -> (x1->T1 ... xn->T1) -> (y1->asset ... yn->asset) -> T ],n
+    \\n non dovrebbe cambiare perchè le informazioni necessarie a definire la funzione (parametri) stanno in Gamma 
+ 
+ 
+ 
+ 
+ 
+ x \notin \Dom(\Top(\Gamma)))
+ \Gamma'',n'' = \Gamma[x -> (T,n)],n+(1 || 4)
+----------------------------------------------
+\Gamma,n |- T x; : \Gamma'',n''                       \Gamma'',n'' |- d' : \Gamma',n'
+--------------------------------------------------------------------------------------[Dec]
+               \Gamma,n |- d d' : \Gamma',n'
+ 
+ 
+ 
+ 
+ y \notin \Dom(\Top(\Gamma)))
+ \Gamma'',n'' = \Gamma[y -> (asset,n)],n+4
+----------------------------------------------
+\Gamma,n |- asset y; : \Gamma'',n''                       \Gamma'',n'' |- a' : \Gamma',n'
+------------------------------------------------------------------------------------------[ADec]
+               \Gamma,n |- a a' : \Gamma',n'
+ 
+ 
+ 
+                                                              [Stm]                         [Stm] || [S-Stm]
+ ass    mv   pr   tr   ret   ite    call              \Gamma,n |- S : \Gamma'',n''     \Gamma'',n'' |- S' : \Gamma',n'
+-------------------------------------------[Stm]    -------------------------------------------------------------------[S-Stm]
+ \Gamma,n |- St : T					            \Gamma,n |- S S' : T
+ 
+ 
+ 
+                                            
+x \in \Dom(\Gamma)  \Gamma(x) = T      \Gamma |- e : T
+---------------------------------------------------------[Assment]        
+                \Gamma |- x = e : T
+ 
+ 
+x \in \Dom(\Gamma)  \Gamma(x) = int      \Gamma |- e : asset
+-------------------------------------------------------------[AssmentA]        
+                \Gamma |- x = e : int
+ 
+ 
+ 
+x1 \in \Dom(\Gamma)   x2 \in \Dom(\Gamma)   
+\Gamma(x1) = asset   \Gamma(x2) = asset 
+-------------------------------------------[Move]
+ 	\Gamma |- x1 -o x2 : asset
+ 	
+ 	
+ 	
+ 
+    \Gamma |- e : T 		        x \in \Dom(\Gamma)    \Gamma(x)=asset
+----------------------[Print]          ------------------------------------------[Trans]
+\Gamma |- print e : T                         \Gamma |- transfer x 
+ 
+ 
+										
+     \Gamma |- e : T		          \Gamma |- e : bool    \Gamma |- S : T   \Gamma |- S' : T1   T=T1
+---------------------------[Return]       ----------------------------------------------------------------[Ite]                     
+ \Gamma |- return e :  T                              \Gamma |- if (e) then S else S' : T    
+ 
+ 
+ 
+ 				n = | \Gamma(x)[1] |					m = | \Gamma(x)[2] | 
+ 		      \Gamma |- e1 : T1     ...  \Gamma |- en : Tn         y1 \in \Dom(\Gamma)  ... y1 \in \Dom(\Gamma)
+ x \in \Dom(\Gamma)   \Gamma(x)[1][1] = T1  ...  \Gamma(x)[1][n] = Tn      \Gamma(y1) = asset   ... \Gamma(yn) = asset              \Gamma(x)[3] = T
+ ------------------------------------------------------------------------------------------------------------------------------------------------------[Call] (!!return x quando x è asset
+                                            \Gamma |- x(e1,...,en)[y1,...,ym] : T                                                               ritorna valore intero dell'asset, senza svuotarlo)
+          
+          
+          
+ 
+ 				n = | \Gamma(x)[1] |					m = | \Gamma(x)[2] | 
+ 		      \Gamma |- e1 : T1     ...  \Gamma |- en : Tn         \Gamma |- ae1 : int  ... \Gamma |- aem : int
+ x \in \Dom(\Gamma)   \Gamma(x)[1][1] = T1  ...  \Gamma(x)[1][n] = Tn                                                                 \Gamma(x)[3] = T
+ ------------------------------------------------------------------------------------------------------------------------------------------------------[InitCall] (!!return x quando x è asset
+                                            \Gamma |- x(e1,...,en)[ae1,...,aem] : T                                                               ritorna valore intero dell'asset, senza svuotarlo)
+          
+ 
+ 
+ 
+ 
+ \Gamma |- e: int		\Gamma |- e: bool
+ -------------------[Neg]     ------------------------[Not]
+ \Gamma |- - e: int            \Gamma |- ! e: bool
+ 
+ 
+ x \in \Dom(\Gamma)
+ \Gamma(x) = T
+ ------------------[Der]
+ \Gamma |- x : T
+ 
+ 
+ 
+ 
+ \Gamma |- e1: int | asset      \Gamma |- e2 : int | asset
+ ----------------------------------------------------------[MultDivSumSub]
+ 	\Gamma |- e1 +|-|*|/ e2 : int
+ 
+ 
+ 
+ 
+ 
+ \Gamma |- e1: int | asset      \Gamma |- e2 : int | asset
+ ----------------------------------------------------------[MinMaj]
+ 	\Gamma |- e1 <|<=|>|>= e2 : bool
+ 
+ 
+ 
+ 
+ 
+ \Gamma |- e1: T      \Gamma |- e2 : T1      T=T1
+ ---------------------------------------------------[DifEq]
+ 	\Gamma |- e1 ==|!= e2 : bool
+ 
+ 
+ 
+ 
+ \Gamma |- e1: bool      \Gamma |- e2 : bool
+ --------------------------------------------[AndOr]
+ 	\Gamma |- e1 && | || e2 : bool
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+   

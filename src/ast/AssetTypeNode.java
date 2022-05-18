@@ -7,6 +7,7 @@ import util.Environment;
 
 public class AssetTypeNode implements Node{
 
+    private Boolean isEmpty = true;
     /**
      * The constructor of the class
      */
@@ -25,6 +26,18 @@ public class AssetTypeNode implements Node{
         return s + "Int Type\n";
     }
 
+    public void empty(){
+        isEmpty = true;
+    }
+
+    public void fill(){
+        isEmpty = false;
+    }
+
+    public Boolean isEmpty(){
+        return isEmpty;
+    }
+    
     /**
      * Override of the checkSemantics method
      * Method to check the semantics of the node

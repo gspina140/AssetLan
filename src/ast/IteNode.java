@@ -80,9 +80,22 @@ public class IteNode implements Node {
 
     @Override
     public Node typeCheck() {
-        cond.typeCheck();
-        for (Node statement:statementsList)
-            statement.typeCheck();
+
+
+        if(! (cond.typeCheck() instanceof BoolTypeNode)){
+            System.out.println("Error: condition of if-then-else must be of type bool");
+            System.exit(0);
+        }
+
+
+        for (Node statement:statementsList){
+            if(statement instanceof ReturnNode)
+                return statement.typeCheck();
+            else    
+                statement.typeCheck();
+        }
+
+        
         return null;
     }
 }

@@ -51,6 +51,9 @@ public class ReturnNode implements Node {
 
     @Override
     public Node typeCheck() {
-        return exp.typeCheck();
+        if(exp != null) 
+            return exp.typeCheck();
+        else 
+            return null;
     }
 }

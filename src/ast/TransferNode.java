@@ -62,6 +62,9 @@ public class TransferNode implements Node{
             System.out.println("Transfer operation requires an asset");
             System.exit(0);
         }
+
+        ((AssetTypeNode)entry.getType()).empty();
+        
         return null;
     }
 }
