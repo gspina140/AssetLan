@@ -29,7 +29,10 @@ public class ReturnNode implements Node {
      * @return the string containing the message
      */
     public String toPrint(String s) {
-        return s + "Return: " +  exp.toPrint(s+" ");
+        if (exp != null)
+            return s + "Return: " +  exp.toPrint(s+" ");
+        else
+            return s + "Return: void";
     }
 
     /**

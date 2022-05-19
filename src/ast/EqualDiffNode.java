@@ -68,14 +68,19 @@ public class EqualDiffNode implements Node{
     @Override
     public Node typeCheck(){
 
-        if(! ( AssetLanlib.isSubtype(eL.typeCheck(), new IntTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new IntTypeNode())) ){
-            System.out.println("Both operator of comparison operation (i.e., == , !=) must be of the same type");
-            System.exit(0);
-        }else
-            return new BoolTypeNode();
-
-        if (! (AssetLanlib.isSubtype(eL.typeCheck(), new BoolTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new BoolTypeNode()))){
-            System.out.println("Both operator of comparison operation (i.e., == , !=) must be of the same type");
+        if ( AssetLanlib.isSubtype(eL.typeCheck(), new IntTypeNode()) ) {
+            if(! ( AssetLanlib.isSubtype(eR.typeCheck(), new IntTypeNode())) ){
+                System.out.println("Both operator of comparison operation (i.e., == , !=) must be of the same type");
+                System.exit(0);
+            }
+        }
+        else if ( (AssetLanlib.isSubtype(eL.typeCheck(), new BoolTypeNode())) ) {
+            if (! (AssetLanlib.isSubtype(eR.typeCheck(), new BoolTypeNode())) ){
+                System.out.println("Both operator of comparison operation (i.e., == , !=) must be of the same type");
+                System.exit(0);
+            }
+        } else {
+            System.out.println("Unexpected error\n");
             System.exit(0);
         }
 
