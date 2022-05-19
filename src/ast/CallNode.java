@@ -1,6 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import util.Environment;
 import util.SemanticError;
@@ -156,10 +157,16 @@ public class CallNode implements Node {
                     System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
                     System.exit(0);
                 }
+
+
             }
         }
+
+        t.getFunction().checkLiquidity(aentries);
 
         return t.getRet();
     }
 
 }
+
+

@@ -38,7 +38,7 @@ ret			: 'return' (exp)?;
 
 // We modified the original grammar so that it is possible to have more than
 // one statement after an 'if' or an 'else' token using curly brackets
-ite			: 'if' '(' exp ')' (statement | '{' statement+ '}') ('else' (statement | '{' statement+ '}') )?;
+ite			: 'if' '(' exp ')' '{' thenSts+=statement* '}' ('else' '{' elseSts+=statement* '}' )?;
 
 call		: ID '(' (explist)? ')' '[' (ID (',' ID)* )? ']';
 

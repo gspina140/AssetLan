@@ -167,14 +167,16 @@ public class FunctionNode implements Node {
                 parTypes = ((DecNode)parameters).getTypeList();
             }
 
+            ArrayList<Node> assetL = new ArrayList<Node>();
             int noa = 0;    // number of assets
             // Delegate asset declarations semantic check to respective node
             if(assets != null) {
                 res.addAll(assets.checkSemantics(env));
+                assetL = ((AdecNode)assets).getAsslist();
                 noa = ((AdecNode)assets).getNumberOfAssets();
             }
 
-            entry.addType( new ArrowTypeNode(parTypes, noa, type));
+            entry.addType( new ArrowTypeNode(parTypes, assetL, noa, type));
 
             // Delegate inner declarations semantic check to respective nodes
             for(Node n : declarations){
@@ -190,10 +192,12 @@ public class FunctionNode implements Node {
                 }
             }
             
+            ((ArrowTypeNode)entry.getType()).addFunction(this);
+        
             // Close scope (remove hashmap relative to the scope and decrease nesting level)
             env.exitScope();        
         }
-        
+
         return res;
 	}
 
@@ -229,4 +233,8 @@ public class FunctionNode implements Node {
 
         return null;
     }
+
+    public void checkLiquidity(ArrayList<STentry>  parlist){
+        System.out.println("AOH!!!!!!\n\n\n\n\n");
+    }  
 }  

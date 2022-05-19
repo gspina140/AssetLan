@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
+import util.AssetLanlib;
 import util.Environment;
 import util.SemanticError;
 
@@ -15,7 +16,9 @@ public class IteNode implements Node {
     /**
      * A list of nodes containing all the statements in the 'then' and 'else' blocks
      */
-    private ArrayList<Node> statementsList;
+    private ArrayList<Node> thenStsL;
+
+    private ArrayList<Node> elseStsL;
 
     /**
      * Class constructor; it take as parameter an expression node containing the condition
@@ -24,7 +27,8 @@ public class IteNode implements Node {
      */
     public IteNode(Node c) {
         cond = c;
-        statementsList = new ArrayList<Node>();
+        thenStsL = new ArrayList<Node>();
+        elseStsL = new ArrayList<Node>();
     }
 
     /**
@@ -32,8 +36,12 @@ public class IteNode implements Node {
      * @param st the statement to be added to the list
      * @return null
      */
-    public void addStatement(Node st) {
-        statementsList.add(st);
+    public void addThenStatement(Node st) {
+        thenStsL.add(st);
+    }
+
+    public void addElseStatement(Node st) {
+        elseStsL.add(st);
     }
 
     /**
@@ -48,8 +56,11 @@ public class IteNode implements Node {
         // String containing all the statements in the 'then' and 'else' blocks
         String str = "";
 
-        for (Node st : statementsList)
+        for (Node st : thenStsL)
             str += st.toPrint(s + "");
+
+        for (Node st : elseStsL)
+        str += st.toPrint(s + "");
 
         return s + "If-Then-Else\n\t\t\t" + "Condition: " + cond.toPrint(s + "  ") + "\n\t\t\tStatements:\t" + str;
     }
@@ -72,7 +83,10 @@ public class IteNode implements Node {
         res.addAll(cond.checkSemantics(env));
 
         // Check semantics in the then and in the else statement
-        for (Node st : statementsList)
+        for (Node st : thenStsL)
+            res.addAll(st.checkSemantics(env));
+
+        for (Node st : elseStsL)
             res.addAll(st.checkSemantics(env));
 
         return res;
@@ -87,14 +101,44 @@ public class IteNode implements Node {
             System.exit(0);
         }
 
+        Node r1 = null ;
+        Node r2 = null;
 
-        for (Node statement:statementsList){
+        for (Node statement:thenStsL){
             if(statement instanceof ReturnNode)
-                return statement.typeCheck();
+                r1 = statement;
             else    
                 statement.typeCheck();
         }
 
+        for (Node statement:elseStsL){
+            if(statement instanceof ReturnNode)
+                r2 = statement;
+            else    
+                statement.typeCheck();
+        }
+        
+        if(r1 != null && r2 != null){
+
+            if((r1.typeCheck() == null || r2.typeCheck() == null) ){
+                if(r1.typeCheck() != r2.typeCheck()){
+                    System.out.println("Error: return statements in if-then-else must have the same type");
+                    System.exit(0);
+                }
+                return null;
+            }
+
+            if(! AssetLanlib.isSubtype(r1.typeCheck(), r2.typeCheck()) ){
+                System.out.println("Error: return statements in if-then-else must have the same type");
+                System.exit(0);
+            }
+
+            return r1.typeCheck();
+
+        }else if(r1 != null || r2 != null){
+            System.out.println("Error: return statements in if-then-else must have the same type");
+            System.exit(0);
+        }
         
         return null;
     }

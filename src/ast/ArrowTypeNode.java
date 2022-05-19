@@ -7,13 +7,16 @@ import util.SemanticError;
 public class ArrowTypeNode implements Node {
 
   private ArrayList<Node> parlist;
+  private ArrayList<Node> asslist;
+  private FunctionNode func;
   private int noassets;  // number of assets
   private Node ret;
   
-  public ArrowTypeNode (ArrayList<Node> p, int noa, Node r) {
-    parlist=p;
+  public ArrowTypeNode (ArrayList<Node> p, ArrayList<Node> a, int noa, Node r) {
+    parlist =p;
+    asslist = a;
     noassets=noa;
-    ret=r;
+    ret     =r;
   }
     
   public String toPrint(String s) { //
@@ -27,8 +30,20 @@ public class ArrowTypeNode implements Node {
     return ret;
   }
   
+  public void addFunction (FunctionNode f) { //
+    func = f;
+  }
+
+  public FunctionNode getFunction () { //
+    return func;
+  }
+
   public ArrayList<Node> getParList () { //
     return parlist;
+  }
+
+  public ArrayList<Node> getAssList () { //
+    return asslist;
   }
 
   public int getNoa() {

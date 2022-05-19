@@ -12,6 +12,8 @@ public class AdecNode implements Node{
      */
     private ArrayList<String> ids;
     
+    private ArrayList<Node> asslist;
+
     /**
      * Class constructor using the first id (it is always present)
      * @param i a String containing the id of the first asset declaration
@@ -20,6 +22,8 @@ public class AdecNode implements Node{
     public AdecNode (String id) {
         ids = new ArrayList<String>();
         addId(id);
+
+        asslist = new ArrayList<Node>();
     }
     
     /**
@@ -31,6 +35,10 @@ public class AdecNode implements Node{
         ids.add(id);
     }
 
+    public void addAss(Node ass){
+        asslist.add(ass);
+    }
+
     /**
      * Returns the list of ids
      * @param void
@@ -38,6 +46,10 @@ public class AdecNode implements Node{
      */
     public ArrayList<String> getIds(){
         return ids;
+    }
+
+    public ArrayList<Node> getAsslist(){
+        return asslist;
     }
 
     public int getNumberOfAssets() {
@@ -83,10 +95,14 @@ public class AdecNode implements Node{
             // Introducing "entry"
             // If addEntry returns null, it means that another declaration with the same id
             // has been found in the same scope, and therefore an "already declared id" is provided
-            if(env.addEntry(new AssetTypeNode(), id) != null){
+            STentry aux = env.addEntry(new AssetTypeNode(), id);
+
+            if(aux != null){
                 res.add(new SemanticError("Error when declaring asset of id " + id +"\n" +
                                           "Id already used for declaration in the same scope"));
             }
+
+            addAss(env.lookup(id).getType());
         }
 
         return res;

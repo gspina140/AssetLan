@@ -367,10 +367,12 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         // Create the resulting node passing the expression node containing the condition
         IteNode res = new IteNode(visit(ctx.exp()));
 
-        // For each statement in the 'then' and 'else' blocks, add it to the statementList
-        for(StatementContext sc: ctx.statement())
-            res.addStatement(visit(sc));
+        for(int i = 0; i < ctx.thenSts.size(); i++)
+            res.addThenStatement(visit(ctx.thenSts.get(i)));
 
+        for(int i = 0; i < ctx.elseSts.size(); i++)
+            res.addElseStatement(visit(ctx.elseSts.get(i)));
+        
         return res;
     }
 

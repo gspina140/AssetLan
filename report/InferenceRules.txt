@@ -1,5 +1,21 @@
 ---Come è fatto l'ambiete? cioè una singola entrata della tabella
-\Gamma,n : Id -> (T, n') || Id -> (x1->T1 ... xn->T1) -> (y1->asset ... yn->asset) ->T    T={Int, Bool, Asset}
+\Gamma,n : Id -> ((T || A), n') 					T={Int, Bool}    A={True, False} \\asset pieno o vuoto per controllare liquidity
+	|| Id -> (x1->T1 ... xn->T1) \\pars
+		-> (y1->asset ... yn->asset)  \\assets
+		->T    \\return type, could be void
+
+
+     a1 -o a2			\\move astratta
+-o^ A |  true | false
+true  |   t  |  t
+false |   t  |  f 
+
+
+     transfer a			\\transfer astratta
+tr^ A |  true | false
+      |   f   |  f
+      |   f   |  f
+
 
 \\Usiamo catena di frame pointers-------------
 
@@ -12,19 +28,19 @@
 
 \Gamma,n |- Ad : \Gamma', n'  \\assetdec
 
-\Gamma   |- St : T   \\Statement
+\Gamma   |- St : T, \Gamma'   \\Statement
 
 \Gamma   |- A  : T    \\Assignment  
 
-\Gamma   |- M  : Asset  \\Move
+\Gamma   |- M  : A  \\Move
 
 \Gamma   |- P  
 
-\Gamma   |- Tr : Asset  \\Transfer
+\Gamma   |- Tr : A  \\Transfer
 
 \Gamma,n |- R  : \Gamma',n' \\Return
 
-\Gamma,n   |- Ite : \Gamma,n
+\Gamma,n |- Ite : \Gamma,n
 
 \Gamma   |- Call  : T
 
@@ -98,7 +114,7 @@ x \notin \Dom(\Gamma)               \Gamma |- e: asset
                                                               [Stm]                         [Stm] || [S-Stm]
  ass    mv   pr   tr   ret   ite    call              \Gamma,n |- S : \Gamma'',n''     \Gamma'',n'' |- S' : \Gamma',n'
 -------------------------------------------[Stm]    -------------------------------------------------------------------[S-Stm]
- \Gamma,n |- St : T					            \Gamma,n |- S S' : T
+             \Gamma,n |- St : T					            \Gamma,n |- S S' : T
  
  
  
@@ -108,27 +124,33 @@ x \in \Dom(\Gamma)  \Gamma(x) = T      \Gamma |- e : T
                 \Gamma |- x = e : T
  
  
-x \in \Dom(\Gamma)  \Gamma(x) = int      \Gamma |- e : asset
+x \in \Dom(\Gamma)  \Gamma(x) = int      \Gamma |- e : A
 -------------------------------------------------------------[AssmentA]        
                 \Gamma |- x = e : int
  
  
  
 x1 \in \Dom(\Gamma)   x2 \in \Dom(\Gamma)   
-\Gamma(x1) = asset   \Gamma(x2) = asset 
--------------------------------------------[Move]
- 	\Gamma |- x1 -o x2 : asset
+\Gamma(x1) = a        \Gamma(x2) = a'     a={false}   a' = x1 -o^ x2    	
+--------------------------------------------------------------------[Move]
+ 	\Gamma |- x1 -o x2 : a, a'
  	
  	
  	
+ 															
+    \Gamma |- e : T 		            x \in \Dom(\Gamma)    \Gamma(x)=A  
+--------------------------[Print]       --------------------------------------------[Trans]                            
+\Gamma |- print e : T                         \Gamma |- transfer x : x = {false}
  
-    \Gamma |- e : T 		        x \in \Dom(\Gamma)    \Gamma(x)=asset
-----------------------[Print]          ------------------------------------------[Trans]
-\Gamma |- print e : T                         \Gamma |- transfer x 
  
  
+ 
+     \Gamma |- e : A
+---------------------------[ReturnA]
+\Gamma |- return e : int
+
 										
-     \Gamma |- e : T		          \Gamma |- e : bool    \Gamma |- S : T   \Gamma |- S' : T1   T=T1
+     \Gamma |- e : T 		          \Gamma |- e : bool    \Gamma |- S : T   \Gamma |- S' : T1   T=T1
 ---------------------------[Return]       ----------------------------------------------------------------[Ite]                     
  \Gamma |- return e :  T                              \Gamma |- if (e) then S else S' : T    
  
