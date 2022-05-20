@@ -360,11 +360,200 @@ For the asset it has been defined as a boolean value in order to handle the liqu
 \end{equation}
 \captionof*{figure}{Queste sono le regole base!}
 
-\begin{mathpar}
-\inferrule{ $[],0 \models F : \Gamma, n$ \\ $\Gamma,n \models Ad : \Gamma_1,n_1$ \\ $\Gamma_1, n_1 \models Fn : \Gamma_2, n_2$ \\ $\Gamma_2, n_2 \models InitC : T$ }
-{a}
-\end{mathpar}
+\medskip 
 
+\[
+\inferrule*[right=(Prg)]
+{[\,],0 \models F : \: \Gamma, n \\ \Gamma,n \models Ad : \: \Gamma_1,n_1 \\ \Gamma_1, n_1 \models Fn : \: \Gamma_2, n_2 \\ \Gamma_2, n_2 \models InitC : \:T }
+{[\,], 0 \models F* Ad* Fn* InitC : \: T} 
+\]
+\captionof*{figure}{Program rule, start from empty environment}
+
+\medskip
+
+\[
+\inferrule*[right=(IntF)]
+{Id \notin Dom(\Gamma) \\ \Gamma \models E : \: int}
+{\Gamma, n \models int \: Id = E; : \: \Gamma[Id\rightarrow(int, n)], n+4}
+\inferrule*[right=(BoolF)]
+{Id \notin Dom(\Gamma) \\ \Gamma \models E : \: bool}
+{\Gamma, n \models bool \: Id = E; : \: \Gamma[Id\rightarrow(bool, n)], n+1}
+\]
+\captionof*{figure}{Rules for Field}
+
+\medskip
+
+\[
+\inferrule*[right=(Asset)]
+{Id \notin Dom(\Gamma) \\ \Gamma \models E : \: asset \\ A = \{false\} }
+{\Gamma, n \models asset \: Id = E; : \: \Gamma[Id\rightarrow(A, n)], n+4}
+\]
+\captionof*{figure}{Asset rule}
+
+\medskip
+
+\[
+\inferrule*[right=(Fun)]{
+Id \notin Dom(\Gamma) \\ 
+\Gamma \bullet [\,],0 \models D D': \: \Gamma \bullet \Gamma',n' \\ 
+\Gamma',n' \models A A': \: \Gamma'',n'' \:
+\cdots}
+{\Gamma,n \models T \: Id (D D') [A A'] \{D_1 D_1' \: S S'\}: \: \\ \Gamma[Id\rightarrow(x_1\rightarrow T_1 \cdots x_n\rightarrow T_n)\rightarrow(y_1\rightarrow A_1 \cdots y_n\rightarrow A_n)\rightarrow T], n \: \cdots}
+\]
+
+\[
+\inferrule*[right=(Fun)]{\cdots \: \Gamma'',n'' \models D_1 D_1': \: \Gamma''',n'''\\
+\inferrule*[right=(S-Stm)]{
+	\inferrule*[rightstyle={\tiny \sc}, right=(A statement must be return), leftskip=2em,rightskip=2em, vdots=1.5em]{\Gamma''',n''' \models E : \: T}		     {\Gamma''',n''' \models return \: E: \: T}
+	}
+	{\Gamma''',n''' \models S S'}
+}
+{\cdots}
+\]
+\captionof*{figure}{Rule for Function Declaration}
+
+\medskip
+
+\[
+\inferrule*[right=(D-Dec)]
+{\inferrule*{Id \notin Dom(\top(\Gamma)) \\  \Gamma'',n'' = \Gamma[Id\rightarrow(T,n)],n+(1\lor 4)}{\Gamma,n \models T \: Id; : \: \Gamma'',n''} \\\qquad \\ \qquad \qquad \qquad \qquad \qquad \qquad \\
+ \Gamma'',n'' \models D': \: \Gamma',n'}
+{\Gamma,n \models D D' : \: \Gamma',n'}
+\]
+\captionof*{figure}{Rule for multiple declarations (Dec in the grammar)}
+
+\medskip
+
+\[
+\inferrule*[right=(A-Dec)]
+{\inferrule*{Id \notin Dom(\top(\Gamma)) \\  \Gamma'',n'' = \Gamma[Id\rightarrow(A,n)],n+4 \\ A = \{false\}}{\Gamma,n \models asset \: Id; : \: \Gamma'',n''} \\\qquad \\ \qquad \qquad \qquad \qquad \qquad \qquad \\
+ \Gamma'',n'' \models A': \: \Gamma',n'}
+{\Gamma,n \models A A' : \: \Gamma',n'}
+\]
+\captionof*{figure}{Rule for multiple assets declarations (ADec in the grammar)}
+
+\medskip
+
+\[
+\inferrule*[right=(Stm)]
+{ass \\ mv \\ pr \\ tr \\ ret \\ ite \\ call}
+{\Gamma,n \models St: \: T}
+\]
+\[
+\inferrule*[right=(S-Stm)]
+{\Gamma,n \models S : \: \Gamma'',n'' \\ \Gamma'',n'' \models S' : \: \Gamma',n' \\ }
+{\Gamma,n \models S S' : \: \Gamma',n'}
+\]
+\captionof*{figure}{Rule for statement, multiple statements}
+
+\[
+\inferrule*[right=(Asm)]
+{Id \in Dom(\Gamma) \\ \Gamma(Id)=T \\ \Gamma \models E : \: T}
+{\Gamma \models Id = E : \: T}
+\]
+\[
+\inferrule*[right=(A-Asm)]
+{Id \in Dom(\Gamma) \\ \Gamma(Id)=int \\ \Gamma \models E : \: A}
+{\Gamma \models Id = E : \: int}
+\]
+\captionof*{figure}{Assignment rules, it is legit to assign the value in an asset to an integer}
+
+\[
+\inferrule*[right=(Mv)]
+{Id_1 \in Dom(\Gamma) \\ \Gamma(Id_1)=A \\ Id_2 \in Dom(\Gamma) \\ \Gamma(Id_2)=A' \\  A' = Id_1 \odot Id_2 \\ A={false} }
+{\Gamma \models Id_1 -o \: Id_2 : \:  A, A'}
+\]
+\captionof*{figure}{Move operation rule ($\odot$ is the abstract move operation defined in ...)}
+
+\medskip
+
+\[
+\inferrule*[right=(Pr)]
+{\Gamma \models E : T \lor A}
+{\Gamma \models print E : T \lor A}
+\]
+\captionof*{figure}{Print rule}
+
+\medskip
+
+\[
+\inferrule*[right=(Tr)]
+{Id \in Dom(\Gamma) \\ \Gamma(Id) = A}
+{\Gamma \models transfer \: Id : A = {False}}
+\]
+\captionof*{figure}{Transfer rule}
+
+\medskip
+
+\[
+\inferrule*[right=(Ret)]
+{\Gamma \models E : \: T}
+{\Gamma \models return \: E : \: T}
+\inferrule*[right=(Ret-A)]
+{\Gamma \models E : \: A}
+{\Gamma \models return \: E : \: int}
+\]
+\captionof*{figure}{Return rule, it is possible to return the value in an asset, so the return type will be int (!! When this happens, if the asset is not empty, the condition 1 of liquidity is violated)}
+
+\medskip
+
+\[
+\inferrule*[right=(Ite)]
+{\Gamma \models E : \: bool \\ \Gamma \models S : \: T \\ \Gamma \models S' : \: T1 \\ T=T1}
+{\Gamma \models if(E)\{S\} \: else\{S'\}: \: T }
+\]
+\captionof*{figure}{If then else rule (T can be also 'void', i.e., the statements doesn't return a type)}
+
+\medskip
+
+\[
+\inferrule*[right=(Call)]
+{Id \in Dom(\Gamma) \\ n = | \Gamma(Id)[1] | \\ \Gamma \models E_1: \: T_1  \cdots \Gamma \models E_n : \: T_n \\ \Gamma(Id)[1][1]=T_1 \cdots \Gamma(Id)[1][n]= T_n \\
+m = | \Gamma(Id)[2] | \\ Y_1 \in Dom(\Gamma) \cdots Y_n \in Dom(\Gamma) \\ \Gamma(Y_1)=A  \cdots \Gamma(Y_m)= A_n \\ \Gamma(Id)[3] = T}
+{\Gamma \models Id(E_1,\cdots,E_n)[Y_1,\cdots,Y_m]: \: T}
+\]
+\captionof*{figure}{Call rule}
+
+\medskip
+
+\[
+\inferrule*[right=(InitCall)]
+{Id \in Dom(\Gamma) \\ n = | \Gamma(Id)[1] | \\ \Gamma \models E_1: \: T_1  \cdots \Gamma \models E_n : \: T_n \\ \Gamma(Id)[1][1]=T_1 \cdots \Gamma(Id)[1][n]= T_n \\
+m = | \Gamma(Id)[2] | \\ \Gamma \models Ae1: \: int \cdots \Gamma \models Ae_m : \: int \\ \Gamma(Id)[3] = T}
+{\Gamma \models Id(E_1,\cdots,E_n)[Ae_1,\cdots,Ae_m]: \: T}
+\]
+\captionof*{figure}{Initialization Call rule}
+
+\[
+\inferrule*[right=(Neg)]
+{\Gamma \models E : \: int}
+{\Gamma \models - E : \: int}
+\inferrule*[right=(Not)]
+{\Gamma \models E : \: bool}
+{\Gamma \models ! E : \: bool}
+\inferrule*[right=(Der)]
+{Id \in Dom(\Gamma) \\ \Gamma(Id)=T}
+{\Gamma \models Id : \: T}
+\]
+\[
+\inferrule*[right=(SumSubMultDiv)]
+{\Gamma \models E_1 : \: int \lor A \\ \Gamma \models E_2 : \: int \lor A}
+{\Gamma \models E_1 (+\lor-\lor*\lor/) E_2 : \: int}
+\]
+\[
+\inferrule*[right=(MinMaj)]
+{\Gamma \models E_1 : \: int \lor A \\ \Gamma \models E_2 : \: int \lor A}
+{\Gamma \models E_1 (<\lor<=\lor>\lor>=) E_2 : \: bool}
+\]
+\[
+\inferrule*[right=(EqNotE)]
+{\Gamma \models E_1 : \: T \\ \Gamma \models E_2 : \: T_1 \\ T=T_1}
+{\Gamma \models E_1 (==\lor!=) E_2 : \: bool}
+\inferrule*[right=(AndOr)]
+{\Gamma \models E_1 : \: bool \\ \Gamma \models E_2 : \: bool}
+{\Gamma \models E_1 (\&\&\lor||) E_2 : bool}
+\]
+\captionof*{figure}{Rules for Expression}
 
 \section{Conclusion}
 In this report, the implementation choices for the development of a compiler for the Asset Language have been discussed.

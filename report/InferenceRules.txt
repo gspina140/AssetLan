@@ -70,9 +70,9 @@ x \notin \Dom(\Gamma)               \Gamma |- e: bool
    
  
 
-x \notin \Dom(\Gamma)               \Gamma |- e: asset  
+x \notin \Dom(\Gamma)    \Gamma |- e: asset    A={false} 
 -------------------------------------------------------[Asset]
-   \Gamma,n |- asset x = e; : \Gamma[x -> (asset,n)],n+4   										
+   \Gamma,n |- asset x = e; : \Gamma[x -> (A,n)],n+4   										
    
    
    
@@ -114,7 +114,7 @@ x \notin \Dom(\Gamma)               \Gamma |- e: asset
                                                               [Stm]                         [Stm] || [S-Stm]
  ass    mv   pr   tr   ret   ite    call              \Gamma,n |- S : \Gamma'',n''     \Gamma'',n'' |- S' : \Gamma',n'
 -------------------------------------------[Stm]    -------------------------------------------------------------------[S-Stm]
-             \Gamma,n |- St : T					            \Gamma,n |- S S' : T
+             \Gamma,n |- St : T					            \Gamma,n |- S S' : \Gamma',n'
  
  
  
