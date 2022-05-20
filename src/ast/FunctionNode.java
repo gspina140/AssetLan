@@ -215,7 +215,7 @@ public class FunctionNode implements Node {
 
         boolean returnFound = false;    // Flag (ho trovato il return node)
         for (Node statement:statementlist) {
-            statement.typeCheck();
+            
             if (statement instanceof ReturnNode) {
                 if ( ! (statement.typeCheck() == null && type == null) ) {
                     if (! (AssetLanlib.isSubtype(statement.typeCheck(), type))) {
@@ -225,6 +225,7 @@ public class FunctionNode implements Node {
                 }
                 returnFound = true;
             }
+            statement.typeCheck();
         }
         if (type != null && !returnFound) {
             System.out.println("No return value for function of type " + type + " found.\n");
@@ -234,7 +235,53 @@ public class FunctionNode implements Node {
         return null;
     }
 
-    public void checkLiquidity(ArrayList<STentry>  parlist){
-        System.out.println("AOH!!!!!!\n\n\n\n\n");
+    public void checkLiquidity(ArrayList<STentry>  parlist, String id, ArrayList<Node> oldAss){
+
+        ArrayList<Node> ass = ((AdecNode)assets).getAsslist();
+
+        AssetTypeNode aux = null;
+        for(int i=0; i < parlist.size(); i++){
+            aux = (AssetTypeNode)parlist.get(i).getType();
+
+            if(! (aux.isEmpty())){
+                aux.empty();
+                ((AssetTypeNode)ass.get(i)).fill();
+            }
+        }
+
+        for(Node statement : statementlist){
+            //System.out.println(statement.getClass().getName()+ "\n");
+            if(statement instanceof MoveNode)
+                ((MoveNode)statement).checkLiquidity();
+            if(statement instanceof TransferNode)
+                ((TransferNode)statement).checkLiquidity();
+
+            if(statement instanceof CallNode){
+                if( ((CallNode)statement).getId().equals(id) ){
+            
+                    if(oldAss != null){
+                        //controllo di aver raggiunto il punto fisso
+                        //System.out.println("aoh\n");
+                        for(int i=0; i < oldAss.size(); i++){
+                            //System.out.println("\n\n " + ((AssetTypeNode)ass.get(i)).isEmpty() + "\n");
+                            if( ((AssetTypeNode)ass.get(i)).isEmpty() ^ ((AssetTypeNode)oldAss.get(i)).isEmpty() )
+                                break;
+
+                            if(i == oldAss.size()-1){
+                                System.out.println("Fixpoint reached\n\n"); //punto fisso
+                                return;
+                            }
+                        }
+                    }
+
+                    //Call
+                    ((CallNode)statement).checkLiquidity(ass);
+
+                    //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
+                   }
+
+            }
+        }
+
     }  
 }  

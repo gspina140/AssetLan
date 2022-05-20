@@ -77,11 +77,13 @@ public class MoveNode implements Node {
             System.exit(0);
         }
 
+        return null;
+    }
+
+    public void checkLiquidity(){
         if (! ((AssetTypeNode)entry1.getType()).isEmpty() ){
             ((AssetTypeNode)entry1.getType()).empty();
             ((AssetTypeNode)entry2.getType()).fill();
         }
-
-        return null;
     }
 }

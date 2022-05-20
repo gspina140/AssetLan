@@ -42,6 +42,10 @@ public class CallNode implements Node {
         this.entry = null;
     }
 
+    public String getId() {
+        return id;
+    }
+
     /**
      * Add asset id to the list of assets ids
      * @param id the asset id to be added to the list
@@ -157,16 +161,18 @@ public class CallNode implements Node {
                     System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
                     System.exit(0);
                 }
-
-
             }
         }
 
-        t.getFunction().checkLiquidity(aentries);
+
+        t.getFunction().checkLiquidity(aentries, id, null);
 
         return t.getRet();
     }
 
+    public void checkLiquidity(ArrayList<Node> oldAss) {
+        ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(aentries, id, oldAss);    
+    } 
 }
 
 

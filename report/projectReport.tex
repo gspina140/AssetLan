@@ -25,6 +25,7 @@
 % \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
 
 %%% PACKAGES
+\usepackage{amsmath}
 \usepackage{booktabs} % for much better looking tables
 \usepackage{array} % for better arrays (eg matrices) in maths
 \usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
@@ -32,9 +33,12 @@
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 % These packages are all incorporated in the memoir class to one degree or another...
 \usepackage{listings}
+\usepackage{caption}
 
 \usepackage{graphicx}
 \graphicspath{ {./images/} }
+
+\usepackage{mathpartir}
 
 %%% HEADERS & FOOTERS
 \usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
@@ -311,6 +315,56 @@ You had: 2 errors:
 	The second error is caused by the fact that asset \verb|d| has never been declared.
 	\end{itemize}
 \end{enumerate}
+
+\subsection{Type Checking}
+\subsubsection{Inference Rules}
+Each entry of the symbol table ($ \Gamma $) will be of one of those forms:
+
+\begin{equation}
+\Gamma, n :
+	\begin{cases}
+	Id \rightarrow ( T \lor A, n' ) \qquad \text{if the } Id \text{ refers to a variable} \\ \\
+	\begin{split}
+	Id & \rightarrow  (x_1 \rightarrow T_1,\cdots
+          							 x_n \rightarrow T_n) \rightarrow \\
+          		   &		\rightarrow (y_1 \rightarrow A_1,\cdots
+          							 y_m \rightarrow A_M) \rightarrow \\
+          		   &		\rightarrow T 
+	\end{split} \qquad \text{if the } Id \text{ refers to a function}
+	\end{cases}
+\end{equation}
+\captionof*{figure}{Where $T=\{int, bool\}$, $A=\{true, false\}$, and $n, n'$ represents the offsets.}
+
+For the asset it has been defined as a boolean value in order to handle the liquidity in the inference rules without informations about the value contained in the variable; true stands for asset full, false for asset empty. \\
+\ES{SPIEGARE LA STORIE DELLE MOVE, TRANSFER ASTRATTE.\\SPIEGARE MEGLIO L'ARROW TYPE NODE}
+
+\medskip
+
+\begin{equation}
+\begin{split}
+& \Gamma, n \models F  : \Gamma', n' \quad \text{Field} \qquad \qquad \quad 
+\Gamma, n \models Fn : \Gamma', n' \quad \text{Function} \\
+& \Gamma, n \models D : \Gamma', n' \quad \text{Declaration} \qquad 
+\Gamma, n \models Ad : \Gamma', n' \quad \text{Asset declaration} \\
+& \Gamma \models St : T, \Gamma' \quad \text{Statement} \qquad \qquad
+\Gamma \models A : T \quad \text{Assignment} \\
+& \Gamma \models M : A \quad \text{Move} \qquad \qquad \qquad \quad
+\Gamma \models P   \quad \text{Print} \\
+& \Gamma \models Tr : A \quad \text{Transfer} \qquad \qquad \qquad
+\Gamma, n \models R : \Gamma', n'  \quad \text{Return} \\
+& \Gamma \models Ite : T \quad \text{If then else} \qquad \qquad 
+\Gamma \models Call : A \quad \text{Function call} \\
+& \Gamma \models InitC : A \quad \text{Init call} \qquad \qquad 
+\Gamma \models Exp : A \quad \text{Expression} \\
+\end{split}
+\end{equation}
+\captionof*{figure}{Queste sono le regole base!}
+
+\begin{mathpar}
+\inferrule{ $[],0 \models F : \Gamma, n$ \\ $\Gamma,n \models Ad : \Gamma_1,n_1$ \\ $\Gamma_1, n_1 \models Fn : \Gamma_2, n_2$ \\ $\Gamma_2, n_2 \models InitC : T$ }
+{a}
+\end{mathpar}
+
 
 \section{Conclusion}
 In this report, the implementation choices for the development of a compiler for the Asset Language have been discussed.

@@ -40,7 +40,7 @@ tr^ A |  true | false
 
 \Gamma,n |- R  : \Gamma',n' \\Return
 
-\Gamma,n |- Ite : \Gamma,n
+\Gamma |- Ite : T
 
 \Gamma   |- Call  : T
 
