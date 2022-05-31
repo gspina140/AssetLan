@@ -132,12 +132,17 @@ public class InitCallNode implements Node {
             }
 
             for(int i = 0; i < aslist.size(); i++){
-                if(! (aslist.get(i).typeCheck() instanceof AssetTypeNode || aslist.get(i).typeCheck() instanceof IntTypeNode)){ //For initialization calls, integers or assets variables are allowed
-                    System.out.println("Type error, expression : " + aslist.get(i) + "is not of an asset");
+                if(! (aslist.get(i).typeCheck() instanceof IntTypeNode)){ //For initialization calls, integers or assets variables are allowed
+                    System.out.println("Type error, expression : " + aslist.get(i) + "is not an integer");
                     System.exit(0);
                 }
             }
         }
+
+        Boolean isLiquid = t.getFunction().checkLiquidity(id, null);
+
+        System.out.println("Function " + id + " is liquid: " + isLiquid);
+
         return t.getRet();
     }
 }

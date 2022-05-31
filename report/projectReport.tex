@@ -333,7 +333,7 @@ Each entry of the symbol table ($ \Gamma $) will be of one of those forms:
 	\end{split} \qquad \text{if the } Id \text{ refers to a function}
 	\end{cases}
 \end{equation}
-\captionof*{figure}{Where $T=\{int, bool\}$, $A=\{true, false\}$, and $n, n'$ represents the offsets.}
+\captionof*{figure}{Where $T=\{int, bool\}$, $A=\{true, false, \top \}$, and $n, n'$ represents the offsets.}
 
 For the asset it has been defined as a boolean value in order to handle the liquidity in the inference rules without informations about the value contained in the variable; true stands for asset full, false for asset empty. \\
 \ES{SPIEGARE LA STORIE DELLE MOVE, TRANSFER ASTRATTE.\\SPIEGARE MEGLIO L'ARROW TYPE NODE}
@@ -437,7 +437,7 @@ Id \notin Dom(\Gamma) \\
 \[
 \inferrule*[right=(Stm)]
 {ass \\ mv \\ pr \\ tr \\ ret \\ ite \\ call}
-{\Gamma,n \models St: \: T}
+{\Gamma,n \models St: \: \Gamma', T}
 \]
 \[
 \inferrule*[right=(S-Stm)]
@@ -499,8 +499,8 @@ Id \notin Dom(\Gamma) \\
 
 \[
 \inferrule*[right=(Ite)]
-{\Gamma \models E : \: bool \\ \Gamma \models S : \: T \\ \Gamma \models S' : \: T1 \\ T=T1}
-{\Gamma \models if(E)\{S\} \: else\{S'\}: \: T }
+{\Gamma \models E : \: bool \\ \Gamma \models S : \: \Gamma', T \\ \Gamma \models S' : \: \Gamma'', T1 \\ T=T1}
+{\Gamma \models if(E)\{S\} \: else\{S'\}: \: max(\Gamma',\Gamma''),  T }
 \]
 \captionof*{figure}{If then else rule (T can be also 'void', i.e., the statements doesn't return a type)}
 

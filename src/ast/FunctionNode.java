@@ -235,7 +235,8 @@ public class FunctionNode implements Node {
         return null;
     }
 
-    public void checkLiquidity(ArrayList<STentry>  parlist, String id, ArrayList<Node> oldAss){
+    public Boolean checkLiquidity(ArrayList<STentry>  parlist, String id, ArrayList<Node> oldAss){
+        Boolean isLiquid = true;
 
         ArrayList<Node> ass = ((AdecNode)assets).getAsslist();
 
@@ -253,8 +254,12 @@ public class FunctionNode implements Node {
             //System.out.println(statement.getClass().getName()+ "\n");
             if(statement instanceof MoveNode)
                 ((MoveNode)statement).checkLiquidity();
+            
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity();
+
+            if(statement instanceof IteNode)
+                ((IteNode)statement).checkLiquidity();    
 
             if(statement instanceof CallNode){
                 if( ((CallNode)statement).getId().equals(id) ){
@@ -269,19 +274,81 @@ public class FunctionNode implements Node {
 
                             if(i == oldAss.size()-1){
                                 System.out.println("Fixpoint reached\n\n"); //punto fisso
-                                return;
+                                //check
+                                for(Node a : ass){
+
+            //System.out.println("\nAsset\n" + ((AssetTypeNode)a).isEmpty() + "\n");  
+                                    if(! ((AssetTypeNode)a).isEmpty())
+                                        return false;
+                                }
+                                return true;
                             }
                         }
                     }
 
                     //Call
-                    ((CallNode)statement).checkLiquidity(ass);
+                    if(((CallNode)statement).checkLiquidity(ass) == false)
+                        isLiquid = false;
 
                     //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
-                   }
-
+                }else
+                    if(((CallNode)statement).checkLiquidity(null) == false)
+                        isLiquid = false;
             }
         }
-
+        /*
+        for(Node a : ass){
+            if(! ((AssetTypeNode)a).isEmpty())
+                return false;
+        }
+*/
+        if(isLiquid == false)
+            return false;
+        else
+            return true;
     }  
+
+    public Boolean checkLiquidity(String id, ArrayList<Node> oldAss){ //Stiamo supponendo che gli asset(parametri) vengano sempre riempiti dalla initcall, anche se il valore di init è 0
+        Boolean isLiquid = true;
+
+        ArrayList<Node> ass = ((AdecNode)assets).getAsslist();
+
+        for(Node a : ass)
+            ((AssetTypeNode)a).fill();
+        
+
+        for(Node statement : statementlist){
+            //System.out.println(statement.getClass().getName()+ "\n");
+            if(statement instanceof MoveNode)
+                ((MoveNode)statement).checkLiquidity();
+            if(statement instanceof TransferNode)
+                ((TransferNode)statement).checkLiquidity();
+
+            if(statement instanceof IteNode)
+                ((IteNode)statement).checkLiquidity();
+
+            if(statement instanceof CallNode){
+                if( ((CallNode)statement).getId().equals(id) ){
+                            //Call
+                    if(((CallNode)statement).checkLiquidity(ass) == false)
+                        isLiquid = false;
+
+                    //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
+                }else
+                    if(((CallNode)statement).checkLiquidity(null) == false)
+                        isLiquid = false;
+            }
+        }
+/*
+        for(Node a : ass){
+            //System.out.println("\nAsset\n" + ((AssetTypeNode)a).isEmpty() + "\n");
+            if(! ((AssetTypeNode)a).isEmpty())
+                return false;
+        }*/
+
+        if(isLiquid != false)
+            return true;
+        else
+            return false;
+    }
 }  

@@ -46,6 +46,10 @@ public class CallNode implements Node {
         return id;
     }
 
+    public ArrayList<STentry> getAentries(){
+        return aentries;
+    }
+    
     /**
      * Add asset id to the list of assets ids
      * @param id the asset id to be added to the list
@@ -164,14 +168,11 @@ public class CallNode implements Node {
             }
         }
 
-
-        t.getFunction().checkLiquidity(aentries, id, null);
-
         return t.getRet();
     }
 
-    public void checkLiquidity(ArrayList<Node> oldAss) {
-        ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(aentries, id, oldAss);    
+    public Boolean checkLiquidity(ArrayList<Node> oldAss) {
+        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(aentries, id, oldAss);    
     } 
 }
 

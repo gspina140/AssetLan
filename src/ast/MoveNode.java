@@ -84,6 +84,7 @@ public class MoveNode implements Node {
         if (! ((AssetTypeNode)entry1.getType()).isEmpty() ){
             ((AssetTypeNode)entry1.getType()).empty();
             ((AssetTypeNode)entry2.getType()).fill();
+            System.out.println("\n\nMove "+id1+" to "+id2 + "il primo è" + ((AssetTypeNode)entry1.getType()).isEmpty());
         }
     }
 }

@@ -142,4 +142,22 @@ public class IteNode implements Node {
         
         return null;
     }
+
+    public void checkLiquidity(){
+        //un array per then, un array per else !!! chi mi dice che modficano le stesse var??
+        //ambiente  ambiente1  - ambiente  ambiente2
+        for (Node statement:thenStsL){
+            if(statement instanceof MoveNode)
+                ((MoveNode)statement).checkLiquidity();
+            if(statement instanceof TransferNode)
+                ((TransferNode)statement).checkLiquidity();
+        }
+
+        for (Node statement:elseStsL){
+            if(statement instanceof MoveNode)
+                ((MoveNode)statement).checkLiquidity();
+            if(statement instanceof TransferNode)
+                ((TransferNode)statement).checkLiquidity();
+        }
+    }
 }
