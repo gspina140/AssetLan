@@ -92,6 +92,31 @@ allcolors={BrickRed}
 \usepackage{tikz}
 \usetikzlibrary{shapes,trees,fit,decorations.pathreplacing,arrows.meta}
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
 %%% END Article customizations
 
 \begin{document}
@@ -189,7 +214,30 @@ The following exercises were used as guidelines/objectives for the design of the
 \item undeclared functions/variables;
 \item multiple declarations of functions/variables in the same environment.
 \end{itemize}
+\item \textbf{Type checking}: implement a semantic analysis that verify:
+\begin{itemize}
+\item the type correctness;
+\item the liquidity of the program:
+\begin{itemize}
+\item for each function, the asset formal parameters must be $0$ at the end of his execution;
+\item at the end of the program all asset fields are $0$.
+\end{itemize} 
+\end{itemize}
+\item \textbf{Code Generation and Interpreter}: define a bytecode language to execute programs in AssetLan and implement the interpreter. In particular:
+\begin{itemize}
+\item the bytecode must have instructions for a stack machine that memorize in ad-hoc register(\$a0) the value of the last instruction calculated;
+\item implement the interpreter for that bytecode;
+\item compile and execute the programs of the high level language.
+\end{itemize} 
 \end{enumerate}
+
+\subsection{Codes to verify / discuss}
+\lstinputlisting{program1.al}
+\lstinputlisting{program2.al}
+\lstinputlisting{program3.al}
+\lstinputlisting{program4.al}
+\lstinputlisting{program5.al}
+\lstinputlisting{program6.al}
 
 \subsection{Lexical Errors}
 In order to redirect the errors of the lexer to an output (log) file, one should override the base error handling strategy of ANTLR, which, by default, redirects the errors to the standard error (i.e., the console). To change the destination and, eventually, the content of error messages, one should provide an implementation of an \textsc{ANTLRErrorListener} subclass; Figure~\ref{fig:err} shows the structure of the classes involved in the error handling phase.
@@ -224,16 +272,14 @@ The following examples show the output messages printed to the \verb|log.txt| fi
 	\begin{itemize}
 		\item Code tested: \begin{lstlisting}
 int a = "s";   
-f()[]
-		\end{lstlisting}
+f()[]		\end{lstlisting}
 		\item Output on \textsc{log.txt}: \begin{lstlisting}
 20-04-2022 15:33:13: 
     Found Lexical error at line 1 at position 8: 
     token recognition error at: '"'
 20-04-2022 15:33:14: 
     Found Lexical error at line 1 at position 10: 
-    token recognition error at: '"'
-		\end{lstlisting}
+    token recognition error at: '"'		\end{lstlisting}
 	\end{itemize}
 \item
 \begin{itemize}
@@ -251,13 +297,11 @@ ma$n()[]
 	\begin{itemize}
 	\item Code tested: \begin{lstlisting}
 int a:
-f()[]
-	\end{lstlisting}
+f()[]	\end{lstlisting}
 	\item Output on \textsc{log.txt}: \begin{lstlisting}
 20-04-2022 15:55:52: 
     Found Lexical error at line 1 at position 5: 
-    token recognition error at: ':'
-	\end{lstlisting}
+    token recognition error at: ':'	\end{lstlisting}
 	\end{itemize}
 \end{enumerate}
 
@@ -323,19 +367,25 @@ Each entry of the symbol table ($ \Gamma $) will be of one of those forms:
 \begin{equation}
 \Gamma, n :
 	\begin{cases}
-	Id \rightarrow ( T \lor A, n' ) \qquad \text{if the } Id \text{ refers to a variable} \\ \\
+	Id \rightarrow ( T \lor A, n' ) \qquad & \text{if the } Id \text{ refers to a variable} \\ \\
 	\begin{split}
 	Id & \rightarrow  (x_1 \rightarrow T_1,\cdots
           							 x_n \rightarrow T_n) \rightarrow \\
           		   &		\rightarrow (y_1 \rightarrow A_1,\cdots
           							 y_m \rightarrow A_M) \rightarrow \\
           		   &		\rightarrow T 
-	\end{split} \qquad \text{if the } Id \text{ refers to a function}
+	\end{split} \qquad & \text{if the } Id \text{ refers to a function}
 	\end{cases}
 \end{equation}
-\captionof*{figure}{Where $T=\{int, bool\}$, $A=\{true, false, \top \}$, and $n, n'$ represents the offsets.}
+\captionof*{figure}{Where $T=\{int, bool\}$, $A=\{asset\}$, and $n, n'$ represents the offsets.}
 
-For the asset it has been defined as a boolean value in order to handle the liquidity in the inference rules without informations about the value contained in the variable; true stands for asset full, false for asset empty. \\
+To handle the effects of the liquidity, it has been used the $\Sigma$ environment that is composed as follows: \\ 
+\[
+\Sigma : Id \rightarrow \mathcal{B} \qquad
+\text{ where, } \mathcal{B} =\{ \bot, f , \top \}
+\]
+The analysis of the effects is performed only on assets, when it is empty is $\bot$, when filled up is $f$(full), and when is undefinable is $\top$. That is, at the end of a program you can check if all the assets variables are $\bot$; so the program can be defined as liquid.
+ \\
 \ES{SPIEGARE LA STORIE DELLE MOVE, TRANSFER ASTRATTE.\\SPIEGARE MEGLIO L'ARROW TYPE NODE}
 
 \medskip
@@ -346,16 +396,16 @@ For the asset it has been defined as a boolean value in order to handle the liqu
 \Gamma, n \models Fn : \Gamma', n' \quad \text{Function} \\
 & \Gamma, n \models D : \Gamma', n' \quad \text{Declaration} \qquad 
 \Gamma, n \models Ad : \Gamma', n' \quad \text{Asset declaration} \\
-& \Gamma \models St : T, \Gamma' \quad \text{Statement} \qquad \qquad
-\Gamma \models A : T \quad \text{Assignment} \\
+& \Gamma \models St : T \lor A \quad \text{Statement} \qquad \qquad
+\Gamma \models A : T \quad \quad \text{Assignment} \\
 & \Gamma \models M : A \quad \text{Move} \qquad \qquad \qquad \quad
 \Gamma \models P   \quad \text{Print} \\
 & \Gamma \models Tr : A \quad \text{Transfer} \qquad \qquad \qquad
-\Gamma, n \models R : \Gamma', n'  \quad \text{Return} \\
+\Gamma, n \models R : T  \quad \text{Return} \\
 & \Gamma \models Ite : T \quad \text{If then else} \qquad \qquad 
-\Gamma \models Call : A \quad \text{Function call} \\
-& \Gamma \models InitC : A \quad \text{Init call} \qquad \qquad 
-\Gamma \models Exp : A \quad \text{Expression} \\
+\Gamma \models Call : T \quad \text{Function call} \\
+& \Gamma \models InitC : T \quad \text{Init call} \qquad \qquad 
+\Gamma \models Exp : T \lor A \quad \text{Expression} \\
 \end{split}
 \end{equation}
 \captionof*{figure}{Queste sono le regole base!}
@@ -385,8 +435,8 @@ For the asset it has been defined as a boolean value in order to handle the liqu
 
 \[
 \inferrule*[right=(Asset)]
-{Id \notin Dom(\Gamma) \\ \Gamma \models E : \: asset \\ A = \{false\} }
-{\Gamma, n \models asset \: Id = E; : \: \Gamma[Id\rightarrow(A, n)], n+4}
+{Id \notin Dom(\Gamma) }
+{\Gamma, n \models asset \: Id ; : \: \Gamma[Id\rightarrow(A, n)], n+4}
 \]
 \captionof*{figure}{Asset rule}
 
@@ -395,20 +445,20 @@ For the asset it has been defined as a boolean value in order to handle the liqu
 \[
 \inferrule*[right=(Fun)]{
 Id \notin Dom(\Gamma) \\ 
-\Gamma \bullet [\,],0 \models D D': \: \Gamma \bullet \Gamma',n' \\ 
-\Gamma',n' \models A A': \: \Gamma'',n'' \:
+\Gamma \bullet [\,],0 \models D : \: \Gamma \bullet \Gamma',n' \\ 
+\Gamma',n' \models A : \: \Gamma'',n'' \:
 \cdots}
-{\Gamma,n \models T \: Id (D D') [A A'] \{D_1 D_1' \: S S'\}: \: \\ \Gamma[Id\rightarrow(x_1\rightarrow T_1 \cdots x_n\rightarrow T_n)\rightarrow(y_1\rightarrow A_1 \cdots y_n\rightarrow A_n)\rightarrow T], n \: \cdots}
+{\Gamma,n \models T \: Id (D ) [A ] \{D_1  \: S \}:  \: \cdots}
 \]
 
 \[
-\inferrule*[right=(Fun)]{\cdots \: \Gamma'',n'' \models D_1 D_1': \: \Gamma''',n'''\\
+\inferrule*[right=(Fun)]{\cdots \: \Gamma'',n'' \models D_1 : \: \Gamma''',n'''\\
 \inferrule*[right=(S-Stm)]{
 	\inferrule*[rightstyle={\tiny \sc}, right=(A statement must be return), leftskip=2em,rightskip=2em, vdots=1.5em]{\Gamma''',n''' \models E : \: T}		     {\Gamma''',n''' \models return \: E: \: T}
 	}
-	{\Gamma''',n''' \models S S'}
+	{\Gamma''',n''' \models S }
 }
-{\cdots}
+{\cdots \: \Gamma[Id\rightarrow(x_1\rightarrow T_1 \cdots x_n\rightarrow T_n)\rightarrow(y_1\rightarrow A_1 \cdots y_n\rightarrow A_n)\rightarrow T], n}
 \]
 \captionof*{figure}{Rule for Function Declaration}
 
@@ -416,7 +466,7 @@ Id \notin Dom(\Gamma) \\
 
 \[
 \inferrule*[right=(D-Dec)]
-{\inferrule*{Id \notin Dom(\top(\Gamma)) \\  \Gamma'',n'' = \Gamma[Id\rightarrow(T,n)],n+(1\lor 4)}{\Gamma,n \models T \: Id; : \: \Gamma'',n''} \\\qquad \\ \qquad \qquad \qquad \qquad \qquad \qquad \\
+{\Gamma,n \models D : \Gamma'',n'' \\
  \Gamma'',n'' \models D': \: \Gamma',n'}
 {\Gamma,n \models D D' : \: \Gamma',n'}
 \]
@@ -426,7 +476,7 @@ Id \notin Dom(\Gamma) \\
 
 \[
 \inferrule*[right=(A-Dec)]
-{\inferrule*{Id \notin Dom(\top(\Gamma)) \\  \Gamma'',n'' = \Gamma[Id\rightarrow(A,n)],n+4 \\ A = \{false\}}{\Gamma,n \models asset \: Id; : \: \Gamma'',n''} \\\qquad \\ \qquad \qquad \qquad \qquad \qquad \qquad \\
+{\Gamma,n \models A : \Gamma'',n'' \\
  \Gamma'',n'' \models A': \: \Gamma',n'}
 {\Gamma,n \models A A' : \: \Gamma',n'}
 \]
@@ -437,12 +487,12 @@ Id \notin Dom(\Gamma) \\
 \[
 \inferrule*[right=(Stm)]
 {ass \\ mv \\ pr \\ tr \\ ret \\ ite \\ call}
-{\Gamma,n \models St: \: \Gamma', T}
+{\Gamma,n \models St: \: T}
 \]
 \[
 \inferrule*[right=(S-Stm)]
-{\Gamma,n \models S : \: \Gamma'',n'' \\ \Gamma'',n'' \models S' : \: \Gamma',n' \\ }
-{\Gamma,n \models S S' : \: \Gamma',n'}
+{\Gamma,n \models S : \: T \\ \Gamma,n \models S' : \: T1\\ }
+{\Gamma,n \models S S' }
 \]
 \captionof*{figure}{Rule for statement, multiple statements}
 
@@ -460,17 +510,17 @@ Id \notin Dom(\Gamma) \\
 
 \[
 \inferrule*[right=(Mv)]
-{Id_1 \in Dom(\Gamma) \\ \Gamma(Id_1)=A \\ Id_2 \in Dom(\Gamma) \\ \Gamma(Id_2)=A' \\  A' = Id_1 \odot Id_2 \\ A={false} }
-{\Gamma \models Id_1 -o \: Id_2 : \:  A, A'}
+{Id_1 \in Dom(\Gamma) \\ \Gamma(Id_1)=A \\ Id_2 \in Dom(\Gamma) \\ \Gamma(Id_2)=A}
+{\Gamma \models Id_1 -o \: Id_2 }
 \]
-\captionof*{figure}{Move operation rule ($\odot$ is the abstract move operation defined in ...)}
+\captionof*{figure}{Move operation rule}
 
 \medskip
 
 \[
 \inferrule*[right=(Pr)]
 {\Gamma \models E : T \lor A}
-{\Gamma \models print E : T \lor A}
+{\Gamma \models print E }
 \]
 \captionof*{figure}{Print rule}
 
@@ -479,7 +529,7 @@ Id \notin Dom(\Gamma) \\
 \[
 \inferrule*[right=(Tr)]
 {Id \in Dom(\Gamma) \\ \Gamma(Id) = A}
-{\Gamma \models transfer \: Id : A = {False}}
+{\Gamma \models transfer \: Id }
 \]
 \captionof*{figure}{Transfer rule}
 
@@ -499,8 +549,8 @@ Id \notin Dom(\Gamma) \\
 
 \[
 \inferrule*[right=(Ite)]
-{\Gamma \models E : \: bool \\ \Gamma \models S : \: \Gamma', T \\ \Gamma \models S' : \: \Gamma'', T1 \\ T=T1}
-{\Gamma \models if(E)\{S\} \: else\{S'\}: \: max(\Gamma',\Gamma''),  T }
+{\Gamma \models E : \: bool \\ \Gamma \models S : \:  T \\ \Gamma \models S' : \:  T1 \\ T=T1}
+{\Gamma \models if(E)\{S\} \: else\{S'\}: \:  T \lor void}
 \]
 \captionof*{figure}{If then else rule (T can be also 'void', i.e., the statements doesn't return a type)}
 
@@ -509,7 +559,7 @@ Id \notin Dom(\Gamma) \\
 \[
 \inferrule*[right=(Call)]
 {Id \in Dom(\Gamma) \\ n = | \Gamma(Id)[1] | \\ \Gamma \models E_1: \: T_1  \cdots \Gamma \models E_n : \: T_n \\ \Gamma(Id)[1][1]=T_1 \cdots \Gamma(Id)[1][n]= T_n \\
-m = | \Gamma(Id)[2] | \\ Y_1 \in Dom(\Gamma) \cdots Y_n \in Dom(\Gamma) \\ \Gamma(Y_1)=A  \cdots \Gamma(Y_m)= A_n \\ \Gamma(Id)[3] = T}
+m = | \Gamma(Id)[2] | \\ Y_1 \in Dom(\Gamma) \cdots Y_n \in Dom(\Gamma) \\ \Gamma(Y_1)=A  \cdots \Gamma(Y_m)= A_m \\ \Gamma(Id)[3] = T}
 {\Gamma \models Id(E_1,\cdots,E_n)[Y_1,\cdots,Y_m]: \: T}
 \]
 \captionof*{figure}{Call rule}
@@ -532,8 +582,8 @@ m = | \Gamma(Id)[2] | \\ \Gamma \models Ae1: \: int \cdots \Gamma \models Ae_m :
 {\Gamma \models E : \: bool}
 {\Gamma \models ! E : \: bool}
 \inferrule*[right=(Der)]
-{Id \in Dom(\Gamma) \\ \Gamma(Id)=T}
-{\Gamma \models Id : \: T}
+{Id \in Dom(\Gamma) \\ \Gamma(Id)=T \lor A}
+{\Gamma \models Id : \: T \lor A}
 \]
 \[
 \inferrule*[right=(SumSubMultDiv)]
@@ -547,13 +597,112 @@ m = | \Gamma(Id)[2] | \\ \Gamma \models Ae1: \: int \cdots \Gamma \models Ae_m :
 \]
 \[
 \inferrule*[right=(EqNotE)]
-{\Gamma \models E_1 : \: T \\ \Gamma \models E_2 : \: T_1 \\ T=T_1}
+{\Gamma \models E_1 : \: int \lor A \\ \Gamma \models E_2 : \: int \lor A }
 {\Gamma \models E_1 (==\lor!=) E_2 : \: bool}
+\inferrule*[right=(EqNotE)]
+{\Gamma \models E_1 : \: bool \\ \Gamma \models E_2 : \: bool}
+{\Gamma \models E_1 (==\lor!=) E_2 : \: bool}
+\]
+\[
 \inferrule*[right=(AndOr)]
 {\Gamma \models E_1 : \: bool \\ \Gamma \models E_2 : \: bool}
 {\Gamma \models E_1 (\&\&\lor||) E_2 : bool}
 \]
 \captionof*{figure}{Rules for Expression}
+
+\medskip
+
+Now it follows the rules to check the effects:
+
+\medskip
+
+\[
+\inferrule*[right=(Asset)]
+{\\}
+{\Sigma \models asset \: Id : \: \Sigma \triangleright [Id \rightarrow \bot] }
+\]
+
+\medskip
+
+\[
+\inferrule*[right=(A-Dec)]
+{\Sigma \models A : \Sigma' \\ \Sigma'\models A': \Sigma''}
+{\Sigma \models A A': \: \Sigma''}
+\]
+
+\medskip
+
+\[
+\inferrule*[right=(Mv)]
+{\Sigma(Id_1)= B \\ \Sigma(Id_2) =B_1  }
+{\Sigma \models Id_1 \: -o \: Id_2 : \: \Sigma \triangleright [Id_1 \rightarrow \bot, Id_2 \rightarrow Id_1 \odot Id_2]}
+\]
+\captionof*{figure}{Rule for move operation, $\odot$ is the abstract move operation~\ref{tab:abstMove}}
+
+\medskip
+
+\begin{table}[]
+\begin{center}
+\begin{tabular}{cc|ccc}
+&          &     & $Id_1$ &       \\
+&$ \odot $ & 0   & 1   & $\top$ \\ \hline
+&0                    & 0   & 1   & $\top$                 \\
+$Id_2$ &1                    & 1   & 1   & $\top$                \\ 
+&$\top$ & $\top$ & $\top$ & $\top$             
+\end{tabular}
+\caption{Abstract move ($\odot$) operation definition: the values in output stands for the value that the second asset involved in the operation has to take, the first one will be $\bot$.}
+\label{tab:abstMove}
+\end{center}
+\end{table}
+
+\medskip
+
+\[
+\inferrule*[right=(Tr)]
+{\\}
+{\Sigma \models transfer \: Id : \: \Sigma \triangleright [Id\rightarrow \bot]}
+\]
+
+\medskip
+
+\[
+\inferrule*[right=(Ite)]
+{\Sigma \models S : \: \Sigma' \\ \Sigma \models S': \: \Sigma''}
+{\Sigma \models if (E) \{ S\} else\{S' \} : \: max(\Sigma',\Sigma'')}
+\]
+\captionof*{figure}{If-then-else rule, in which $max$ stands for the least upper bound}
+
+\medskip
+
+\[
+\inferrule*[right=(Fun)]{ 
+\Sigma \bullet [\:] \models A : \: \Sigma' \\ \Sigma' \models S : \Sigma''}
+{\Sigma \models T \: Id (D ) [A ] \{D_1  \: S \}: \Sigma'' }
+\]
+\captionof*{figure}{Rule for Function Declaration}
+
+\medskip
+
+\[
+\inferrule*[right=(Call)]
+{\Sigma' =\Sigma \triangleright [Y_1 \rightarrow \bot, \cdots, Y_m \rightarrow \bot]}
+{\Sigma \models Id(E_1,\cdots,E_n)[Y_1,\cdots,Y_m]: \: \Sigma'}
+\]
+\captionof*{figure}{Call rule}
+
+\medskip
+
+\[
+\inferrule*[right=(InitCall)]
+{\\}
+{\Sigma \models Id(E_1,\cdots,E_n)[Ae_1,\cdots,Ae_m]}
+\]
+\captionof*{figure}{Initialization Call rule}
+
+
+\medskip
+
+At the end of the execution of each function (condition 1 for liquidity) and at the end of the execution of a program (condition 2 for liquidity), if all assets variable in the related $\Sigma$ are $\bot$ the program is liquid; if at least one is $f$ but they are all $\neq$ to $\top$ then it is not liquid; if there is some $\top$ value it is not possible to define whether is liquid or not.
 
 \section{Conclusion}
 In this report, the implementation choices for the development of a compiler for the Asset Language have been discussed.
