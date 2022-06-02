@@ -66,7 +66,9 @@ public class TransferNode implements Node{
         return null;
     }
 
-    public void checkLiquidity(){
-        ((AssetTypeNode)entry.getType()).empty();
+    public Boolean checkLiquidity(Environment sigma){
+        STEntry asset = sigma.lookup(id);
+        ((AssetTypeNode)asset.getType()).empty();
+        return true;
     }
 }

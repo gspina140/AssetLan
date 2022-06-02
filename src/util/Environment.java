@@ -11,7 +11,7 @@ public class Environment {
 	/**
 	 * Symbolic table, implemented as a list of hash-tables
 	 */
-	private ArrayList<HashMap<String,STentry>>  symTable = new ArrayList<HashMap<String,STentry>>();
+	private ArrayList<HashMap<String,STentry>>  symTable;
 
 	/**
 	 * The current nesting level; outher nesting level is 0 (first position of ArrayList) instead of 1 (slides)
@@ -22,6 +22,18 @@ public class Environment {
 	 * The current offset (to this day unused, 2022/04/21 - it will be used for code generation)
 	 */
 	private int offset = 0;
+
+	public Environment() {
+		this.symTable = new ArrayList<HashMap<String,STentry>>();
+	}
+	 
+	public Environment(Environment env) {
+		this.symTable = new ArrayList<>(env.getSymTable());
+	}
+
+	public ArrayList<HashMap<String,STentry>> getSymTable() {
+		return this.symTable;
+	}
 
 	/**
 	 * Enter a new scope (increase nesting level and add a new hash-table to the list)

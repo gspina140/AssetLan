@@ -71,4 +71,9 @@ public class AssetNode implements Node {
     public Node typeCheck() {
         return null;
     }
+
+    public Boolean checkLiquidity(Environment sigma) {
+        sigma.addEntry(type, id);
+        return true;
+    }
 }

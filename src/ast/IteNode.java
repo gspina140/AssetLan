@@ -143,21 +143,61 @@ public class IteNode implements Node {
         return null;
     }
 
-    public void checkLiquidity(){
+    public void checkLiquidity(Environment sigma){
         //un array per then, un array per else !!! chi mi dice che modficano le stesse var??
         //ambiente  ambiente1  - ambiente  ambiente2
+        Environment sigma1 = sigma;
+        Environment sigma2 = sigma;
+
+        Environment sigma1 = new Environment(sigma);
+        Environment sigma2 = new Environment(sigma);
+
         for (Node statement:thenStsL){
             if(statement instanceof MoveNode)
-                ((MoveNode)statement).checkLiquidity();
+                ((MoveNode)statement).checkLiquidity(sigma1);
             if(statement instanceof TransferNode)
-                ((TransferNode)statement).checkLiquidity();
+                ((TransferNode)statement).checkLiquidity(sigma1);
+            // call
+            // ite
         }
 
         for (Node statement:elseStsL){
             if(statement instanceof MoveNode)
-                ((MoveNode)statement).checkLiquidity();
+                ((MoveNode)statement).checkLiquidity(sigma2);
             if(statement instanceof TransferNode)
-                ((TransferNode)statement).checkLiquidity();
+                ((TransferNode)statement).checkLiquidity(sigma2);
+            // call
+            // ite
         }
+
+        ArrayList<HashMap<String,STentry>> symTable1 = sigma1.getSymTable();
+        ArrayList<HashMap<String,STentry>> symTable2 = sigma2.getSymTable();  
+
+        // max(sigma1,sigma2) - least upper bound
+        // for each value, if both empty, result is empty
+        // if both full, result is full
+        // if they differ, result is undefined
+        for (i = 0; symTable1.size(); i++) {
+    
+            // Iterating HashMap through for loop
+            for (Map.Entry<String, STEntry> set : symTable1.get(i).entrySet()) {
+
+                String assetId = set.getKey();
+                STEntry assetEntry1 = set.getValue();
+                STEntry assetEntry2 = symTable2.get(i).get(AssetId);
+                STEntry assetEntry3 = sigma.getSymTable().get(i).get(AssetId);
+                
+                if (((AssetTypeNode)assetEntry1.getType()).isEmpty() && ((AssetTypeNode)assetEntry1.getType()).isEmpty())
+                    ((AssetTypeNode)assetEntry3.getType()).empty(); // Sono entrambi vuoti
+                else if (!((AssetTypeNode)assetEntry1.getType()).isEmpty() && !((AssetTypeNode)assetEntry1.getType()).isEmpty())
+                    ((AssetTypeNode)assetEntry3.getType()).fill(); // Sono entrambi pieni
+                else {
+                    ((AssetTypeNode)assetEntry3.getType()).undefined(); // Sono entrambi vuoti
+                    return null;    // undefined found; I can not define if liquid or not
+                }
+
+        }
+
+        return true; 
     }
 }

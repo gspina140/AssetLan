@@ -127,4 +127,12 @@ public class ProgramNode implements Node {
             function.typeCheck();
         return initcall.typeCheck();
     }
+
+    public Boolean checkLiquidity(Environment sigma) {
+        for (Node asset:assetlist)
+            asset.checkLiquidity();
+        initcall.checkLiquidity(sigma);
+        // controllo degli asset
+        // return false = not liquid, true = liquid, null = top (could not define if liquid or not)
+    }
 }

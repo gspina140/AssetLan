@@ -171,8 +171,14 @@ public class CallNode implements Node {
         return t.getRet();
     }
 
-    public Boolean checkLiquidity(ArrayList<Node> oldAss) {
-        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(aentries, id, oldAss);    
+    public Boolean checkLiquidity(Environment sigma, ArrayList<Node> oldAss) {
+        // Look-up for each asset id
+        for (String a : idlist) {
+            STentry aentry = sigma.lookup(a);
+            ((AssetTypeNode)aentry.getType()).empty();
+        }
+
+        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, oldAss);    
     } 
 }
 

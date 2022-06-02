@@ -8,6 +8,7 @@ import util.Environment;
 public class AssetTypeNode implements Node{
 
     private Boolean isEmpty = true;
+
     /**
      * The constructor of the class
      */
@@ -32,6 +33,10 @@ public class AssetTypeNode implements Node{
 
     public void fill(){
         isEmpty = false;
+    }
+
+    public void undefined(){
+        isEmpty = null;
     }
 
     public Boolean isEmpty(){

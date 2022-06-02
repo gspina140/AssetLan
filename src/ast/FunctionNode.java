@@ -308,7 +308,8 @@ public class FunctionNode implements Node {
             return true;
     }  
 
-    public Boolean checkLiquidity(String id, ArrayList<Node> oldAss){ //Stiamo supponendo che gli asset(parametri) vengano sempre riempiti dalla initcall, anche se il valore di init è 0
+    public Boolean checkLiquidity(String id, ArrayList<Node> oldAss){ 
+        //Stiamo supponendo che gli asset(parametri) vengano sempre riempiti dalla initcall, anche se il valore di init è 0
         Boolean isLiquid = true;
 
         ArrayList<Node> ass = ((AdecNode)assets).getAsslist();
@@ -350,5 +351,43 @@ public class FunctionNode implements Node {
             return true;
         else
             return false;
+    }
+
+    // checkLiquidity for initcall function
+    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<Node> oldAss) {
+        Boolean isLiquid = true;
+        sigma.enterScope();
+        assets.checkLiquidity(sigma);
+
+        ArrayList<Node> ass = ((AdecNode)assets).getAsslist();
+
+        for(Node a : ass)
+            ((AssetTypeNode)a).fill();
+
+        for(Node statement : statementlist){
+            //System.out.println(statement.getClass().getName()+ "\n");
+            if(statement instanceof MoveNode)
+                ((MoveNode)statement).checkLiquidity(sigma);
+
+            if(statement instanceof TransferNode)
+                ((TransferNode)statement).checkLiquidity(sigma);
+
+            if(statement instanceof CallNode){
+                if( ((CallNode)statement).getId().equals(id) ){
+                    //Call
+                    if(((CallNode)statement).checkLiquidity(sigma, ass) == false)
+                        isLiquid = false;
+
+                    //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
+                }else
+                    if(((CallNode)statement).checkLiquidity(sigma, null) == false)
+                        isLiquid = false;
+            }
+
+            if(statement instanceof IteNode)
+                ((IteNode)statement).checkLiquidity(sigma);
+        }
+
+        sigma.exitScope();
     }
 }  

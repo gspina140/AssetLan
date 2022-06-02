@@ -88,6 +88,8 @@ public class Test {
         
         /* Visit the AST to find semantic errors (e.g., multiply declared variables or undeclared variables) */
         Environment env = new Environment();
+        Environment sigma = new Environment();  // Effects analysis on liquidity
+
         ArrayList<SemanticError> err = ast.checkSemantics(env);
         if(err.size()>0) {
             System.out.println("You had: " + err.size() + " errors:");
@@ -105,6 +107,14 @@ public class Test {
             else
                 System.out.println(type.toPrint("Type checking ok! Type of the program is: "));
 
+            Boolean isLiquid = ast.checkLiquidity(sigma);  // Effects analysis on liquidity
+
+            if(isLiquid == null)
+                System.out.println("\nCould not define if the program was liquid or not.\n");
+            else if (isLiquid)
+                System.out.println("\nThe program is liquid.\n");
+            else
+                System.out.println("\nThe program is not liquid.\n");
         }
     }
 }

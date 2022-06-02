@@ -112,4 +112,11 @@ public class AdecNode implements Node{
     public Node typeCheck() {
         return null;
     }
+
+    public Boolean checkLiquidity(Environment sigma) {
+        for (String id : ids) {
+            sigma.addEntry(new AssetTypeNode(), id);
+        }
+        return true;
+    }
 }

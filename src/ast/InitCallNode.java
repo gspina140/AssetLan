@@ -139,10 +139,11 @@ public class InitCallNode implements Node {
             }
         }
 
-        Boolean isLiquid = t.getFunction().checkLiquidity(id, null);
-
-        System.out.println("Function " + id + " is liquid: " + isLiquid);
-
         return t.getRet();
+    }
+
+    public Boolean checkLiquidity(Environment sigma) {
+        ArrowTypeNode t=(ArrowTypeNode)entry.getType();
+        return t.getFunction().checkLiquidity(sigma,id,null);
     }
 }

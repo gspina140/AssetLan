@@ -80,11 +80,13 @@ public class MoveNode implements Node {
         return null;
     }
 
-    public void checkLiquidity(){
-        if (! ((AssetTypeNode)entry1.getType()).isEmpty() ){
-            ((AssetTypeNode)entry1.getType()).empty();
-            ((AssetTypeNode)entry2.getType()).fill();
-            System.out.println("\n\nMove "+id1+" to "+id2 + "il primo è" + ((AssetTypeNode)entry1.getType()).isEmpty());
+    public Boolean checkLiquidity(Environment sigma) {
+        STEntry leftAsset = sigma.lookup(id1);
+        STEntry rightAsset = sigma.lookup(id2);
+        if (! ((AssetTypeNode)leftAsset.getType()).isEmpty() ) {
+            ((AssetTypeNode)leftAsset.getType()).empty();
+            ((AssetTypeNode)rightAsset.getType()).fill();
         }
+        return true;
     }
 }
