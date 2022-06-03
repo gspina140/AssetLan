@@ -107,7 +107,7 @@ public class Test {
             else
                 System.out.println(type.toPrint("Type checking ok! Type of the program is: "));
 
-            Boolean isLiquid = ast.checkLiquidity(sigma);  // Effects analysis on liquidity
+            Boolean isLiquid = ((ProgramNode)ast).checkLiquidity(sigma);  // Effects analysis on liquidity
 
             if(isLiquid == null)
                 System.out.println("\nCould not define if the program was liquid or not.\n");

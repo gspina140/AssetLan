@@ -129,10 +129,22 @@ public class ProgramNode implements Node {
     }
 
     public Boolean checkLiquidity(Environment sigma) {
+        sigma.enterScope();
         for (Node asset:assetlist)
-            asset.checkLiquidity();
-        initcall.checkLiquidity(sigma);
-        // controllo degli asset
+            ((AssetNode)asset).checkLiquidity(sigma);
+        Boolean isLiquid = ((InitCallNode)initcall).checkLiquidity(sigma);
+        if (isLiquid) {
+            for (Node asset:assetlist) {
+                STentry a = sigma.lookup(((AssetNode)asset).getId());
+                if (!((AssetTypeNode)a.getType()).isEmpty()) {
+                    isLiquid = false;
+                    break;
+                }
+            }
+        }
+        sigma.exitScope();
+
         // return false = not liquid, true = liquid, null = top (could not define if liquid or not)
+        return isLiquid;
     }
 }

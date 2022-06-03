@@ -144,6 +144,6 @@ public class InitCallNode implements Node {
 
     public Boolean checkLiquidity(Environment sigma) {
         ArrowTypeNode t=(ArrowTypeNode)entry.getType();
-        return t.getFunction().checkLiquidity(sigma,id,null);
+        return t.getFunction().checkLiquidity(sigma,id,null,null);
     }
 }

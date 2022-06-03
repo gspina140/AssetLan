@@ -178,7 +178,7 @@ public class CallNode implements Node {
             ((AssetTypeNode)aentry.getType()).empty();
         }
 
-        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, oldAss);    
+        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, aentries, oldAss);    
     } 
 }
 

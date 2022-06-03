@@ -81,8 +81,8 @@ public class MoveNode implements Node {
     }
 
     public Boolean checkLiquidity(Environment sigma) {
-        STEntry leftAsset = sigma.lookup(id1);
-        STEntry rightAsset = sigma.lookup(id2);
+        STentry leftAsset = sigma.lookup(id1);
+        STentry rightAsset = sigma.lookup(id2);
         if (! ((AssetTypeNode)leftAsset.getType()).isEmpty() ) {
             ((AssetTypeNode)leftAsset.getType()).empty();
             ((AssetTypeNode)rightAsset.getType()).fill();

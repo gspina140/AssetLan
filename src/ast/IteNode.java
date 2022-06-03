@@ -1,6 +1,8 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import util.AssetLanlib;
 import util.Environment;
@@ -143,12 +145,9 @@ public class IteNode implements Node {
         return null;
     }
 
-    public void checkLiquidity(Environment sigma){
+    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<Node> oldAss){
         //un array per then, un array per else !!! chi mi dice che modficano le stesse var??
         //ambiente  ambiente1  - ambiente  ambiente2
-        Environment sigma1 = sigma;
-        Environment sigma2 = sigma;
-
         Environment sigma1 = new Environment(sigma);
         Environment sigma2 = new Environment(sigma);
 
@@ -157,8 +156,13 @@ public class IteNode implements Node {
                 ((MoveNode)statement).checkLiquidity(sigma1);
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma1);
-            // call
-            // ite
+            if(statement instanceof CallNode)
+                if( ((CallNode)statement).getId().equals(id) )
+                    ((CallNode)statement).checkLiquidity(sigma1,oldAss);
+                else 
+                    ((CallNode)statement).checkLiquidity(sigma1,null);
+            if(statement instanceof IteNode)
+                ((IteNode)statement).checkLiquidity(sigma1,id,oldAss);
         }
 
         for (Node statement:elseStsL){
@@ -166,8 +170,13 @@ public class IteNode implements Node {
                 ((MoveNode)statement).checkLiquidity(sigma2);
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma2);
-            // call
-            // ite
+            if(statement instanceof CallNode)
+                if( ((CallNode)statement).getId().equals(id) )
+                    ((CallNode)statement).checkLiquidity(sigma2,oldAss);
+                else 
+                    ((CallNode)statement).checkLiquidity(sigma2,null);
+            if(statement instanceof IteNode)
+                ((IteNode)statement).checkLiquidity(sigma2,id,oldAss);
         }
 
         ArrayList<HashMap<String,STentry>> symTable1 = sigma1.getSymTable();
@@ -177,15 +186,15 @@ public class IteNode implements Node {
         // for each value, if both empty, result is empty
         // if both full, result is full
         // if they differ, result is undefined
-        for (i = 0; symTable1.size(); i++) {
+        for (int i = 0; i<symTable1.size(); i++) {
     
             // Iterating HashMap through for loop
-            for (Map.Entry<String, STEntry> set : symTable1.get(i).entrySet()) {
+            for (Map.Entry<String, STentry> set : symTable1.get(i).entrySet()) {
 
                 String assetId = set.getKey();
-                STEntry assetEntry1 = set.getValue();
-                STEntry assetEntry2 = symTable2.get(i).get(AssetId);
-                STEntry assetEntry3 = sigma.getSymTable().get(i).get(AssetId);
+                STentry assetEntry1 = set.getValue();
+                STentry assetEntry2 = symTable2.get(i).get(assetId);
+                STentry assetEntry3 = sigma.getSymTable().get(i).get(assetId);
                 
                 if (((AssetTypeNode)assetEntry1.getType()).isEmpty() && ((AssetTypeNode)assetEntry1.getType()).isEmpty())
                     ((AssetTypeNode)assetEntry3.getType()).empty(); // Sono entrambi vuoti
@@ -195,6 +204,7 @@ public class IteNode implements Node {
                     ((AssetTypeNode)assetEntry3.getType()).undefined(); // Sono entrambi vuoti
                     return null;    // undefined found; I can not define if liquid or not
                 }
+            }
 
         }
 

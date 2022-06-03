@@ -32,7 +32,6 @@ public class AssetNode implements Node {
     public String getId() {
         return id;
     }
-
     /**
      * Override of the toPrint method
      * Method to print a message containing information about the node
