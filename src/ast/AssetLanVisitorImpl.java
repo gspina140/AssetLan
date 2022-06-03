@@ -207,8 +207,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         AdecNode res = new AdecNode(idList.get(0));
         
         // If there are other assets declarations, add them to the list
-        for(int i=1; i < idList.size(); i++)
+        for(int i=1; i < idList.size(); i++) {
             res.addId(idList.get(i));
+            res.addAss(new AssetTypeNode());
+        }
 
         return res;
     }

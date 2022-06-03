@@ -24,6 +24,7 @@ public class AdecNode implements Node{
         addId(id);
 
         asslist = new ArrayList<Node>();
+        addAss(new AssetTypeNode());
     }
     
     /**
@@ -116,6 +117,7 @@ public class AdecNode implements Node{
     public Boolean checkLiquidity(Environment sigma) {
         for (String id : ids) {
             sigma.addEntry(new AssetTypeNode(), id);
+            System.out.println("Inserito asset " + id + " in Sigma, empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");  // DEBUG
         }
         return true;
     }

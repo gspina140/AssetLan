@@ -1,5 +1,5 @@
 src/*/*.class
-src/input.al
+src/*.al
 src/log.txt
 src/parser/.antlr
 src/parser/*.interp

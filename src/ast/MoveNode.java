@@ -87,6 +87,12 @@ public class MoveNode implements Node {
             ((AssetTypeNode)leftAsset.getType()).empty();
             ((AssetTypeNode)rightAsset.getType()).fill();
         }
+
+        /** DEBUG */
+        System.out.println("Move: " + id1 + " empty: " + ((AssetTypeNode)sigma.lookup(id1).getType()).isEmpty() + "\n");
+        System.out.println("Move: " + id2 + " empty: " + ((AssetTypeNode)sigma.lookup(id2).getType()).isEmpty() + "\n");
+        /** DEBUG */
+
         return true;
     }
 }

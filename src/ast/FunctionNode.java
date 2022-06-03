@@ -238,24 +238,42 @@ public class FunctionNode implements Node {
     public Boolean checkLiquidity(Environment sigma, String id, ArrayList<STentry>  parlist, ArrayList<Node> oldAss) {
         Boolean isLiquid = true;
         sigma.enterScope();
-        ((AdecNode)assets).checkLiquidity(sigma);
 
-        ArrayList<Node> ass = ((AdecNode)assets).getAsslist();
+        ArrayList<Node> ass = null;
 
-        if(parlist != null) {
-            AssetTypeNode aux = null;
-            for(int i=0; i < parlist.size(); i++){
-                aux = (AssetTypeNode)parlist.get(i).getType();
+        if (assets != null) {
+            ((AdecNode)assets).checkLiquidity(sigma);
 
-                if(! (aux.isEmpty())){
-                    aux.empty();
-                    ((AssetTypeNode)ass.get(i)).fill();
+            ass = new ArrayList<Node>();
+
+            ArrayList<String> assetsIds = ((AdecNode)assets).getIds();
+            for (String aid : assetsIds) {
+                ass.add(sigma.lookup(aid).getType());
+            }
+
+            if(parlist != null) {
+                AssetTypeNode aux = null;
+                for(int i=0; i < parlist.size(); i++){
+                    aux = (AssetTypeNode)parlist.get(i).getType();
+
+                    if(! (aux.isEmpty())){
+                        aux.empty();
+                        ((AssetTypeNode)ass.get(i)).fill();
+                    }
+                }
+            } else {
+                for(Node a : ass) {
+                    ((AssetTypeNode)a).fill();
                 }
             }
-        } else {
-            for(Node a : ass)
-                ((AssetTypeNode)a).fill();
-        }
+
+            /** DEBUG */
+            //ArrayList<String> assetsIds = ((AdecNode)assets).getIds();
+            for (String aid : assetsIds) {
+                System.out.println("Asset " + aid + " empty: " + ((AssetTypeNode)sigma.lookup(aid).getType()).isEmpty() + "\n");
+            }
+            /** DEBUG */
+        } 
 
         for(Node statement : statementlist){
             //System.out.println(statement.getClass().getName()+ "\n");
@@ -279,7 +297,7 @@ public class FunctionNode implements Node {
                                 //check
                                 for(Node a : ass){
 
-                                   //System.out.println("\nAsset\n" + ((AssetTypeNode)a).isEmpty() + "\n");  
+                                //System.out.println("\nAsset\n" + ((AssetTypeNode)a).isEmpty() + "\n");  
                                     if(! ((AssetTypeNode)a).isEmpty())
                                         return false;
                                 }
@@ -303,7 +321,7 @@ public class FunctionNode implements Node {
             }
         }
 
-        if(isLiquid) {
+        if(isLiquid && ass != null) {
             for (Node a : ass) {
                 if(!((AssetTypeNode)a).isEmpty()) {
                     isLiquid = false;

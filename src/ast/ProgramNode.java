@@ -130,8 +130,10 @@ public class ProgramNode implements Node {
 
     public Boolean checkLiquidity(Environment sigma) {
         sigma.enterScope();
-        for (Node asset:assetlist)
-            ((AssetNode)asset).checkLiquidity(sigma);
+        for (Node asset:assetlist) {
+            System.out.println("Inserisco asset in Sigma!\n");   // DEBUG   
+            ((AssetNode)asset).checkLiquidity(sigma);         
+        }
         Boolean isLiquid = ((InitCallNode)initcall).checkLiquidity(sigma);
         if (isLiquid) {
             for (Node asset:assetlist) {

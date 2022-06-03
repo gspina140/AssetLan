@@ -73,6 +73,7 @@ public class AssetNode implements Node {
 
     public Boolean checkLiquidity(Environment sigma) {
         sigma.addEntry(type, id);
+        System.out.println("Asset " + id + " is empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");   // DEBUG
         return true;
     }
 }
