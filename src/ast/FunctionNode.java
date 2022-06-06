@@ -235,7 +235,7 @@ public class FunctionNode implements Node {
         return null;
     }
 
-    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<STentry>  parlist, ArrayList<Node> oldAss) {
+    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<String> parlist, ArrayList<Node> oldAss) {
         Boolean isLiquid = true;
         sigma.enterScope();
 
@@ -254,8 +254,8 @@ public class FunctionNode implements Node {
             if(parlist != null) {
                 AssetTypeNode aux = null;
                 for(int i=0; i < parlist.size(); i++){
-                    aux = (AssetTypeNode)parlist.get(i).getType();
-
+                    aux = (AssetTypeNode)sigma.lookup(parlist.get(i)).getType();
+                    
                     if(! (aux.isEmpty())){
                         aux.empty();
                         ((AssetTypeNode)ass.get(i)).fill();
@@ -282,6 +282,11 @@ public class FunctionNode implements Node {
 
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma);
+
+            if(statement instanceof IteNode){
+                if (((IteNode)statement).checkLiquidity(sigma,id,ass) == null)
+                    return null;
+            }
 
             if(statement instanceof CallNode){
                 if( ((CallNode)statement).getId().equals(id) ){            
@@ -311,13 +316,14 @@ public class FunctionNode implements Node {
                         isLiquid = false;
 
                     //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
-                } else
-                    if(!((CallNode)statement).checkLiquidity(sigma,null))
-                        isLiquid = false;
-
-                if(statement instanceof IteNode)
-                    if (((IteNode)statement).checkLiquidity(sigma,id,ass) == null)
+                } else{
+                    Boolean temp =((CallNode)statement).checkLiquidity(sigma,null);
+                    if(temp == null)
                         return null;
+                    else if(temp == false)
+                        isLiquid = false;
+                }
+
             }
         }
 

@@ -173,12 +173,12 @@ public class CallNode implements Node {
 
     public Boolean checkLiquidity(Environment sigma, ArrayList<Node> oldAss) {
         // Look-up for each asset id
-        for (String a : idlist) {
-            STentry aentry = sigma.lookup(a);
-            ((AssetTypeNode)aentry.getType()).empty();
-        }
+        // for (String a : idlist) {
+        //     STentry aentry = sigma.lookup(a);
+        //     ((AssetTypeNode)aentry.getType()).empty();
+        // }
 
-        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, aentries, oldAss);    
+        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, idlist, oldAss);    
     } 
 }
 

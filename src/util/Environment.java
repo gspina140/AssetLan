@@ -2,6 +2,7 @@ package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import ast.Node;
 import ast.STentry;
@@ -28,7 +29,19 @@ public class Environment {
 	}
 	 
 	public Environment(Environment env) {
-		this.symTable = new ArrayList<>(env.getSymTable());
+        this.symTable = new ArrayList<HashMap<String,STentry>>();
+
+        for(HashMap<String,STentry> hm : env.getSymTable()) {
+            HashMap<String,STentry> newhm = new HashMap<String,STentry>();
+            for (Map.Entry<String, STentry> set : hm.entrySet()) {
+                STentry aux = new STentry(set.getValue()) ;
+                newhm.put(set.getKey(), aux);
+            }
+            this.symTable.add(newhm);
+        }
+        this.nestingLevel = env.getNestingLevel();
+//		this.symTable = new ArrayList<HashMap<String,STentry>>(env.getSymTable());
+ //       Collections.copy(this.symTable, env.getSymTable());
 	}
 
 	public ArrayList<HashMap<String,STentry>> getSymTable() {

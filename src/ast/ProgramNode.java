@@ -135,7 +135,9 @@ public class ProgramNode implements Node {
             ((AssetNode)asset).checkLiquidity(sigma);         
         }
         Boolean isLiquid = ((InitCallNode)initcall).checkLiquidity(sigma);
-        if (isLiquid) {
+        if(isLiquid == null)
+            return null;
+        else if (isLiquid) {
             for (Node asset:assetlist) {
                 STentry a = sigma.lookup(((AssetNode)asset).getId());
                 if (!((AssetTypeNode)a.getType()).isEmpty()) {

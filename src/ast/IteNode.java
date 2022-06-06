@@ -152,8 +152,9 @@ public class IteNode implements Node {
         Environment sigma2 = new Environment(sigma);
 
         for (Node statement:thenStsL){
-            if(statement instanceof MoveNode)
+            if(statement instanceof MoveNode){
                 ((MoveNode)statement).checkLiquidity(sigma1);
+            }
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma1);
             if(statement instanceof CallNode)
@@ -166,8 +167,9 @@ public class IteNode implements Node {
         }
 
         for (Node statement:elseStsL){
-            if(statement instanceof MoveNode)
+            if(statement instanceof MoveNode){
                 ((MoveNode)statement).checkLiquidity(sigma2);
+            }
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma2);
             if(statement instanceof CallNode)
@@ -196,10 +198,12 @@ public class IteNode implements Node {
                 STentry assetEntry2 = symTable2.get(i).get(assetId);
                 STentry assetEntry3 = sigma.getSymTable().get(i).get(assetId);
                 
-                if (((AssetTypeNode)assetEntry1.getType()).isEmpty() && ((AssetTypeNode)assetEntry1.getType()).isEmpty())
+                if (((AssetTypeNode)assetEntry1.getType()).isEmpty() && ((AssetTypeNode)assetEntry2.getType()).isEmpty()){
                     ((AssetTypeNode)assetEntry3.getType()).empty(); // Sono entrambi vuoti
-                else if (!((AssetTypeNode)assetEntry1.getType()).isEmpty() && !((AssetTypeNode)assetEntry1.getType()).isEmpty())
+                }
+                else if ( ! ((AssetTypeNode)assetEntry1.getType()).isEmpty() && !((AssetTypeNode)assetEntry2.getType()).isEmpty()){
                     ((AssetTypeNode)assetEntry3.getType()).fill(); // Sono entrambi pieni
+                }
                 else {
                     ((AssetTypeNode)assetEntry3.getType()).undefined(); // Sono entrambi vuoti
                     return null;    // undefined found; I can not define if liquid or not

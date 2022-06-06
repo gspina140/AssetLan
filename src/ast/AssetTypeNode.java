@@ -15,6 +15,10 @@ public class AssetTypeNode implements Node{
     public AssetTypeNode(){
     }
 
+    public AssetTypeNode(Node n){
+        this.isEmpty = ((AssetTypeNode)n).isEmpty();
+    }
+
     /**
      * Override of the toPrint method
      * Method to print a message containing information about the node

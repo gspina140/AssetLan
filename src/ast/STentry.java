@@ -40,6 +40,12 @@ public class STentry {
 		type   = t;
 		offset = os;
 	}
+
+    public STentry(STentry e){
+        this.nl = e.getNestinglevel();
+            this.type = new AssetTypeNode(e.getType());
+        this.offset = e.getOffset();
+    }
 	
 	/**
 	 * Specify the type of the entry
