@@ -13,15 +13,18 @@ public class LogicOpNode implements Node{
      */
     private Node eL, eR;
 
+    Boolean isAnd;
+
     /**
      * Class constructor; it takes as parameters both the expression nodes
      * @param e1 the node containing the expression on the left side of the operator
      * @param e2 the node containing the expression on the right side of the operator
      * @return an object of type BinExpNode
      */
-    public LogicOpNode(Node e1, Node e2){
+    public LogicOpNode(Node e1, Node e2, Boolean kind){
         eL = e1;
         eR = e2;
+        isAnd = kind;
     }
     
     /**
@@ -73,5 +76,38 @@ public class LogicOpNode implements Node{
         }
 
         return new BoolTypeNode();
+    }
+
+    @Override
+    public String codeGeneration(){
+        if(isAnd){
+            String falseL = AssetLanlib.freshLabel();
+            String endL = AssetLanlib.freshLabel();
+            return eL.codeGeneration() +
+                "li $t1 0\n"+
+                "beq $a0 $t1" + falseL +"\n"+
+                eR.codeGeneration()+
+                "li $t1 0\n"+
+                "beq $a0 $t1" + falseL +"\n"+
+                "li $a0 1\n"+
+                "b"+ endL + "\n"+
+                falseL + ":\n"+
+                "li $a0 0\n"+
+                endL + ":\n";
+        }else{
+            String trueL = AssetLanlib.freshLabel();
+            String endL = AssetLanlib.freshLabel();
+            return eL.codeGeneration() +
+                "li $t1 1\n"+
+                "beq $a0 $t1" + trueL +"\n"+
+                eR.codeGeneration()+
+                "li $t1 1\n"+
+                "beq $a0 $t1" + trueL +"\n"+
+                "li $a0 0\n"+
+                "b"+ endL + "\n"+
+                trueL + ":\n"+
+                "li $a0 1\n"+
+                endL + ":\n";
+        }
     }
 }

@@ -14,15 +14,18 @@ public class EqualDiffNode implements Node{
      */
     private Node eL, eR;
 
+    private Boolean isEq;
+
     /**
      * Class constructor; it takes as parameters both the expression nodes
      * @param e1 the node containing the expression on the left side of the operator
      * @param e2 the node containing the expression on the right side of the operator
      * @return an object of type BinExpNode
      */
-    public EqualDiffNode(Node e1, Node e2){
-        eL = e1;
-        eR = e2;
+    public EqualDiffNode(Node e1, Node e2, Boolean kind){
+        eL   = e1;
+        eR   = e2;
+        isEq = kind;
     }
     
     /**
@@ -85,5 +88,38 @@ public class EqualDiffNode implements Node{
         }
 
         return new BoolTypeNode();
+    }
+
+    @Override
+    public String codeGeneration(){
+        if(isEq){
+            String trueL = AssetLanlib.freshLabel();
+            String endL = AssetLanlib.freshLabel();
+            return eL.codeGeneration()+
+            "push $a0\n"+
+            eR.codeGeneration()+
+            "lw $t1 0($sp)\n"+ //t1<-top
+            "beq $t1 $a0"+ trueL +"\n"+
+            "li $a0 0\n"+
+            "b"+endL+"\n"+
+            trueL + ":\n"+
+            "li $a0 1\n"+
+            endL + ":\n"+
+            "pop\n";
+        }else{
+            String falseL = AssetLanlib.freshLabel();
+            String endL = AssetLanlib.freshLabel();
+            return eL.codeGeneration()+
+            "push $a0\n"+
+            eR.codeGeneration()+
+            "lw $t1 0($sp)\n"+ //t1<-top
+            "beq $t1 $a0"+ falseL +"\n"+
+            "li $a0 1\n"+
+            "b"+endL+"\n"+
+            falseL + ":\n"+
+            "li $a0 0\n"+
+            endL + ":\n"+
+            "pop\n";
+        }
     }
 }

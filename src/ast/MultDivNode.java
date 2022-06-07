@@ -14,15 +14,18 @@ public class MultDivNode implements Node{
      */
     private Node eL, eR;
 
+    private Boolean isMult;
+
     /**
      * Class constructor; it takes as parameters both the expression nodes
      * @param e1 the node containing the expression on the left side of the operator
      * @param e2 the node containing the expression on the right side of the operator
      * @return an object of type BinExpNode
      */
-    public MultDivNode(Node e1, Node e2){
+    public MultDivNode(Node e1, Node e2, Boolean kind){
         eL = e1;
         eR = e2;
+        isMult = kind;
     }
     
     /**
@@ -74,5 +77,24 @@ public class MultDivNode implements Node{
         }
 
         return new IntTypeNode();
+    }
+
+    @Override
+    public String codeGeneration(){
+        if(isMult){
+            return eL.codeGeneration()+
+            "push $a0\n"+
+            eR.codeGeneration()+
+            "lw $t1 0($sp)\n"+
+            "mult $a0 $t1 $a0\n"+
+            "pop\n";
+        }else{
+            return eL.codeGeneration()+
+            "push $a0\n"+
+            eR.codeGeneration()+
+            "lw $t1 0($sp)\n"+
+            "div $a0 $t1 $a0\n"+
+            "pop\n";
+        }
     }
 }

@@ -47,4 +47,9 @@ public class ValExpNode implements Node{
     public Node typeCheck() {
         return new IntTypeNode();
     }
+
+    @Override
+    public String codeGeneration() {
+        return "li $a0" + val + "\n";
+    }
 }

@@ -465,29 +465,29 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
         switch(s){
             case "+":
-                return new PlusMinusNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new PlusMinusNode(visit(ctx.exp(0)), visit(ctx.exp(1)),true);
             case "-":
-                return new PlusMinusNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new PlusMinusNode(visit(ctx.exp(0)), visit(ctx.exp(1)),false);
             case "*":
-                return new MultDivNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new MultDivNode(visit(ctx.exp(0)), visit(ctx.exp(1)),true);
             case "/":
-                return new MultDivNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new MultDivNode(visit(ctx.exp(0)), visit(ctx.exp(1)),false);
             case "==":
-                return new EqualDiffNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new EqualDiffNode(visit(ctx.exp(0)), visit(ctx.exp(1)),true);
             case "!=":
-                return new EqualDiffNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new EqualDiffNode(visit(ctx.exp(0)), visit(ctx.exp(1)), false);
             case "<":
-                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)), 1);
             case "<=":
-                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)),2);
             case ">":
-                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)),3);
             case ">=":
-                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new MinorMajorNode(visit(ctx.exp(0)), visit(ctx.exp(1)),4);
             case "&&":
-                return new LogicOpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new LogicOpNode(visit(ctx.exp(0)), visit(ctx.exp(1)), true);
             case "||":
-                return new LogicOpNode(visit(ctx.exp(0)), visit(ctx.exp(1)));
+                return new LogicOpNode(visit(ctx.exp(0)), visit(ctx.exp(1)), false);
             default:
                 return null;
         }

@@ -58,9 +58,17 @@ public class DerExpNode implements Node{
 	    return res;
 	}
 
-
     @Override
     public Node typeCheck() {
         return entry.getType();
     }
+/* 
+    @Override
+    public String codeGeneration(){
+        if(entry.getType() instanceof IntTypeNode || entry.getType() instanceof AssetTypeNode){
+            return ;
+        }else{
+
+        }
+    }*/
 }

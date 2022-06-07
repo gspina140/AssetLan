@@ -52,4 +52,12 @@ public class BoolExpNode implements Node{
     public Node typeCheck() {
         return new BoolTypeNode();
     }
+
+    @Override
+    public String codeGeneration(){
+        if(val)
+            return "li $a0 1\n";
+        else
+            return "li $a0 0\n";
+    }
 }

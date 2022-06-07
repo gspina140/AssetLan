@@ -13,15 +13,18 @@ public class PlusMinusNode implements Node{
      */
     private Node eL, eR;
 
+    private Boolean isSum;
+
     /**
      * Class constructor; it takes as parameters both the expression nodes
      * @param e1 the node containing the expression on the left side of the operator
      * @param e2 the node containing the expression on the right side of the operator
      * @return an object of type BinExpNode
      */
-    public PlusMinusNode(Node e1, Node e2){
+    public PlusMinusNode(Node e1, Node e2, Boolean kind){
         eL = e1;
         eR = e2;
+        isSum = kind;
     }
     
     /**
@@ -73,5 +76,24 @@ public class PlusMinusNode implements Node{
         }
 
         return new IntTypeNode();
+    }
+
+    @Override
+    public String codeGeneration(){
+        if(isSum){
+            return eL.codeGeneration()+
+            "push $a0\n"+
+            eR.codeGeneration()+
+            "lw $t1 0($sp)\n"+
+            "add $a0 $t1 $a0\n"+
+            "pop\n";
+        }else{
+            return eL.codeGeneration()+
+            "push $a0\n"+
+            eR.codeGeneration()+
+            "lw $t1 0($sp)\n"+
+            "sub $a0 $t1 $a0\n"+
+            "pop\n";
+        }
     }
 }

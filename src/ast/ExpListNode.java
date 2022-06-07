@@ -57,4 +57,16 @@ public class ExpListNode implements Node{
         return null;
     }
 
+
+    @Override
+    public String codeGeneration(){
+        String res="";
+        
+        for(Node exp: expList){
+            res+= exp.codeGeneration();//AOH STATTE ACCORTO
+            res += "salvare nel AR della fun x";
+        }
+
+        return res;
+    }
 }

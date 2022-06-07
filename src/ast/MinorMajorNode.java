@@ -13,15 +13,18 @@ public class MinorMajorNode implements Node{
      */
     private Node eL, eR;
 
+    private int kind;
+
     /**
      * Class constructor; it takes as parameters both the expression nodes
      * @param e1 the node containing the expression on the left side of the operator
      * @param e2 the node containing the expression on the right side of the operator
      * @return an object of type BinExpNode
      */
-    public MinorMajorNode(Node e1, Node e2){
-        eL = e1;
-        eR = e2;
+    public MinorMajorNode(Node e1, Node e2, int k){
+        eL   = e1;
+        eR   = e2;
+        kind =k;
     }
     
     /**
@@ -73,5 +76,73 @@ public class MinorMajorNode implements Node{
         }
 
         return new BoolTypeNode();
+    }
+
+    @Override
+    public String codeGeneration(){
+        String trueL,falseL;
+        String endL ;
+        switch(kind){
+            case 1:
+                trueL= AssetLanlib.freshLabel();
+                endL = AssetLanlib.freshLabel();
+    
+                return eL.codeGeneration()+
+                "push $a0\n"+
+                eR.codeGeneration()+
+                "lw $t1 0($sp)\n"+
+                "blt $t1 $a0"+ trueL+"\n"+
+                "li $a0 0\n"+
+                "b"+endL+"\n"+
+                trueL +":\n"+
+                "li $a0 1\n"+
+                endL + ":\n"+
+                "pop\n";
+            case 2:
+                trueL = AssetLanlib.freshLabel();
+                endL  = AssetLanlib.freshLabel();
+    
+                return eL.codeGeneration()+
+                "push $a0\n"+
+                eR.codeGeneration()+
+                "lw $t1 0($sp)\n"+
+                "ble $t1 $a0"+ trueL+"\n"+
+                "li $a0 0\n"+
+                "b"+endL+"\n"+
+                trueL +":\n"+
+                "li $a0 1\n"+
+                endL + ":\n"+
+                "pop\n";
+            case 3:
+                falseL = AssetLanlib.freshLabel();
+                endL = AssetLanlib.freshLabel();
+                return eL.codeGeneration()+
+                "push $a0\n"+
+                eR.codeGeneration()+
+                "lw $t1 0($sp)\n"+
+                "blt $t1 $a0"+ falseL+"\n"+
+                "li $a0 1\n"+
+                "b"+endL+"\n"+
+                falseL +":\n"+
+                "li $a0 0\n"+
+                endL + ":\n"+
+                "pop\n";
+            case 4:
+                falseL = AssetLanlib.freshLabel();
+                endL = AssetLanlib.freshLabel();
+                return eL.codeGeneration()+
+                "push $a0\n"+
+                eR.codeGeneration()+
+                "lw $t1 0($sp)\n"+
+                "ble $t1 $a0"+ falseL+"\n"+
+                "li $a0 1\n"+
+                "b"+endL+"\n"+
+                falseL +":\n"+
+                "li $a0 0\n"+
+                endL + ":\n"+
+                "pop\n";
+            default:
+                return null; //never happens
+        }
     }
 }
