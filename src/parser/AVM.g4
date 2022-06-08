@@ -83,6 +83,6 @@ HALT	 : 'halt' ;	// stop execution
 COL	 : ':' ;
 LABEL	 : ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')* ;
 NUMBER	 : '0' | ('-')?(('1'..'9')('0'..'9')*) ;
-REGISTER : '$' ('a0'|'t1'|'s0'|'ra'|'fp'|'sp'|'zero');
+REGISTER : '$' ('a0'|'t1'|'s0'|'ra'|'fp'|'sp'|'v0');
 
 WHITESP  : ( '\t' | ' ' | '\r' | '\n' )+   -> channel(HIDDEN);

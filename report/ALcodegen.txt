@@ -1,0 +1,249 @@
+codegen( stable, program ) =
+        codegen( stable, wallet   )
+        codegen( stable, field    )
+        codegen( stable, function ) // genera solo le lable e salva le function in una struttura a parte
+        codegen( stable, initcall )
+        halt
+        getFunctionCode             // mette il codice delle function della struttura a parte
+
+codegen( stable, wallet ) =
+        li $s0 0
+
+######################################################àà
+    sw
+    sw
+    sw
+    ...
+    
+    initcall:
+        codegen(call_fun1)
+        jal fun1
+        ...
+        codegen(call_fun2)
+        jal fun2
+        ...
+        halt
+
+    fun1:
+        ...
+    fun2:
+        ...
+######################################################àà
+
+codegen( stable, type ID '=' exp ) =
+        codegen( stable, exp )
+        if (type == "bool")
+            sb $a0 0( lookup(ID).get_offset() )
+        else
+            sw $a0 0( lookup(ID).get_offset() )
+
+codegen( stable, field1 field2 ) =
+        codegen( stable, field1 )
+        codegen( stable, field2 )
+
+codegen( stable, '(' exp1 ')' (+|-|*|/) exp2 ) =
+        codegen( stable, exp1 )
+        push $a0
+        codegen( stable, exp2 )
+        $t1 <- top
+        switch op:
+            op == '+'
+                add  $a0 $t1 $a0
+            op == '-'
+                sub  $a0 $t1 $a0
+            op == '*'
+                mult $a0 $t1 $a0
+            op == '/'
+                div  $a0 $t1 $a0
+        pop
+
+codegen( stable,  exp1 (+|-|*|/) '(' exp2 ')' ) =
+        codegen( stable, exp2 )
+        push $a0
+        codegen( stable, exp1 )
+        $t1 <- top
+        switch op:
+            op == '+'
+                add  $a0 $a0 $t1
+            op == '-'
+                sub  $a0 $a0 $t1
+            op == '*'
+                mult $a0 $a0 $t1
+            op == '/'
+                div  $a0 $a0 $t1
+        pop
+
+codegen( stable, '-' exp ) =
+        codegen( stable, exp )
+        li   $t1 -1
+        mult $a0 $a0 $t1
+
+codegen( stable, '!' exp ) =
+        codegen(stable, exp )
+        li $t0 0    // false
+        false_branch = new_label()
+        beq $a0 $t0 false_branch
+        li $a0 0    // se era true gli metto false
+        end = new_label()
+        b end
+    false_branch:
+        li $a0 1    // se era false gli metto true
+    end:
+
+codegen( stable, ID ) =
+        move $al $fp
+        for ( i = 0; i < nesting_level - lookup( stable, ID ).nesting_level; i++ )
+            lw $al 0( $al ) ;
+        if ( lookup.( stable, ID ).type == "bool" )
+            lb $a0 lookup( stable, ID ).offset( $al )
+        else
+            lw $a0 lookup( stable, ID ).offset( $al )
+
+codegen( stable, ID '=' exp ) =
+        cgen( stable, exp )
+        move $al $fp
+        for ( i=0; i < nesting_level - lookup( stable, ID ).nesting_level; i++)
+            lw $al 0( $al ) ;
+        if ( lookup.( stable, ID ).type == "bool" )
+            sb $a0 lookup( stable, ID ).offset( $al )
+        else
+            sw $a0 lookup( stable, ID ).offset( $al )
+
+codegen( stable,  exp1 (+|-|*|/)  exp2 ) =
+        codegen( stable, exp2 )
+        push $a0
+        codegen( stable, exp1 )
+        $t1 <- top
+        switch op:
+            op == '+'
+                add  $a0 $a0 $t1
+            op == '-'
+                sub  $a0 $a0 $t1
+            op == '*'
+                mult $a0 $a0 $t1
+            op == '/'
+                div  $a0 $a0 $t1
+        pop
+
+
+// Fatto in codice, come per ==, |=, && e ||
+codegen( stable,  exp1 (<|<=|>|>=)  exp2 ) =
+        codegen( stable, exp2 )
+        halt
+        codegen( stable, exp1 )
+        $t1 <- top
+        switch op:
+            op == '<'
+                add  $a0 $a0 $t1
+            op == '<='
+                sub  $a0 $a0 $t1
+            op == '>'
+                mult $a0 $a0 $t1
+            op == '>='
+                div  $a0 $a0 $t1
+        pop
+
+// call
+codegen( stable, ID '(' (explist)? ')' '[' (ID (',' ID)* )? ']' ) =
+        push $fp
+        for ( i = size(explist) - 1; i >= 0; i-- ) {
+            cgen(stable, explist[i] )   // explist[i] è una exp
+            push $a0
+        }
+        for ( i = size(idslist) - 1; i >= 0; i-- ) {
+            cgen(stable, idslist[i] )
+            push $a0
+            move $al $fp
+            for ( j = 0; j < nesting_level - lookup( stable, idslist[i] ).nesting_level; j++ )
+                lw $al 0($al)
+            li $t1 0
+            sw $t1 lookup( stable, idslist[i] ).offset($al) 
+        }
+        lw $al 0($fp) // 0($fp) —> $al
+        for ( i=0; i < nesting_level - lookup( stable, ID ).nesting_level; i++ )
+            lw $al 0($al)
+            push $al
+        jal lookup( stable, ID ).label
+
+
+// function
+codegen( stable, (type | 'void') ID '(' (par = dec)? ')' '[' (adec)? ']'
+			     '{' (innerDec += dec ';')* statement* '}' ) =
+    lookup( stable, f ).label:      // nel codice: fresh_function_label()
+        move $fp $sp
+        push $ra
+        cgen( stable, statement* )
+
+        // l'ultimo statement eseguito sarà un return, quindi avrò un valore in $v0
+
+        $ra ← top
+        addi $sp $sp k              // k = size(par) + size(adec) + size(innerDec) + ra
+        $fp ← top
+        pop
+
+        if (type != 'void')
+            move $a0 $v0
+        jr $r
+
+// initcall
+codegen( stable, ID '(' (parameters = explist )? ')' '[' (assets = explist )? ']' ) =
+        push $fp
+        for ( i = size(explist) - 1; i >= 0; i-- ) {
+            cgen(stable, explist[i] )   // explist[i] è una exp
+            push $a0
+        }
+        for ( i = size(idslist) - 1; i >= 0; i-- ) {
+            cgen(stable, idslist[i] )
+            push $a0
+        }
+        lw $al 0($fp) // 0($fp) —> $al
+        for ( i=0; i < nesting_level - lookup( stable, ID ).nesting_level; i++ )
+            lw $al 0($al)
+            push $al
+        jal lookup( stable, ID ).label
+
+// move
+codegen( stable, ID1 '-o' ID2 ) =
+        move $al $fp
+        for ( i = 0; i < nesting_level - lookup( stable, ID1 ).nesting_level; i++ )
+            lw $al 0( $al )
+        lw $a0 lookup( stable, ID1 ).offset( $al )
+        push $a0
+        li $t1 0
+        sw $t1 lookup( stable, ID1 ).offset( $al )
+        move $al $fp
+        for ( i = 0; i < nesting_level - lookup( stable, ID2 ).nesting_level; i++ )
+            lw $al 0( $al )
+        lw $a0 lookup( stable, ID2 ).offset( $al )
+        $t1 <- top
+        add $a0 $a0 $t1
+        sw $a0 lookup( stable, ID2 ).offset( $al )
+        pop
+
+// transfer
+codegen( stable, 'transfer' ID ) =
+        move $al $fp
+        for ( i = 0; i < nesting_level - lookup( stable, ID ).nesting_level; i++ )
+            lw $al 0( $al )
+        lw $a0 lookup( stable, ID ).offset( $al )
+        add $s0 $s0 $a0
+        li $t1 0
+        sw $t1 lookup( stable, ID ).offset( $al )
+
+// return
+codegen( stable, 'return' exp ) =
+        codegen( stable, exp )
+        move $v0 $a0
+
+// ite
+codegen( stable, 'if' '(' exp ')' '{' thenSts '}' ('else' '{' elseSts '}' ) ) =
+        codegen( stable, exp )
+        li $t1 0    // false
+        false_branch = new_label()
+        beq $a0 $t1 false_branch
+        codegen( stable, thenSts )
+        end = new_label()
+        b end
+    false_branch:
+        codegen( stable, elseSts )
+    end:
