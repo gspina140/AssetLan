@@ -1,7 +1,11 @@
-grammar SVM;
+grammar AVM;
 
 @header {
 import java.util.HashMap;
+}
+
+@lexer::members {
+public int lexicalErrors=0;
 }
 
 /*------------------------------------------------------------------
@@ -60,7 +64,7 @@ STOREB     : 'sb' ;
 LOADB	 : 'lb' ;
 BRANCH	 : 'b' ;	// jump to label
 BRANCHEQ : 'beq' ;	// jump to label if top == next
-BANCHLESST : 'blt' ;	
+BRANCHLESST : 'blt' ;	
 BRANCHLESSEQ:'ble' ;	// jump to label if top <= next
 JAL  : 'jal' ;	// jump and link
 //JS	 : 'js' ;	// jump to instruction pointed by top of stack and store next instruction in ra

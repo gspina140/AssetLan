@@ -115,6 +115,31 @@ public class Test {
                 System.out.println("\nThe program is liquid.\n");
             else
                 System.out.println("\nThe program is not liquid.\n");
+
+            // CODE GENERATION  prova.AssetLan.asm
+            String code=ast.codeGeneration(); 
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
+            out.write(code);
+            out.close(); 
+            System.out.println("Code generated! Assembling and running generated code.");
+
+            FileInputStream isASM = new FileInputStream(fileName+".asm");
+            ANTLRInputStream inputASM = new ANTLRInputStream(isASM);
+            AVMLexer lexerASM = new AVMLexer(inputASM);
+            CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
+            AVMParser parserASM = new AVMParser(tokensASM);
+
+            //parserASM.assembly();
+
+            AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
+            visitorAVM.visit(parserASM.assembly()); 
+
+            System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.");
+            if (lexerASM.lexicalErrors>0 || parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
+
+            System.out.println("Starting Virtual Machine...");
+            ExecuteVM vm = new ExecuteVM(visitorAVM.code);
+            vm.cpu();
         }
     }
 }
