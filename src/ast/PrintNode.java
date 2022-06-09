@@ -56,4 +56,9 @@ public class PrintNode implements Node {
         return exp.typeCheck();
     }
 
+    @Override
+    public String codeGeneration(Environment env){
+        return exp.codeGeneration(env)+
+                "print $a0\n";
+    }
 }

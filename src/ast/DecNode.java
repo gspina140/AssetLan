@@ -101,4 +101,7 @@ public class DecNode implements Node{
     public Node typeCheck() {
         return null;
     }
+
+    @Override
+    public String codeGeneration(Environment env){return "";}
 }

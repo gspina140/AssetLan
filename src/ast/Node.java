@@ -29,5 +29,5 @@ public interface Node {
 
     Node typeCheck();
 
-    public String codeGeneration();
+    public String codeGeneration(Environment env);
 }

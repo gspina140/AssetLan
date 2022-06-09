@@ -43,7 +43,7 @@ instruction:
 	  //| COPYFP          
 	  //| LOADHP          
 	  //| STOREHP         
-	  | PRINT           
+	  | PRINT r=REGISTER           
 	  | HALT
 	  ) ;
  	 
@@ -86,3 +86,5 @@ NUMBER	 : '0' | ('-')?(('1'..'9')('0'..'9')*) ;
 REGISTER : '$' ('a0'|'t1'|'s0'|'ra'|'fp'|'sp'|'v0');
 
 WHITESP  : ( '\t' | ' ' | '\r' | '\n' )+   -> channel(HIDDEN);
+
+ERR   	 : . { System.err.println("Invalid char: "+ getText()); lexicalErrors++;  } -> channel(HIDDEN); 

@@ -214,4 +214,28 @@ public class IteNode implements Node {
 
         return true; 
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        String falseL = AssetLanlib.freshLabel();
+        String end = AssetLanlib.freshLabel();
+
+        String thenCode = "";
+        String elseCode = "";
+
+        for(Node t : thenStsL)
+            thenCode+=t.codeGeneration(env)+"\n";
+
+        for(Node e : elseStsL)
+            elseCode+=e.codeGeneration(env)+"\n";
+
+        return cond.codeGeneration(env)+
+                "li $t1 0\n"+
+                "beq $a0 $t1 "+falseL+"\n"+
+                thenCode+
+                "b"+end+"\n"+
+                falseL+":\n"+
+                elseCode+
+                end+":\n";
+    } 
 }

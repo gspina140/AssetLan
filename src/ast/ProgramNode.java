@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
+import util.AssetLanlib;
 import util.Environment;
 import util.SemanticError;
 
@@ -151,4 +152,32 @@ public class ProgramNode implements Node {
         // return false = not liquid, true = liquid, null = top (could not define if liquid or not)
         return isLiquid;
     }
+
+    public String codeGeneration(Environment env){
+        String decs = "";
+        int k = 4; //k is the memory of the static scope, starts from 4 to allocate the $ra of initcall!
+
+        for (Node f : fieldlist){
+            decs += f.codeGeneration(env);
+            if(((FieldNode)f).getType() instanceof IntTypeNode)
+                k+=4;
+            else
+                k+=1;
+        }
+
+        k+= 4* assetlist.size();
+
+        for(Node fn : functionlist)
+            fn.codeGeneration(env);
+
+        return  "move $fp $sp\n"+
+                "addi $sp $sp -"+k +"\n"+
+                "li $s0 0\n"+  //Register s0 is the wallet, i.e. the count of asset values stransfered
+                decs+
+                initcall.codeGeneration(env)+
+                "addi $sp $sp "+k+"\n"+
+                "halt\n"+
+                AssetLanlib.getCode(); 
+    }
+
 }

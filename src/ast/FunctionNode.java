@@ -340,4 +340,56 @@ public class FunctionNode implements Node {
 
         return isLiquid;
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        String funL = AssetLanlib.freshFunLabel(id);
+        String stmCode = "";
+
+        int k = 4;
+        int kIn = 0; //space for inner declarations
+
+        ArrayList<Node> decL = ((DecNode)parameters).getTypeList();
+        for(Node t : decL){
+            if(t instanceof IntTypeNode)
+                k+=4;
+            else
+                k+=1;
+        }
+
+        k+= 4 * ((AdecNode)assets).getNumberOfAssets();
+
+        for(Node in : declarations){
+            ArrayList<Node> innerDecL = ((DecNode)in).getTypeList();
+
+            for(Node t : innerDecL){
+                if(t instanceof IntTypeNode)
+                    kIn+=4;
+                else
+                    kIn+=1;
+            }
+        }
+
+        for(Node s : statementlist)
+            stmCode += s.codeGeneration(env);
+        
+        String ret="";
+        if(type != null)
+            ret+="move $a0 $v0\n";
+
+        AssetLanlib.putCode(funL+":\n"+
+                            "move $fp $sp\n"+
+                            "push $ra"+
+                            "addi $sp $sp -"+kIn+"\n"+
+                            stmCode+
+                            "lw $ra 0($sp)\n"+
+                            "addi $sp $sp "+(k+kIn)+"\n"+  // (k+kIn) is the length of AR
+                            "lw $fp 0($sp)\n"+
+                            "pop\n"+
+                            ret+
+                            "jr $ra");
+        
+        return ""; 
+    }
+
 }

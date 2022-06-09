@@ -82,4 +82,24 @@ public class AssignmentNode implements Node {
         
         return null;
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        String getAR = "";
+        String store = "";
+
+        for(int i=0; i< env.getNestingLevel()-env.lookup(id).getNestinglevel(); i++ ){
+            getAR+="lw $al 0($al)\n";
+        }
+        
+        if(env.lookup(id).getType() instanceof BoolTypeNode)
+            store = "sb $a0 "+ env.lookup(id).getOffset() +"($al)\n";
+        else
+            store = "sw $a0 "+ env.lookup(id).getOffset() +"($al)\n";
+
+        return "move $al $fp"+
+                getAR+
+                exp.codeGeneration(env)+
+                store;
+    }
 }

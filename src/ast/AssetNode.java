@@ -76,4 +76,7 @@ public class AssetNode implements Node {
         System.out.println("Asset " + id + " is empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");   // DEBUG
         return true;
     }
+
+    @Override
+    public String codeGeneration(Environment env){return "";}
 }

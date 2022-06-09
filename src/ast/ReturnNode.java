@@ -59,4 +59,10 @@ public class ReturnNode implements Node {
         else 
             return null;
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        return exp.codeGeneration(env)+
+                "move $v0 $a0\n";
+    }
 }

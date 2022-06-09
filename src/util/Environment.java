@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.naming.InitialContext;
+
+import ast.AssetTypeNode;
+import ast.IntTypeNode;
 import ast.Node;
 import ast.STentry;
 
@@ -55,6 +59,7 @@ public class Environment {
 	 */
 	public void enterScope() {
 		nestingLevel++;
+        offset = 0;
 		HashMap<String, STentry> hm = new HashMap<String, STentry>();
 		symTable.add(hm);
 	}
@@ -66,6 +71,21 @@ public class Environment {
 	 */
 	public void exitScope() {
 		symTable.remove(nestingLevel--);
+        //offset (backtrack)
+        
+        int x = 0;
+        //int lastDeclared=0;
+        for (Map.Entry<String, STentry> set : symTable.get(nestingLevel).entrySet()) {
+            if(x >= set.getValue().getOffset()){
+                x=set.getValue().getOffset();
+                if(set.getValue().getType() instanceof IntTypeNode || set.getValue().getType() instanceof AssetTypeNode)
+                    x-=4;
+                else
+                    x-=1;
+            }
+        }
+
+        offset = x;
 	}
 
 	/**
@@ -95,8 +115,13 @@ public class Environment {
 	public STentry addEntry(Node type, String id) {
 
 		STentry entry = null;
-		if (type != null)
-			entry = new STentry(nestingLevel, type, offset--);
+		if (type != null){
+            if(type instanceof IntTypeNode || type instanceof AssetTypeNode){
+			    entry = new STentry(nestingLevel, type, offset);
+                offset-=4;
+            }else
+			    entry = new STentry(nestingLevel, type, offset--);
+        }
 		else
 			entry = new STentry(nestingLevel, offset--);
 
@@ -110,7 +135,7 @@ public class Environment {
 	 * @param void
 	 * @return current nesting level
 	 */
-	private int getNestingLevel() {
+	public int getNestingLevel() {
 		return nestingLevel;
 	}
 

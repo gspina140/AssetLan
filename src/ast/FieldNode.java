@@ -50,6 +50,10 @@ public class FieldNode implements Node {
             return s + "\nField: " + id + type.toPrint(s) ;
     }
 
+    public Node getType(){
+        return type;
+    }
+
     /**
      * Override of the checkSemantics function
      * Check for possible semantics errors when declaring the field
@@ -88,4 +92,20 @@ public class FieldNode implements Node {
         
         return null;
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        String res = "";
+
+        if(exp != null){
+            res+=exp.codeGeneration(env);
+
+            if (type instanceof BoolTypeNode)
+                res+= "sb $a0" + env.lookup(id).getOffset() +"($fp)";
+            else
+                res+= "sw $a0" + env.lookup(id).getOffset() +"($fp)";
+        }
+
+        return res;
+}
 }

@@ -180,6 +180,39 @@ public class CallNode implements Node {
 
         return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, idlist, oldAss);    
     } 
+
+    @Override
+    public String codeGeneration(Environment env){
+        String parCode = "";
+        String assCode = "";
+        String getAR   = ""; //AR where the fun is defined (is always 0)
+
+        ArrayList<Node> expr = ((ExpListNode)expressions).getExps();
+
+        for(int i=expr.size()-1; i>=0; i--){
+            parCode+= expr.get(i).codeGeneration(env)+"\n";
+            parCode+= "push $a0\n";
+        }
+
+        for(int i=idlist.size()-1; i>=0;i--){
+            for(int j=0; j< env.getNestingLevel()-env.lookup(idlist.get(i)).getNestinglevel();j++)
+                assCode+="lw $al 0($al)\n";
+            assCode+="lw $a0 "+env.lookup(idlist.get(i))+"($al)\n"+
+                    "push $a0\n"+
+                    "li $t1 0\n"+
+                    "sw $t1 "+env.lookup(idlist.get(i))+"($al)\n";
+        }
+
+        for(int i=0; i<env.getNestingLevel()-env.lookup(id).getNestinglevel();i++) 
+            getAR+="lw $al 0($al)\n";
+
+        return "push $fp\n"+
+                parCode+
+                "move $al $fp\n"+
+                assCode+
+                "move $al $fp\n"+
+                getAR+
+                "push $al\n"+
+                "jal function"+id+"\n";
+    }
 }
-
-

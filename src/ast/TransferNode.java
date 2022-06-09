@@ -76,4 +76,19 @@ public class TransferNode implements Node{
 
         return true;
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        String getAR = "";
+
+        for(int i= 0; i< env.getNestingLevel()-env.lookup(id).getNestinglevel(); i++)
+            getAR += "lw $al 0($al)\n";
+
+        return "move $al $fp\n"+
+                getAR+
+                "lw $a0 "+env.lookup(id).getOffset()+"($al)\n"+
+                "add $s0 $s0 $a0\n"+
+                "li $t1 0\n"+
+                "sw $t1 "+env.lookup(id).getOffset()+"($al)\n";
+    }
 }
