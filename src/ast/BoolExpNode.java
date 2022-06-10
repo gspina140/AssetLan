@@ -54,7 +54,7 @@ public class BoolExpNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         if(val)
             return "li $a0 1\n";
         else

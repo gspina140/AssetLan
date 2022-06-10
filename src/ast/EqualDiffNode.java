@@ -91,13 +91,13 @@ public class EqualDiffNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         if(isEq){
             String trueL = AssetLanlib.freshLabel();
             String endL = AssetLanlib.freshLabel();
-            return eL.codeGeneration(env)+
+            return eL.codeGeneration()+
             "push $a0\n"+
-            eR.codeGeneration(env)+
+            eR.codeGeneration()+
             "lw $t1 0($sp)\n"+ //t1<-top
             "beq $t1 $a0"+ trueL +"\n"+
             "li $a0 0\n"+
@@ -109,9 +109,9 @@ public class EqualDiffNode implements Node{
         }else{
             String falseL = AssetLanlib.freshLabel();
             String endL = AssetLanlib.freshLabel();
-            return eL.codeGeneration(env)+
+            return eL.codeGeneration()+
             "push $a0\n"+
-            eR.codeGeneration(env)+
+            eR.codeGeneration()+
             "lw $t1 0($sp)\n"+ //t1<-top
             "beq $t1 $a0"+ falseL +"\n"+
             "li $a0 1\n"+

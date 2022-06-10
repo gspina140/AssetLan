@@ -64,5 +64,5 @@ public class AssetTypeNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){return "";}
+    public String codeGeneration(){return "";}
 }

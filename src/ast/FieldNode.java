@@ -13,6 +13,9 @@ public class FieldNode implements Node {
      */
     private Node type;
 
+
+    private Environment localEnv;
+
     /**
      * The id of the field declaration
      */
@@ -78,6 +81,8 @@ public class FieldNode implements Node {
         if(exp != null)
             res.addAll(exp.checkSemantics(env));
 
+        localEnv = new Environment(env);
+
         return res;
     }
 
@@ -94,16 +99,16 @@ public class FieldNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String res = "";
 
         if(exp != null){
-            res+=exp.codeGeneration(env);
+            res+=exp.codeGeneration();
 
             if (type instanceof BoolTypeNode)
-                res+= "sb $a0" + env.lookup(id).getOffset() +"($fp)";
+                res+= "sb $a0" + localEnv.lookup(id).getOffset() +"($fp)";
             else
-                res+= "sw $a0" + env.lookup(id).getOffset() +"($fp)";
+                res+= "sw $a0" + localEnv.lookup(id).getOffset() +"($fp)";
         }
 
         return res;

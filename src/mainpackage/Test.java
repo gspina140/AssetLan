@@ -119,7 +119,7 @@ public class Test {
                 System.out.println("\nThe program is not liquid.\n");
 
             // CODE GENERATION  prova.AssetLan.asm
-            String code=ast.codeGeneration(env); 
+            String code=ast.codeGeneration(); 
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
             out.write(code);
             out.close(); 

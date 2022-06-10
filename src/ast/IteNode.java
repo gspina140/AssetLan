@@ -216,7 +216,7 @@ public class IteNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String falseL = AssetLanlib.freshLabel();
         String end = AssetLanlib.freshLabel();
 
@@ -224,12 +224,12 @@ public class IteNode implements Node {
         String elseCode = "";
 
         for(Node t : thenStsL)
-            thenCode+=t.codeGeneration(env)+"\n";
+            thenCode+=t.codeGeneration()+"\n";
 
         for(Node e : elseStsL)
-            elseCode+=e.codeGeneration(env)+"\n";
+            elseCode+=e.codeGeneration()+"\n";
 
-        return cond.codeGeneration(env)+
+        return cond.codeGeneration()+
                 "li $t1 0\n"+
                 "beq $a0 $t1 "+falseL+"\n"+
                 thenCode+

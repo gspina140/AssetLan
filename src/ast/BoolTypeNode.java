@@ -42,6 +42,6 @@ public class BoolTypeNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){return "";}
+    public String codeGeneration(){return "";}
 }
     

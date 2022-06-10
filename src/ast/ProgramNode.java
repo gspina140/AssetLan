@@ -153,12 +153,12 @@ public class ProgramNode implements Node {
         return isLiquid;
     }
 
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String decs = "";
         int k = 4; //k is the memory of the static scope, starts from 4 to allocate the $ra of initcall!
 
         for (Node f : fieldlist){
-            decs += f.codeGeneration(env);
+            decs += f.codeGeneration();
             if(((FieldNode)f).getType() instanceof IntTypeNode)
                 k+=4;
             else
@@ -168,13 +168,13 @@ public class ProgramNode implements Node {
         k+= 4* assetlist.size();
 
         for(Node fn : functionlist)
-            fn.codeGeneration(env);
+            fn.codeGeneration();
 
         return  "move $fp $sp\n"+
                 "addi $sp $sp -"+k +"\n"+
                 "li $s0 0\n"+  //Register s0 is the wallet, i.e. the count of asset values stransfered
                 decs+
-                initcall.codeGeneration(env)+
+                initcall.codeGeneration()+
                 "addi $sp $sp "+k+"\n"+
                 "halt\n"+
                 AssetLanlib.getCode(); 

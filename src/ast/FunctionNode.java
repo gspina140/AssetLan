@@ -342,7 +342,7 @@ public class FunctionNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String funL = AssetLanlib.freshFunLabel(id);
         String stmCode = "";
 
@@ -374,7 +374,7 @@ public class FunctionNode implements Node {
         }
 
         for(Node s : statementlist)
-            stmCode += s.codeGeneration(env);
+            stmCode += s.codeGeneration();
         
         String ret="";
         if(type != null)

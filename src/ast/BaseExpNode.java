@@ -12,6 +12,8 @@ public class BaseExpNode implements Node{
      */
     private Node exp;
 
+    private Environment localEnv;
+
     /**
      * Class constructor; it take as only argument the node containing the expression
      * @param e the node containing the expression
@@ -49,6 +51,8 @@ public class BaseExpNode implements Node{
         
         // Delegate semantic check of expression to relative node
         res.addAll(exp.checkSemantics(env));
+
+        localEnv = env;
         
         return res;
     }
@@ -59,7 +63,7 @@ public class BaseExpNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
-        return exp.codeGeneration(env);
+    public String codeGeneration(){
+        return exp.codeGeneration();
     }
 }

@@ -20,6 +20,8 @@ public class AssignmentNode implements Node {
 
     private STentry entry;
 
+    private Environment localEnv;
+
     /**
      * Class constructor; it takes as parameters both an id and an expression
      * @param i the id of the variable we are assigning to
@@ -67,6 +69,8 @@ public class AssignmentNode implements Node {
         // Delegate semantic check of expression to relative node
         res.addAll(exp.checkSemantics(env));
         
+        localEnv = new Environment(env);
+
         return res;
     }
 
@@ -84,22 +88,22 @@ public class AssignmentNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String getAR = "";
         String store = "";
 
-        for(int i=0; i< env.getNestingLevel()-env.lookup(id).getNestinglevel(); i++ ){
+        for(int i=0; i< localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel(); i++ ){
             getAR+="lw $al 0($al)\n";
         }
         
-        if(env.lookup(id).getType() instanceof BoolTypeNode)
-            store = "sb $a0 "+ env.lookup(id).getOffset() +"($al)\n";
+        if(localEnv.lookup(id).getType() instanceof BoolTypeNode)
+            store = "sb $a0 "+ localEnv.lookup(id).getOffset() +"($al)\n";
         else
-            store = "sw $a0 "+ env.lookup(id).getOffset() +"($al)\n";
+            store = "sw $a0 "+ localEnv.lookup(id).getOffset() +"($al)\n";
 
         return "move $al $fp"+
                 getAR+
-                exp.codeGeneration(env)+
+                exp.codeGeneration()+
                 store;
     }
 }

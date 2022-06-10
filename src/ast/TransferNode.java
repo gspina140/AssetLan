@@ -12,6 +12,8 @@ public class TransferNode implements Node{
     private String id;
 
     private STentry entry;
+
+    private Environment localEnv;
     
     /**
      * The class constructor; it take as parameter a string containing an asset id
@@ -53,6 +55,8 @@ public class TransferNode implements Node{
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Asset " + id + " han not been declared"));
 
+        localEnv=new Environment(env);
+
         return res;
     }
 
@@ -78,17 +82,17 @@ public class TransferNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String getAR = "";
 
-        for(int i= 0; i< env.getNestingLevel()-env.lookup(id).getNestinglevel(); i++)
+        for(int i= 0; i< localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel(); i++)
             getAR += "lw $al 0($al)\n";
 
         return "move $al $fp\n"+
                 getAR+
-                "lw $a0 "+env.lookup(id).getOffset()+"($al)\n"+
+                "lw $a0 "+localEnv.lookup(id).getOffset()+"($al)\n"+
                 "add $s0 $s0 $a0\n"+
                 "li $t1 0\n"+
-                "sw $t1 "+env.lookup(id).getOffset()+"($al)\n";
+                "sw $t1 "+localEnv.lookup(id).getOffset()+"($al)\n";
     }
 }

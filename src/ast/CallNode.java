@@ -1,7 +1,6 @@
 package ast;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import util.Environment;
 import util.SemanticError;
@@ -19,7 +18,7 @@ public class CallNode implements Node {
      */
     private Node expressions;
 
-    private Environment env;
+    private Environment localEnv;
 
     /**
      * The ids of the function assets
@@ -122,6 +121,8 @@ public class CallNode implements Node {
             aentries.add(aentry);
         }
 
+        localEnv = new Environment(env) ;
+
         return res;
     }
 
@@ -184,28 +185,31 @@ public class CallNode implements Node {
     } 
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String parCode = "";
         String assCode = "";
         String getAR   = ""; //AR where the fun is defined (is always 0)
 
-        ArrayList<Node> expr = ((ExpListNode)expressions).getExps();
+        if(expressions != null){
+           ArrayList<Node> expr = ((ExpListNode)expressions).getExps();
 
-        for(int i=expr.size()-1; i>=0; i--){
-            parCode+= expr.get(i).codeGeneration(env)+"\n";
-            parCode+= "push $a0\n";
+           for(int i=expr.size()-1; i>=0; i--){
+               parCode+= expr.get(i).codeGeneration()+"\n";
+               parCode+= "push $a0\n";
+           }
         }
 
         for(int i=idlist.size()-1; i>=0;i--){
-            for(int j=0; j< env.getNestingLevel()-env.lookup(idlist.get(i)).getNestinglevel();j++)
+            System.out.println("DIREI CHE : "+idlist.get(i)+"\n");
+            for(int j=0; j< localEnv.getNestingLevel()-localEnv.lookup(idlist.get(i)).getNestinglevel();j++)
                 assCode+="lw $al 0($al)\n";
-            assCode+="lw $a0 "+env.lookup(idlist.get(i))+"($al)\n"+
+            assCode+="lw $a0 "+localEnv.lookup(idlist.get(i))+"($al)\n"+
                     "push $a0\n"+
                     "li $t1 0\n"+
-                    "sw $t1 "+env.lookup(idlist.get(i))+"($al)\n";
+                    "sw $t1 "+localEnv.lookup(idlist.get(i))+"($al)\n";
         }
 
-        for(int i=0; i<env.getNestingLevel()-env.lookup(id).getNestinglevel();i++) 
+        for(int i=0; i<localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel();i++) 
             getAR+="lw $al 0($al)\n";
 
         return "push $fp\n"+

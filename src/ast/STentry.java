@@ -1,5 +1,6 @@
 package ast;
 
+
 public class STentry {
  
 	/**
@@ -43,7 +44,14 @@ public class STentry {
 
     public STentry(STentry e){
         this.nl = e.getNestinglevel();
+        if(e.getType() instanceof IntTypeNode)
+            this.type = new IntTypeNode();
+        else if(e.getType() instanceof BoolTypeNode)
+            this.type = new BoolTypeNode();
+        else if(e.getType() instanceof AssetTypeNode) 
             this.type = new AssetTypeNode(e.getType());
+        else if(e.getType() instanceof ArrowTypeNode)
+            this.type = new ArrowTypeNode((ArrowTypeNode)e.getType());
         this.offset = e.getOffset();
     }
 	

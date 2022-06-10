@@ -79,7 +79,7 @@ public class MinorMajorNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String trueL,falseL;
         String endL ;
         switch(kind){
@@ -87,9 +87,9 @@ public class MinorMajorNode implements Node{
                 trueL= AssetLanlib.freshLabel();
                 endL = AssetLanlib.freshLabel();
     
-                return eL.codeGeneration(env)+
+                return eL.codeGeneration()+
                 "push $a0\n"+
-                eR.codeGeneration(env)+
+                eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
                 "blt $t1 $a0"+ trueL+"\n"+
                 "li $a0 0\n"+
@@ -102,9 +102,9 @@ public class MinorMajorNode implements Node{
                 trueL = AssetLanlib.freshLabel();
                 endL  = AssetLanlib.freshLabel();
     
-                return eL.codeGeneration(env)+
+                return eL.codeGeneration()+
                 "push $a0\n"+
-                eR.codeGeneration(env)+
+                eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
                 "ble $t1 $a0"+ trueL+"\n"+
                 "li $a0 0\n"+
@@ -116,9 +116,9 @@ public class MinorMajorNode implements Node{
             case 3:
                 falseL = AssetLanlib.freshLabel();
                 endL = AssetLanlib.freshLabel();
-                return eL.codeGeneration(env)+
+                return eL.codeGeneration()+
                 "push $a0\n"+
-                eR.codeGeneration(env)+
+                eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
                 "blt $t1 $a0"+ falseL+"\n"+
                 "li $a0 1\n"+
@@ -130,9 +130,9 @@ public class MinorMajorNode implements Node{
             case 4:
                 falseL = AssetLanlib.freshLabel();
                 endL = AssetLanlib.freshLabel();
-                return eL.codeGeneration(env)+
+                return eL.codeGeneration()+
                 "push $a0\n"+
-                eR.codeGeneration(env)+
+                eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
                 "ble $t1 $a0"+ falseL+"\n"+
                 "li $a0 1\n"+

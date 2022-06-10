@@ -15,6 +15,8 @@ public class DerExpNode implements Node{
 
     private STentry entry;
 
+    private Environment localEnv;
+
     /**
      * Class constructor; it takes as parameter the derivated
      * @param i the derivated id
@@ -54,7 +56,9 @@ public class DerExpNode implements Node{
         if (entry == null) 
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Identifier " + id + " han not been declared"));
-    
+        
+        localEnv = new Environment(env);
+        
 	    return res;
 	}
 
@@ -64,20 +68,20 @@ public class DerExpNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String getAR = "";
 
-        for(int i=0; i<env.getNestingLevel()-env.lookup(id).getNestinglevel();i++)
+        for(int i=0; i<localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel();i++)
             getAR+="lw $al 0($al)\n";
 
         if(entry.getType() instanceof IntTypeNode || entry.getType() instanceof AssetTypeNode){
             return "move $al $fp\n"+
                     getAR+
-                    "lw $a0 "+env.lookup(id).getOffset()+"($al)\n";
+                    "lw $a0 "+localEnv.lookup(id).getOffset()+"($al)\n";
         }else{
             return "move $al $fp\n"+
             getAR+
-            "lb $a0 "+env.lookup(id).getOffset()+"($al)\n";
+            "lb $a0 "+localEnv.lookup(id).getOffset()+"($al)\n";
         }
     }
 }

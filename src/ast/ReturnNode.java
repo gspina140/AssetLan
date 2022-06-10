@@ -61,8 +61,8 @@ public class ReturnNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
-        return exp.codeGeneration(env)+
+    public String codeGeneration(){
+        return exp.codeGeneration()+
                 "move $v0 $a0\n";
     }
 }

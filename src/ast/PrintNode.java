@@ -57,8 +57,8 @@ public class PrintNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
-        return exp.codeGeneration(env)+
+    public String codeGeneration(){
+        return exp.codeGeneration()+
                 "print $a0\n";
     }
 }

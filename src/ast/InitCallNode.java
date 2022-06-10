@@ -18,6 +18,8 @@ public class InitCallNode implements Node {
     private Node assets;
 
     private STentry entry;
+
+    private Environment localEnv;
 	
 	/**
      * Class constructor; it takes as parameter the id of the function and instantiates
@@ -86,6 +88,8 @@ public class InitCallNode implements Node {
         if(assets != null)
             res.addAll(assets.checkSemantics(env));
 
+        localEnv = new Environment(env);
+
         return res;
 	}
 
@@ -148,7 +152,7 @@ public class InitCallNode implements Node {
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         String parCode = "";
         String assCode = "";
         String getAR   = "";
@@ -156,18 +160,18 @@ public class InitCallNode implements Node {
         ArrayList<Node> expr = ((ExpListNode)parameters).getExps();
 
         for(int i=expr.size()-1; i>=0; i--){
-            parCode+= expr.get(i).codeGeneration(env)+"\n";
+            parCode+= expr.get(i).codeGeneration()+"\n";
             parCode+= "push $a0\n";
         }
 
         ArrayList<Node> assExpr = ((ExpListNode)assets).getExps();
 
         for(int i=assExpr.size()-1; i>=0; i--){
-            assCode+= expr.get(i).codeGeneration(env)+"\n";
+            assCode+= expr.get(i).codeGeneration()+"\n";
             assCode+= "push $a0\n";
         }
 
-        for(int i=0; i<env.getNestingLevel()-env.lookup(id).getNestinglevel();i++) 
+        for(int i=0; i<localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel();i++) 
             getAR+="lw $al 0($al)\n";
 
         return "push $fp\n"+

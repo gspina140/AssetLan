@@ -80,18 +80,18 @@ public class MultDivNode implements Node{
     }
 
     @Override
-    public String codeGeneration(Environment env){
+    public String codeGeneration(){
         if(isMult){
-            return eL.codeGeneration(env)+
+            return eL.codeGeneration()+
             "push $a0\n"+
-            eR.codeGeneration(env)+
+            eR.codeGeneration()+
             "lw $t1 0($sp)\n"+
             "mult $a0 $t1 $a0\n"+
             "pop\n";
         }else{
-            return eL.codeGeneration(env)+
+            return eL.codeGeneration()+
             "push $a0\n"+
-            eR.codeGeneration(env)+
+            eR.codeGeneration()+
             "lw $t1 0($sp)\n"+
             "div $a0 $t1 $a0\n"+
             "pop\n";
