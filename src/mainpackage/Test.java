@@ -1,6 +1,7 @@
 package mainpackage;
 
 import java.io.FileInputStream;
+import java.io.*;
 
 import java.util.ArrayList;
 
@@ -91,6 +92,7 @@ public class Test {
         Environment sigma = new Environment();  // Effects analysis on liquidity
 
         ArrayList<SemanticError> err = ast.checkSemantics(env);
+        System.out.println("\n\n\nATTTENTI: " + env.getSymTable().size() +"\n\n");
         if(err.size()>0) {
             System.out.println("You had: " + err.size() + " errors:");
             for (SemanticError e : err)
@@ -117,12 +119,12 @@ public class Test {
                 System.out.println("\nThe program is not liquid.\n");
 
             // CODE GENERATION  prova.AssetLan.asm
-            String code=ast.codeGeneration(); 
+            String code=ast.codeGeneration(env); 
             BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
             out.write(code);
             out.close(); 
             System.out.println("Code generated! Assembling and running generated code.");
-
+/*
             FileInputStream isASM = new FileInputStream(fileName+".asm");
             ANTLRInputStream inputASM = new ANTLRInputStream(isASM);
             AVMLexer lexerASM = new AVMLexer(inputASM);
@@ -130,7 +132,7 @@ public class Test {
             AVMParser parserASM = new AVMParser(tokensASM);
 
             //parserASM.assembly();
-
+            
             AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
             visitorAVM.visit(parserASM.assembly()); 
 
@@ -139,7 +141,7 @@ public class Test {
 
             System.out.println("Starting Virtual Machine...");
             ExecuteVM vm = new ExecuteVM(visitorAVM.code);
-            vm.cpu();
+            vm.cpu();*/
         }
     }
 }

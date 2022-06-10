@@ -146,4 +146,37 @@ public class InitCallNode implements Node {
         ArrowTypeNode t=(ArrowTypeNode)entry.getType();
         return t.getFunction().checkLiquidity(sigma, id, null, null);
     }
+
+    @Override
+    public String codeGeneration(Environment env){
+        String parCode = "";
+        String assCode = "";
+        String getAR   = "";
+
+        ArrayList<Node> expr = ((ExpListNode)parameters).getExps();
+
+        for(int i=expr.size()-1; i>=0; i--){
+            parCode+= expr.get(i).codeGeneration(env)+"\n";
+            parCode+= "push $a0\n";
+        }
+
+        ArrayList<Node> assExpr = ((ExpListNode)assets).getExps();
+
+        for(int i=assExpr.size()-1; i>=0; i--){
+            assCode+= expr.get(i).codeGeneration(env)+"\n";
+            assCode+= "push $a0\n";
+        }
+
+        for(int i=0; i<env.getNestingLevel()-env.lookup(id).getNestinglevel();i++) 
+            getAR+="lw $al 0($al)\n";
+
+        return "push $fp\n"+
+                parCode+
+                assCode+
+                "move $al $fp\n"+
+                getAR+
+                "push $al\n"+
+                "jal function"+id+"\n";
+    }
+
 }

@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-import javax.lang.model.util.ElementScanner6;
+//import javax.lang.model.util.ElementScanner6;
 
 import util.AssetLanlib;
 import util.Environment;
@@ -349,15 +349,18 @@ public class FunctionNode implements Node {
         int k = 4;
         int kIn = 0; //space for inner declarations
 
-        ArrayList<Node> decL = ((DecNode)parameters).getTypeList();
-        for(Node t : decL){
-            if(t instanceof IntTypeNode)
-                k+=4;
-            else
-                k+=1;
+        if(parameters != null){
+           ArrayList<Node> decL = ((DecNode)parameters).getTypeList();
+           for(Node t : decL){
+               if(t instanceof IntTypeNode)
+                   k+=4;
+               else
+                   k+=1;
+           }
         }
 
-        k+= 4 * ((AdecNode)assets).getNumberOfAssets();
+        if(assets != null)
+            k+= 4 * ((AdecNode)assets).getNumberOfAssets();
 
         for(Node in : declarations){
             ArrayList<Node> innerDecL = ((DecNode)in).getTypeList();

@@ -19,6 +19,8 @@ public class CallNode implements Node {
      */
     private Node expressions;
 
+    private Environment env;
+
     /**
      * The ids of the function assets
      */

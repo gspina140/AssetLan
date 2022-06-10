@@ -49,7 +49,7 @@ public class ValExpNode implements Node{
     }
 
     @Override
-    public String codeGeneration() {
+    public String codeGeneration(Environment env) {
         return "li $a0" + val + "\n";
     }
 }

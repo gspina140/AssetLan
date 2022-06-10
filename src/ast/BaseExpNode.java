@@ -59,7 +59,7 @@ public class BaseExpNode implements Node{
     }
 
     @Override
-    public String codeGeneration(){
-        return exp.codeGeneration();
+    public String codeGeneration(Environment env){
+        return exp.codeGeneration(env);
     }
 }

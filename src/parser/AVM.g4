@@ -18,7 +18,7 @@ instruction:
     (  LOADI r=REGISTER  n=NUMBER
       | PUSH r=REGISTER
       | PUSH n=NUMBER 
-	  | PUSH l=LABEL 		     
+	  //| PUSH l=LABEL 		     
 	  | POP		    
 	  | ADD     rDest=REGISTER r1=REGISTER r2=REGISTER		    
 	  | SUB	    rDest=REGISTER r1=REGISTER r2=REGISTER	    
@@ -33,16 +33,7 @@ instruction:
 	  | BRANCHEQ  r1=REGISTER r2=REGISTER l=LABEL 
 	  | BRANCHLESSEQ r1=REGISTER r2=REGISTER l=LABEL 
 	  | BRANCHLESST r1=REGISTER r2=REGISTER l=LABEL 
-	  | JAL l=LABEL              
-	  //| LOADRA          
-	  //| STORERA         
-	  //| LOADRV          
-	  //| STORERV         
-	  //| LOADFP          
-	  //| STOREFP         
-	  //| COPYFP          
-	  //| LOADHP          
-	  //| STOREHP         
+	  | JAL l=LABEL       
 	  | PRINT r=REGISTER           
 	  | HALT
 	  ) ;
@@ -67,16 +58,6 @@ BRANCHEQ : 'beq' ;	// jump to label if top == next
 BRANCHLESST : 'blt' ;	
 BRANCHLESSEQ:'ble' ;	// jump to label if top <= next
 JAL  : 'jal' ;	// jump and link
-//JS	 : 'js' ;	// jump to instruction pointed by top of stack and store next instruction in ra
-//LOADRA	 : 'lra' ;	// load from ra
-//STORERA  : 'sra' ;	// store top into ra	 
-//LOADRV	 : 'lrv' ;	// load from rv
-//STORERV  : 'srv' ;	// store top into rv	 
-//LOADFP	 : 'lfp' ;	// load frame pointer in the stack
-//STOREFP	 : 'sfp' ;	// store top into frame pointer
-//COPYFP   : 'cfp' ;      // copy stack pointer into frame pointer
-//LOADHP	 : 'lhp' ;	// load heap pointer in the stack
-//STOREHP	 : 'shp' ;	// store top into heap pointer
 PRINT	 : 'print' ;	// print top of stack
 HALT	 : 'halt' ;	// stop execution
 

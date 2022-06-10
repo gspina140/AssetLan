@@ -65,11 +65,11 @@ public class NotExpNode implements Node{
     }
 
     @Override
-    public String codeGeneration(){
+    public String codeGeneration(Environment env){
         String trueL = AssetLanlib.freshLabel();
         String endL = AssetLanlib.freshLabel();
 
-        return exp.codeGeneration()+
+        return exp.codeGeneration(env)+
         "li $t1 0\n"+
         "beq $a0 $t1"+trueL+"\n"+
         "li $a0 0\n"+

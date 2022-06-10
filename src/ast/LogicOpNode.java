@@ -79,14 +79,14 @@ public class LogicOpNode implements Node{
     }
 
     @Override
-    public String codeGeneration(){
+    public String codeGeneration(Environment env){
         if(isAnd){
             String falseL = AssetLanlib.freshLabel();
             String endL = AssetLanlib.freshLabel();
-            return eL.codeGeneration() +
+            return eL.codeGeneration(env) +
                 "li $t1 0\n"+
                 "beq $a0 $t1" + falseL +"\n"+
-                eR.codeGeneration()+
+                eR.codeGeneration(env)+
                 "li $t1 0\n"+
                 "beq $a0 $t1" + falseL +"\n"+
                 "li $a0 1\n"+
@@ -97,10 +97,10 @@ public class LogicOpNode implements Node{
         }else{
             String trueL = AssetLanlib.freshLabel();
             String endL = AssetLanlib.freshLabel();
-            return eL.codeGeneration() +
+            return eL.codeGeneration(env) +
                 "li $t1 1\n"+
                 "beq $a0 $t1" + trueL +"\n"+
-                eR.codeGeneration()+
+                eR.codeGeneration(env)+
                 "li $t1 1\n"+
                 "beq $a0 $t1" + trueL +"\n"+
                 "li $a0 0\n"+

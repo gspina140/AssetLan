@@ -2,24 +2,24 @@ package ast;
 
 import java.util.HashMap;
 
-import interpreter.ExecuteVM;
+//import interpreter.ExecuteVM;
 import parser.*;
 	
-public class AVMVisitorImpl extends AVMBaseVisitor{
+public class AVMVisitorImpl extends AVMBaseVisitor<Void>{
 
 
-    public int[] code = new int[ExecuteVM.CODESIZE];    // Each element of the array is an instruction of the program
+    public int[] code = new int[10000];    // Each element of the array is an instruction of the program
     private int i = 0;  // Program counter
     private HashMap<String,Integer> labelAdd = new HashMap<String,Integer>();
     private HashMap<Integer,String> labelRef = new HashMap<Integer,String>();
 
     /**
-     * labelAdd
+     * labelAdd   false_branch:
      * f    | 7
      * g    | 10
      * main | 15
      * 
-     * labelRef
+     * labelRef  b false_branch
      * 9    | f
      * 16   | f
      * 18   | g
@@ -46,15 +46,21 @@ public class AVMVisitorImpl extends AVMBaseVisitor{
     @Override 
     public Void visitInstruction(AVMParser.InstructionContext ctx) { 
     	switch (ctx.getStart().getType()) {
+            case AVMLexer.LOADI:
+                code[i++]= AVMParser.LOADI;
+                break;
 			case AVMLexer.PUSH:
 				if(ctx.n != null) {
 					code[i++] = AVMParser.PUSH; 
 	                code[i++] = Integer.parseInt(ctx.n.getText());
-				}
+				}else if(ctx.r != null){
+                    //push register
+                }
+                /*
 				else if(ctx.l != null){
 					code[i++] = AVMParser.PUSH; 
 		            labelRef.put(i++, ctx.l.getText());
-				}
+				}*/
 				break;
 			case AVMLexer.POP:
 				code[i++] = AVMParser.POP;
@@ -77,6 +83,10 @@ public class AVMVisitorImpl extends AVMBaseVisitor{
 			case AVMLexer.LOADW:
 				code[i++] = AVMParser.LOADW;
 				break;
+            case AVMLexer.STOREB:
+                code[i++] = AVMParser.STOREB;
+            case AVMLexer.LOADB:
+                code[i++] = AVMParser.LOADB;
 			case AVMLexer.LABEL:
 				labelAdd.put(ctx.l.getText(),i);
 				break;
@@ -91,37 +101,14 @@ public class AVMVisitorImpl extends AVMBaseVisitor{
 			case AVMLexer.BRANCHLESSEQ:
 				code[i++] = AVMParser.BRANCHLESSEQ; 
                 labelRef.put(i++,(ctx.l!=null? ctx.l.getText():null));
+            case AVMLexer.BRANCHLESST:
+                code[i++] = AVMParser.BRANCHLESST; 
+                labelRef.put(i++,(ctx.l!=null? ctx.l.getText():null));
                 break;
-			case AVMLexer.JS:
-				code[i++] = AVMParser.JS;
-				break;
-			case AVMLexer.LOADRA:
-				code[i++] = AVMParser.LOADRA;
-				break;
-			case AVMLexer.STORERA:
-				code[i++] = AVMParser.STORERA;
-				break;
-			case AVMLexer.LOADRV:
-				code[i++] = AVMParser.LOADRV;
-				break;
-			case AVMLexer.STORERV:
-				code[i++] = AVMParser.STORERV;
-				break;
-			case AVMLexer.LOADFP:
-				code[i++] = AVMParser.LOADFP;
-				break;
-			case AVMLexer.STOREFP:
-				code[i++] = AVMParser.STOREFP;
-				break;
-			case AVMLexer.COPYFP:
-				code[i++] = AVMParser.COPYFP;
-				break;
-			case AVMLexer.LOADHP:
-				code[i++] = AVMParser.LOADHP;
-				break;
-			case AVMLexer.STOREHP:
-				code[i++] = AVMParser.STOREHP;
-				break;
+            case AVMLexer.JAL:
+                code[i++] = AVMParser.JAL;
+                labelRef.put(i++,(ctx.l!=null?ctx.l.getText():null));
+                break;
 			case AVMLexer.PRINT:
 				code[i++] = AVMParser.PRINT;
 				break;

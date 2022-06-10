@@ -61,7 +61,7 @@ public class ArrowTypeNode implements Node {
   }
 
   //non utilizzato
-  public String codeGeneration() {
+  public String codeGeneration(Environment env) {
     return "";
   }
 

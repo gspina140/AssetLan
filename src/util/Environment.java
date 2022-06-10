@@ -69,12 +69,13 @@ public class Environment {
 	 * @param void
 	 * @return void
 	 */
-	public void exitScope() {
-		symTable.remove(nestingLevel--);
+	public void exitScope() {  
+	    symTable.remove(nestingLevel--);  
         //offset (backtrack)
         
         int x = 0;
         //int lastDeclared=0;
+        if(nestingLevel != -1){
         for (Map.Entry<String, STentry> set : symTable.get(nestingLevel).entrySet()) {
             if(x >= set.getValue().getOffset()){
                 x=set.getValue().getOffset();
@@ -84,7 +85,9 @@ public class Environment {
                     x-=1;
             }
         }
-
+    }
+    
+    
         offset = x;
 	}
 

@@ -79,18 +79,18 @@ public class PlusMinusNode implements Node{
     }
 
     @Override
-    public String codeGeneration(){
+    public String codeGeneration(Environment env){
         if(isSum){
-            return eL.codeGeneration()+
+            return eL.codeGeneration(env)+
             "push $a0\n"+
-            eR.codeGeneration()+
+            eR.codeGeneration(env)+
             "lw $t1 0($sp)\n"+
             "add $a0 $t1 $a0\n"+
             "pop\n";
         }else{
-            return eL.codeGeneration()+
+            return eL.codeGeneration(env)+
             "push $a0\n"+
-            eR.codeGeneration()+
+            eR.codeGeneration(env)+
             "lw $t1 0($sp)\n"+
             "sub $a0 $t1 $a0\n"+
             "pop\n";

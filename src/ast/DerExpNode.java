@@ -62,13 +62,22 @@ public class DerExpNode implements Node{
     public Node typeCheck() {
         return entry.getType();
     }
-/* 
-    @Override
-    public String codeGeneration(){
-        if(entry.getType() instanceof IntTypeNode || entry.getType() instanceof AssetTypeNode){
-            return ;
-        }else{
 
+    @Override
+    public String codeGeneration(Environment env){
+        String getAR = "";
+
+        for(int i=0; i<env.getNestingLevel()-env.lookup(id).getNestinglevel();i++)
+            getAR+="lw $al 0($al)\n";
+
+        if(entry.getType() instanceof IntTypeNode || entry.getType() instanceof AssetTypeNode){
+            return "move $al $fp\n"+
+                    getAR+
+                    "lw $a0 "+env.lookup(id).getOffset()+"($al)\n";
+        }else{
+            return "move $al $fp\n"+
+            getAR+
+            "lb $a0 "+env.lookup(id).getOffset()+"($al)\n";
         }
-    }*/
+    }
 }

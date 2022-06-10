@@ -62,4 +62,7 @@ public class AssetTypeNode implements Node{
     public Node typeCheck() {
         return new AssetTypeNode();
     }
+
+    @Override
+    public String codeGeneration(Environment env){return "";}
 }
