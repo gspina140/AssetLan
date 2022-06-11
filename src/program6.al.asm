@@ -101,6 +101,9 @@ lw $al 0($al)
 lw $al 0($al)
 push $al
 jal function_f
+move $al $fp
+lw $al 0($al)
+lw $a0 4($al)
 print $a0
 move $al $fp
 lw $al 0($al)
