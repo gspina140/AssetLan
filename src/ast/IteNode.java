@@ -233,7 +233,7 @@ public class IteNode implements Node {
                 "li $t1 0\n"+
                 "beq $a0 $t1 "+falseL+"\n"+
                 thenCode+
-                "b"+end+"\n"+
+                "b "+end+"\n"+
                 falseL+":\n"+
                 elseCode+
                 end+":\n";

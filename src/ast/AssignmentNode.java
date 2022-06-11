@@ -20,7 +20,8 @@ public class AssignmentNode implements Node {
 
     private STentry entry;
 
-    private Environment localEnv;
+    private int nl;
+
 
     /**
      * Class constructor; it takes as parameters both an id and an expression
@@ -69,7 +70,7 @@ public class AssignmentNode implements Node {
         // Delegate semantic check of expression to relative node
         res.addAll(exp.checkSemantics(env));
         
-        localEnv = new Environment(env);
+        nl = env.getNestingLevel();
 
         return res;
     }
@@ -92,16 +93,16 @@ public class AssignmentNode implements Node {
         String getAR = "";
         String store = "";
 
-        for(int i=0; i< localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel(); i++ ){
+        for(int i=0; i< nl-entry.getNestinglevel(); i++ ){
             getAR+="lw $al 0($al)\n";
         }
         
-        if(localEnv.lookup(id).getType() instanceof BoolTypeNode)
-            store = "sb $a0 "+ localEnv.lookup(id).getOffset() +"($al)\n";
+        if(entry.getType() instanceof BoolTypeNode)
+            store = "sb $a0 "+ entry.getOffset() +"($al)\n";
         else
-            store = "sw $a0 "+ localEnv.lookup(id).getOffset() +"($al)\n";
+            store = "sw $a0 "+ entry.getOffset() +"($al)\n";
 
-        return "move $al $fp"+
+        return "move $al $fp\n"+
                 getAR+
                 exp.codeGeneration()+
                 store;

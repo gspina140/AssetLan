@@ -73,7 +73,7 @@ public class NotExpNode implements Node{
         "li $t1 0\n"+
         "beq $a0 $t1"+trueL+"\n"+
         "li $a0 0\n"+
-        "b"+endL+"\n"+
+        "b "+endL+"\n"+
         trueL+":\n"+
         "li $a0 1\n"+
         endL +":\n";

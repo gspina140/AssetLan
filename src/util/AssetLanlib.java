@@ -20,7 +20,7 @@ public class AssetLanlib {
     
     public static String freshFunLabel(String fName) { 
         funLabCount++;
-        return "function"+fName;
+        return "function_"+fName;
     } 
   
     public static void putCode(String c) { 

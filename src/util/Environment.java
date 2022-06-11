@@ -80,9 +80,9 @@ public class Environment {
             if(x >= set.getValue().getOffset()){
                 x=set.getValue().getOffset();
                 if(set.getValue().getType() instanceof IntTypeNode || set.getValue().getType() instanceof AssetTypeNode)
-                    x-=4;
+                    x+=4;
                 else
-                    x-=1;
+                    x+=1;
             }
         }
     }
@@ -121,12 +121,12 @@ public class Environment {
 		if (type != null){
             if(type instanceof IntTypeNode || type instanceof AssetTypeNode){
 			    entry = new STentry(nestingLevel, type, offset);
-                offset-=4;
+                offset+=4;
             }else
-			    entry = new STentry(nestingLevel, type, offset--);
+			    entry = new STentry(nestingLevel, type, offset++);
         }
 		else
-			entry = new STentry(nestingLevel, offset--);
+			entry = new STentry(nestingLevel, offset++);
 
 		HashMap<String, STentry> hm = getCurrentScope();
 

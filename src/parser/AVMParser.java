@@ -22,8 +22,8 @@ public class AVMParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, LOADI=3, PUSH=4, POP=5, ADD=6, SUB=7, MULT=8, DIV=9, STOREW=10, 
 		LOADW=11, STOREB=12, LOADB=13, BRANCH=14, BRANCHEQ=15, BRANCHLESST=16, 
-		BRANCHLESSEQ=17, JAL=18, PRINT=19, HALT=20, COL=21, LABEL=22, NUMBER=23, 
-		REGISTER=24, WHITESP=25, ERR=26;
+		BRANCHLESSEQ=17, JAL=18, PRINT=19, HALT=20, MOVE=21, ADDI=22, JR=23, COL=24, 
+		LABEL=25, NUMBER=26, REGISTER=27, WHITESP=28, ERR=29;
 	public static final int
 		RULE_assembly = 0, RULE_instruction = 1;
 	private static String[] makeRuleNames() {
@@ -37,7 +37,7 @@ public class AVMParser extends Parser {
 		return new String[] {
 			null, "'('", "')'", "'li'", "'push'", "'pop'", "'add'", "'sub'", "'mult'", 
 			"'div'", "'sw'", "'lw'", "'sb'", "'lb'", "'b'", "'beq'", "'blt'", "'ble'", 
-			"'jal'", "'print'", "'halt'", "':'"
+			"'jal'", "'print'", "'halt'", "'move'", "'addi'", "'jr'", "':'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -45,8 +45,8 @@ public class AVMParser extends Parser {
 		return new String[] {
 			null, null, null, "LOADI", "PUSH", "POP", "ADD", "SUB", "MULT", "DIV", 
 			"STOREW", "LOADW", "STOREB", "LOADB", "BRANCH", "BRANCHEQ", "BRANCHLESST", 
-			"BRANCHLESSEQ", "JAL", "PRINT", "HALT", "COL", "LABEL", "NUMBER", "REGISTER", 
-			"WHITESP", "ERR"
+			"BRANCHLESSEQ", "JAL", "PRINT", "HALT", "MOVE", "ADDI", "JR", "COL", 
+			"LABEL", "NUMBER", "REGISTER", "WHITESP", "ERR"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -136,7 +136,7 @@ public class AVMParser extends Parser {
 			setState(7);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LOADI) | (1L << PUSH) | (1L << POP) | (1L << ADD) | (1L << SUB) | (1L << MULT) | (1L << DIV) | (1L << STOREW) | (1L << LOADW) | (1L << STOREB) | (1L << LOADB) | (1L << BRANCH) | (1L << BRANCHEQ) | (1L << BRANCHLESST) | (1L << BRANCHLESSEQ) | (1L << JAL) | (1L << PRINT) | (1L << HALT) | (1L << LABEL))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LOADI) | (1L << PUSH) | (1L << POP) | (1L << ADD) | (1L << SUB) | (1L << MULT) | (1L << DIV) | (1L << STOREW) | (1L << LOADW) | (1L << STOREB) | (1L << LOADB) | (1L << BRANCH) | (1L << BRANCHEQ) | (1L << BRANCHLESST) | (1L << BRANCHLESSEQ) | (1L << JAL) | (1L << PRINT) | (1L << HALT) | (1L << MOVE) | (1L << ADDI) | (1L << JR) | (1L << LABEL))) != 0)) {
 				{
 				{
 				setState(4);
@@ -163,16 +163,17 @@ public class AVMParser extends Parser {
 	public static class InstructionContext extends ParserRuleContext {
 		public Token r;
 		public Token n;
-		public Token rDest;
 		public Token r1;
 		public Token r2;
-		public Token rScr;
+		public Token rDest;
 		public Token rSrc;
 		public Token l;
 		public TerminalNode LOADI() { return getToken(AVMParser.LOADI, 0); }
 		public TerminalNode PUSH() { return getToken(AVMParser.PUSH, 0); }
+		public TerminalNode MOVE() { return getToken(AVMParser.MOVE, 0); }
 		public TerminalNode POP() { return getToken(AVMParser.POP, 0); }
 		public TerminalNode ADD() { return getToken(AVMParser.ADD, 0); }
+		public TerminalNode ADDI() { return getToken(AVMParser.ADDI, 0); }
 		public TerminalNode SUB() { return getToken(AVMParser.SUB, 0); }
 		public TerminalNode MULT() { return getToken(AVMParser.MULT, 0); }
 		public TerminalNode DIV() { return getToken(AVMParser.DIV, 0); }
@@ -186,6 +187,7 @@ public class AVMParser extends Parser {
 		public TerminalNode BRANCHLESSEQ() { return getToken(AVMParser.BRANCHLESSEQ, 0); }
 		public TerminalNode BRANCHLESST() { return getToken(AVMParser.BRANCHLESST, 0); }
 		public TerminalNode JAL() { return getToken(AVMParser.JAL, 0); }
+		public TerminalNode JR() { return getToken(AVMParser.JR, 0); }
 		public TerminalNode PRINT() { return getToken(AVMParser.PRINT, 0); }
 		public TerminalNode HALT() { return getToken(AVMParser.HALT, 0); }
 		public List<TerminalNode> REGISTER() { return getTokens(AVMParser.REGISTER); }
@@ -219,10 +221,10 @@ public class AVMParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(79);
+			setState(86);
 			_errHandler.sync(this);
-			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
-			case 1:
+			switch (_input.LA(1)) {
+			case LOADI:
 				{
 				setState(10);
 				match(LOADI);
@@ -232,7 +234,7 @@ public class AVMParser extends Parser {
 				((InstructionContext)_localctx).n = match(NUMBER);
 				}
 				break;
-			case 2:
+			case PUSH:
 				{
 				setState(13);
 				match(PUSH);
@@ -240,206 +242,230 @@ public class AVMParser extends Parser {
 				((InstructionContext)_localctx).r = match(REGISTER);
 				}
 				break;
-			case 3:
+			case MOVE:
 				{
 				setState(15);
-				match(PUSH);
+				match(MOVE);
 				setState(16);
-				((InstructionContext)_localctx).n = match(NUMBER);
+				((InstructionContext)_localctx).r1 = match(REGISTER);
+				setState(17);
+				((InstructionContext)_localctx).r2 = match(REGISTER);
 				}
 				break;
-			case 4:
+			case POP:
 				{
-				setState(17);
+				setState(18);
 				match(POP);
 				}
 				break;
-			case 5:
+			case ADD:
 				{
-				setState(18);
-				match(ADD);
 				setState(19);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
+				match(ADD);
 				setState(20);
-				((InstructionContext)_localctx).r1 = match(REGISTER);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(21);
-				((InstructionContext)_localctx).r2 = match(REGISTER);
-				}
-				break;
-			case 6:
-				{
+				((InstructionContext)_localctx).r1 = match(REGISTER);
 				setState(22);
-				match(SUB);
+				((InstructionContext)_localctx).r2 = match(REGISTER);
+				}
+				break;
+			case ADDI:
+				{
 				setState(23);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
+				match(ADDI);
 				setState(24);
-				((InstructionContext)_localctx).r1 = match(REGISTER);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(25);
-				((InstructionContext)_localctx).r2 = match(REGISTER);
-				}
-				break;
-			case 7:
-				{
+				((InstructionContext)_localctx).r1 = match(REGISTER);
 				setState(26);
-				match(MULT);
+				((InstructionContext)_localctx).n = match(NUMBER);
+				}
+				break;
+			case SUB:
+				{
 				setState(27);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
+				match(SUB);
 				setState(28);
-				((InstructionContext)_localctx).r1 = match(REGISTER);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(29);
-				((InstructionContext)_localctx).r2 = match(REGISTER);
-				}
-				break;
-			case 8:
-				{
-				setState(30);
-				match(DIV);
-				setState(31);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
-				setState(32);
 				((InstructionContext)_localctx).r1 = match(REGISTER);
-				setState(33);
+				setState(30);
 				((InstructionContext)_localctx).r2 = match(REGISTER);
 				}
 				break;
-			case 9:
+			case MULT:
 				{
+				setState(31);
+				match(MULT);
+				setState(32);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
+				setState(33);
+				((InstructionContext)_localctx).r1 = match(REGISTER);
 				setState(34);
-				match(STOREW);
+				((InstructionContext)_localctx).r2 = match(REGISTER);
+				}
+				break;
+			case DIV:
+				{
 				setState(35);
-				((InstructionContext)_localctx).rScr = match(REGISTER);
+				match(DIV);
 				setState(36);
-				((InstructionContext)_localctx).n = match(NUMBER);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(37);
-				match(T__0);
+				((InstructionContext)_localctx).r1 = match(REGISTER);
 				setState(38);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
+				((InstructionContext)_localctx).r2 = match(REGISTER);
+				}
+				break;
+			case STOREW:
+				{
 				setState(39);
-				match(T__1);
-				}
-				break;
-			case 10:
-				{
+				match(STOREW);
 				setState(40);
-				match(LOADW);
+				((InstructionContext)_localctx).rSrc = match(REGISTER);
 				setState(41);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
+				((InstructionContext)_localctx).n = match(NUMBER);
 				setState(42);
-				((InstructionContext)_localctx).n = match(NUMBER);
+				match(T__0);
 				setState(43);
-				match(T__0);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(44);
-				((InstructionContext)_localctx).rSrc = match(REGISTER);
+				match(T__1);
+				}
+				break;
+			case LOADW:
+				{
 				setState(45);
-				match(T__1);
-				}
-				break;
-			case 11:
-				{
+				match(LOADW);
 				setState(46);
-				match(STOREB);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(47);
-				((InstructionContext)_localctx).rScr = match(REGISTER);
+				((InstructionContext)_localctx).n = match(NUMBER);
 				setState(48);
-				((InstructionContext)_localctx).n = match(NUMBER);
+				match(T__0);
 				setState(49);
-				match(T__0);
-				setState(50);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
-				setState(51);
-				match(T__1);
-				}
-				break;
-			case 12:
-				{
-				setState(52);
-				match(LOADB);
-				setState(53);
-				((InstructionContext)_localctx).rDest = match(REGISTER);
-				setState(54);
-				((InstructionContext)_localctx).n = match(NUMBER);
-				setState(55);
-				match(T__0);
-				setState(56);
 				((InstructionContext)_localctx).rSrc = match(REGISTER);
-				setState(57);
+				setState(50);
 				match(T__1);
 				}
 				break;
-			case 13:
+			case STOREB:
 				{
+				setState(51);
+				match(STOREB);
+				setState(52);
+				((InstructionContext)_localctx).rSrc = match(REGISTER);
+				setState(53);
+				((InstructionContext)_localctx).n = match(NUMBER);
+				setState(54);
+				match(T__0);
+				setState(55);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
+				setState(56);
+				match(T__1);
+				}
+				break;
+			case LOADB:
+				{
+				setState(57);
+				match(LOADB);
 				setState(58);
-				((InstructionContext)_localctx).l = match(LABEL);
+				((InstructionContext)_localctx).rDest = match(REGISTER);
 				setState(59);
+				((InstructionContext)_localctx).n = match(NUMBER);
+				setState(60);
+				match(T__0);
+				setState(61);
+				((InstructionContext)_localctx).rSrc = match(REGISTER);
+				setState(62);
+				match(T__1);
+				}
+				break;
+			case LABEL:
+				{
+				setState(63);
+				((InstructionContext)_localctx).l = match(LABEL);
+				setState(64);
 				match(COL);
 				}
 				break;
-			case 14:
+			case BRANCH:
 				{
-				setState(60);
-				match(BRANCH);
-				setState(61);
-				((InstructionContext)_localctx).l = match(LABEL);
-				}
-				break;
-			case 15:
-				{
-				setState(62);
-				match(BRANCHEQ);
-				setState(63);
-				((InstructionContext)_localctx).r1 = match(REGISTER);
-				setState(64);
-				((InstructionContext)_localctx).r2 = match(REGISTER);
 				setState(65);
-				((InstructionContext)_localctx).l = match(LABEL);
-				}
-				break;
-			case 16:
-				{
+				match(BRANCH);
 				setState(66);
-				match(BRANCHLESSEQ);
+				((InstructionContext)_localctx).l = match(LABEL);
+				}
+				break;
+			case BRANCHEQ:
+				{
 				setState(67);
-				((InstructionContext)_localctx).r1 = match(REGISTER);
+				match(BRANCHEQ);
 				setState(68);
-				((InstructionContext)_localctx).r2 = match(REGISTER);
-				setState(69);
-				((InstructionContext)_localctx).l = match(LABEL);
-				}
-				break;
-			case 17:
-				{
-				setState(70);
-				match(BRANCHLESST);
-				setState(71);
 				((InstructionContext)_localctx).r1 = match(REGISTER);
-				setState(72);
+				setState(69);
 				((InstructionContext)_localctx).r2 = match(REGISTER);
+				setState(70);
+				((InstructionContext)_localctx).l = match(LABEL);
+				}
+				break;
+			case BRANCHLESSEQ:
+				{
+				setState(71);
+				match(BRANCHLESSEQ);
+				setState(72);
+				((InstructionContext)_localctx).r1 = match(REGISTER);
 				setState(73);
-				((InstructionContext)_localctx).l = match(LABEL);
-				}
-				break;
-			case 18:
-				{
+				((InstructionContext)_localctx).r2 = match(REGISTER);
 				setState(74);
-				match(JAL);
-				setState(75);
 				((InstructionContext)_localctx).l = match(LABEL);
 				}
 				break;
-			case 19:
+			case BRANCHLESST:
 				{
+				setState(75);
+				match(BRANCHLESST);
 				setState(76);
-				match(PRINT);
+				((InstructionContext)_localctx).r1 = match(REGISTER);
 				setState(77);
+				((InstructionContext)_localctx).r2 = match(REGISTER);
+				setState(78);
+				((InstructionContext)_localctx).l = match(LABEL);
+				}
+				break;
+			case JAL:
+				{
+				setState(79);
+				match(JAL);
+				setState(80);
+				((InstructionContext)_localctx).l = match(LABEL);
+				}
+				break;
+			case JR:
+				{
+				setState(81);
+				match(JR);
+				setState(82);
 				((InstructionContext)_localctx).r = match(REGISTER);
 				}
 				break;
-			case 20:
+			case PRINT:
 				{
-				setState(78);
+				setState(83);
+				match(PRINT);
+				setState(84);
+				((InstructionContext)_localctx).r = match(REGISTER);
+				}
+				break;
+			case HALT:
+				{
+				setState(85);
 				match(HALT);
 				}
 				break;
+			default:
+				throw new NoViableAltException(this);
 			}
 			}
 		}
@@ -455,29 +481,31 @@ public class AVMParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\34T\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\37[\4\2\t\2\4\3\t"+
 		"\3\3\2\7\2\b\n\2\f\2\16\2\13\13\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
-		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3R\n\3\3\3\2\2\4\2\4\2\2\2e\2\t\3\2\2"+
-		"\2\4Q\3\2\2\2\6\b\5\4\3\2\7\6\3\2\2\2\b\13\3\2\2\2\t\7\3\2\2\2\t\n\3\2"+
-		"\2\2\n\3\3\2\2\2\13\t\3\2\2\2\f\r\7\5\2\2\r\16\7\32\2\2\16R\7\31\2\2\17"+
-		"\20\7\6\2\2\20R\7\32\2\2\21\22\7\6\2\2\22R\7\31\2\2\23R\7\7\2\2\24\25"+
-		"\7\b\2\2\25\26\7\32\2\2\26\27\7\32\2\2\27R\7\32\2\2\30\31\7\t\2\2\31\32"+
-		"\7\32\2\2\32\33\7\32\2\2\33R\7\32\2\2\34\35\7\n\2\2\35\36\7\32\2\2\36"+
-		"\37\7\32\2\2\37R\7\32\2\2 !\7\13\2\2!\"\7\32\2\2\"#\7\32\2\2#R\7\32\2"+
-		"\2$%\7\f\2\2%&\7\32\2\2&\'\7\31\2\2\'(\7\3\2\2()\7\32\2\2)R\7\4\2\2*+"+
-		"\7\r\2\2+,\7\32\2\2,-\7\31\2\2-.\7\3\2\2./\7\32\2\2/R\7\4\2\2\60\61\7"+
-		"\16\2\2\61\62\7\32\2\2\62\63\7\31\2\2\63\64\7\3\2\2\64\65\7\32\2\2\65"+
-		"R\7\4\2\2\66\67\7\17\2\2\678\7\32\2\289\7\31\2\29:\7\3\2\2:;\7\32\2\2"+
-		";R\7\4\2\2<=\7\30\2\2=R\7\27\2\2>?\7\20\2\2?R\7\30\2\2@A\7\21\2\2AB\7"+
-		"\32\2\2BC\7\32\2\2CR\7\30\2\2DE\7\23\2\2EF\7\32\2\2FG\7\32\2\2GR\7\30"+
-		"\2\2HI\7\22\2\2IJ\7\32\2\2JK\7\32\2\2KR\7\30\2\2LM\7\24\2\2MR\7\30\2\2"+
-		"NO\7\25\2\2OR\7\32\2\2PR\7\26\2\2Q\f\3\2\2\2Q\17\3\2\2\2Q\21\3\2\2\2Q"+
-		"\23\3\2\2\2Q\24\3\2\2\2Q\30\3\2\2\2Q\34\3\2\2\2Q \3\2\2\2Q$\3\2\2\2Q*"+
-		"\3\2\2\2Q\60\3\2\2\2Q\66\3\2\2\2Q<\3\2\2\2Q>\3\2\2\2Q@\3\2\2\2QD\3\2\2"+
-		"\2QH\3\2\2\2QL\3\2\2\2QN\3\2\2\2QP\3\2\2\2R\5\3\2\2\2\4\tQ";
+		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3Y\n\3\3"+
+		"\3\2\2\4\2\4\2\2\2n\2\t\3\2\2\2\4X\3\2\2\2\6\b\5\4\3\2\7\6\3\2\2\2\b\13"+
+		"\3\2\2\2\t\7\3\2\2\2\t\n\3\2\2\2\n\3\3\2\2\2\13\t\3\2\2\2\f\r\7\5\2\2"+
+		"\r\16\7\35\2\2\16Y\7\34\2\2\17\20\7\6\2\2\20Y\7\35\2\2\21\22\7\27\2\2"+
+		"\22\23\7\35\2\2\23Y\7\35\2\2\24Y\7\7\2\2\25\26\7\b\2\2\26\27\7\35\2\2"+
+		"\27\30\7\35\2\2\30Y\7\35\2\2\31\32\7\30\2\2\32\33\7\35\2\2\33\34\7\35"+
+		"\2\2\34Y\7\34\2\2\35\36\7\t\2\2\36\37\7\35\2\2\37 \7\35\2\2 Y\7\35\2\2"+
+		"!\"\7\n\2\2\"#\7\35\2\2#$\7\35\2\2$Y\7\35\2\2%&\7\13\2\2&\'\7\35\2\2\'"+
+		"(\7\35\2\2(Y\7\35\2\2)*\7\f\2\2*+\7\35\2\2+,\7\34\2\2,-\7\3\2\2-.\7\35"+
+		"\2\2.Y\7\4\2\2/\60\7\r\2\2\60\61\7\35\2\2\61\62\7\34\2\2\62\63\7\3\2\2"+
+		"\63\64\7\35\2\2\64Y\7\4\2\2\65\66\7\16\2\2\66\67\7\35\2\2\678\7\34\2\2"+
+		"89\7\3\2\29:\7\35\2\2:Y\7\4\2\2;<\7\17\2\2<=\7\35\2\2=>\7\34\2\2>?\7\3"+
+		"\2\2?@\7\35\2\2@Y\7\4\2\2AB\7\33\2\2BY\7\32\2\2CD\7\20\2\2DY\7\33\2\2"+
+		"EF\7\21\2\2FG\7\35\2\2GH\7\35\2\2HY\7\33\2\2IJ\7\23\2\2JK\7\35\2\2KL\7"+
+		"\35\2\2LY\7\33\2\2MN\7\22\2\2NO\7\35\2\2OP\7\35\2\2PY\7\33\2\2QR\7\24"+
+		"\2\2RY\7\33\2\2ST\7\31\2\2TY\7\35\2\2UV\7\25\2\2VY\7\35\2\2WY\7\26\2\2"+
+		"X\f\3\2\2\2X\17\3\2\2\2X\21\3\2\2\2X\24\3\2\2\2X\25\3\2\2\2X\31\3\2\2"+
+		"\2X\35\3\2\2\2X!\3\2\2\2X%\3\2\2\2X)\3\2\2\2X/\3\2\2\2X\65\3\2\2\2X;\3"+
+		"\2\2\2XA\3\2\2\2XC\3\2\2\2XE\3\2\2\2XI\3\2\2\2XM\3\2\2\2XQ\3\2\2\2XS\3"+
+		"\2\2\2XU\3\2\2\2XW\3\2\2\2Y\5\3\2\2\2\4\tX";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

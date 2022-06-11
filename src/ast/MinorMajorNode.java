@@ -93,7 +93,7 @@ public class MinorMajorNode implements Node{
                 "lw $t1 0($sp)\n"+
                 "blt $t1 $a0"+ trueL+"\n"+
                 "li $a0 0\n"+
-                "b"+endL+"\n"+
+                "b "+endL+"\n"+
                 trueL +":\n"+
                 "li $a0 1\n"+
                 endL + ":\n"+
@@ -108,7 +108,7 @@ public class MinorMajorNode implements Node{
                 "lw $t1 0($sp)\n"+
                 "ble $t1 $a0"+ trueL+"\n"+
                 "li $a0 0\n"+
-                "b"+endL+"\n"+
+                "b "+endL+"\n"+
                 trueL +":\n"+
                 "li $a0 1\n"+
                 endL + ":\n"+
@@ -122,7 +122,7 @@ public class MinorMajorNode implements Node{
                 "lw $t1 0($sp)\n"+
                 "blt $t1 $a0"+ falseL+"\n"+
                 "li $a0 1\n"+
-                "b"+endL+"\n"+
+                "b "+endL+"\n"+
                 falseL +":\n"+
                 "li $a0 0\n"+
                 endL + ":\n"+
@@ -136,7 +136,7 @@ public class MinorMajorNode implements Node{
                 "lw $t1 0($sp)\n"+
                 "ble $t1 $a0"+ falseL+"\n"+
                 "li $a0 1\n"+
-                "b"+endL+"\n"+
+                "b "+endL+"\n"+
                 falseL +":\n"+
                 "li $a0 0\n"+
                 endL + ":\n"+

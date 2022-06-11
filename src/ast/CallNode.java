@@ -18,7 +18,7 @@ public class CallNode implements Node {
      */
     private Node expressions;
 
-    private Environment localEnv;
+    private int nl;
 
     /**
      * The ids of the function assets
@@ -121,7 +121,7 @@ public class CallNode implements Node {
             aentries.add(aentry);
         }
 
-        localEnv = new Environment(env) ;
+        nl = env.getNestingLevel();
 
         return res;
     }
@@ -199,17 +199,17 @@ public class CallNode implements Node {
            }
         }
 
-        for(int i=idlist.size()-1; i>=0;i--){
+        for(int i=aentries.size()-1; i>=0;i--){
             System.out.println("DIREI CHE : "+idlist.get(i)+"\n");
-            for(int j=0; j< localEnv.getNestingLevel()-localEnv.lookup(idlist.get(i)).getNestinglevel();j++)
+            for(int j=0; j< nl-aentries.get(i).getNestinglevel();j++)
                 assCode+="lw $al 0($al)\n";
-            assCode+="lw $a0 "+localEnv.lookup(idlist.get(i))+"($al)\n"+
+            assCode+="lw $a0 "+aentries.get(i).getOffset()+"($al)\n"+
                     "push $a0\n"+
                     "li $t1 0\n"+
-                    "sw $t1 "+localEnv.lookup(idlist.get(i))+"($al)\n";
+                    "sw $t1 "+aentries.get(i).getOffset()+"($al)\n";
         }
 
-        for(int i=0; i<localEnv.getNestingLevel()-localEnv.lookup(id).getNestinglevel();i++) 
+        for(int i=0; i<nl-entry.getNestinglevel();i++) 
             getAR+="lw $al 0($al)\n";
 
         return "push $fp\n"+
@@ -219,6 +219,6 @@ public class CallNode implements Node {
                 "move $al $fp\n"+
                 getAR+
                 "push $al\n"+
-                "jal function"+id+"\n";
+                "jal function_"+id+"\n";
     }
 }

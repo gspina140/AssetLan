@@ -14,7 +14,7 @@ public class MoveNode implements Node {
 
     private STentry entry1, entry2;
 
-    private Environment localEnv;
+    private int nl;
 
     /**
      * Class constructor; it takes as parameters the ids 
@@ -63,7 +63,7 @@ public class MoveNode implements Node {
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Asset " + id2 + " han not been declared"));
         
-        localEnv = new Environment(env);
+        nl = env.getNestingLevel();
 
         return res;
     }
@@ -106,24 +106,24 @@ public class MoveNode implements Node {
         String getAR1="";
         String getAR2="";
         
-        for(int i= 0; i< localEnv.getNestingLevel()-localEnv.lookup(id1).getNestinglevel();i++)
+        for(int i= 0; i< nl-entry1.getNestinglevel();i++)
             getAR1+="lw $al 0($al)\n";
 
-        for(int i= 0; i< localEnv.getNestingLevel()-localEnv.lookup(id2).getNestinglevel();i++)
+        for(int i= 0; i< nl-entry2.getNestinglevel();i++)
             getAR2+="lw $al 0($al)\n";
 
         return "move $al $fp\n"+
                 getAR1+
-                "lw $a0 "+localEnv.lookup(id1).getOffset()+"($al)\n"+
+                "lw $a0 "+entry1.getOffset()+"($al)\n"+
                 "push $a0\n"+
-                "li $t1 1\n"+
-                "sw $t1 "+localEnv.lookup(id1).getOffset()+"($al)\n"+
+                "li $t1 0\n"+
+                "sw $t1 "+entry1.getOffset()+"($al)\n"+
                 "move $al $fp\n"+
                 getAR2+
-                "lw $a0 "+localEnv.lookup(id2).getOffset()+"($al)\n"+
+                "lw $a0 "+entry2.getOffset()+"($al)\n"+
                 "lw $t1 0($sp)\n"+
                 "add $a0 $a0 $t1\n"+
-                "sw $a0 "+localEnv.lookup(id2).getOffset()+"($al)\n"+
+                "sw $a0 "+entry2.getOffset()+"($al)\n"+
                 "pop\n";
     }
 }

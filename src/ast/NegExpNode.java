@@ -66,6 +66,6 @@ public class NegExpNode implements Node{
     @Override
     public String codeGeneration(){
         return exp.codeGeneration()+
-        "sub $a0 $zero $a0\n";
+        "li $t1 0\nsub $a0 $t1 $a0\n";
     }
 }

@@ -13,8 +13,12 @@ import org.antlr.v4.runtime.misc.*;
 
 import ast.*;
 
+import interpreter.ExecuteVM;
+
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
+import parser.AVMParser;
+import parser.AVMLexer;
 
 import util.Environment;
 import util.SemanticError;
@@ -124,7 +128,7 @@ public class Test {
             out.write(code);
             out.close(); 
             System.out.println("Code generated! Assembling and running generated code.");
-/*
+
             FileInputStream isASM = new FileInputStream(fileName+".asm");
             ANTLRInputStream inputASM = new ANTLRInputStream(isASM);
             AVMLexer lexerASM = new AVMLexer(inputASM);
@@ -141,7 +145,7 @@ public class Test {
 
             System.out.println("Starting Virtual Machine...");
             ExecuteVM vm = new ExecuteVM(visitorAVM.code);
-            vm.cpu();*/
+            vm.cpu();
         }
     }
 }

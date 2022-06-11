@@ -2,6 +2,8 @@ package ast;
 
 import java.util.ArrayList;
 
+import javax.lang.model.util.ElementScanner6;
+
 //import javax.lang.model.util.ElementScanner6;
 
 import util.AssetLanlib;
@@ -380,17 +382,21 @@ public class FunctionNode implements Node {
         if(type != null)
             ret+="move $a0 $v0\n";
 
+        String allocateDec = "";
+        if(kIn != 0)
+            allocateDec+= "addi $sp $sp -"+kIn+"\n";
+
         AssetLanlib.putCode(funL+":\n"+
                             "move $fp $sp\n"+
-                            "push $ra"+
-                            "addi $sp $sp -"+kIn+"\n"+
+                            "push $ra\n"+
+                            allocateDec+
                             stmCode+
                             "lw $ra 0($sp)\n"+
                             "addi $sp $sp "+(k+kIn)+"\n"+  // (k+kIn) is the length of AR
                             "lw $fp 0($sp)\n"+
                             "pop\n"+
                             ret+
-                            "jr $ra");
+                            "jr $ra\n");
         
         return ""; 
     }

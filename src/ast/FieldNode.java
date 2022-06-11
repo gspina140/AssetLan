@@ -13,8 +13,7 @@ public class FieldNode implements Node {
      */
     private Node type;
 
-
-    private Environment localEnv;
+    private int nl;
 
     /**
      * The id of the field declaration
@@ -25,6 +24,8 @@ public class FieldNode implements Node {
      * The expression defining the value to assign the field (can be empty)
      */
     private Node exp;
+
+    private STentry entry;
 
     /**
      * The class constructor; it take as parameters the type, the id and the expression (null if it is not present)
@@ -77,11 +78,13 @@ public class FieldNode implements Node {
             res.add(new SemanticError("Error when declaring field of id " + id +"\n" +
                                       "Id already used for declaration in the same scope"));
 
+        entry = env.lookup(id);
+
         // If there is an expression, delegate semantic check of expression to relative node
         if(exp != null)
             res.addAll(exp.checkSemantics(env));
-
-        localEnv = new Environment(env);
+        
+        nl = env.getNestingLevel();
 
         return res;
     }
@@ -106,9 +109,9 @@ public class FieldNode implements Node {
             res+=exp.codeGeneration();
 
             if (type instanceof BoolTypeNode)
-                res+= "sb $a0" + localEnv.lookup(id).getOffset() +"($fp)";
+                res+= "sb $a0 " + entry.getOffset() +"($fp)\n";
             else
-                res+= "sw $a0" + localEnv.lookup(id).getOffset() +"($fp)";
+                res+= "sw $a0 " + entry.getOffset() +"($fp)\n";
         }
 
         return res;
