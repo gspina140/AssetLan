@@ -102,9 +102,10 @@ public class AssignmentNode implements Node {
         else
             store = "sw $a0 "+ entry.getOffset() +"($al)\n";
 
-        return "move $al $fp\n"+
-                getAR+
+        return 
                 exp.codeGeneration()+
+                "move $al $fp\n"+
+                getAR+
                 store;
     }
 }

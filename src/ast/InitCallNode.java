@@ -172,7 +172,7 @@ public class InitCallNode implements Node {
             ArrayList<Node> expr = ((ExpListNode) parameters).getExps();
 
             for (int i = expr.size() - 1; i >= 0; i--) {
-                parCode += expr.get(i).codeGeneration() + "\n";
+                parCode += expr.get(i).codeGeneration();
                 parCode += "push $a0\n";
             }
         }
@@ -181,17 +181,17 @@ public class InitCallNode implements Node {
             ArrayList<Node> assExpr = ((ExpListNode) assets).getExps();
 
             for (int i = assExpr.size() - 1; i >= 0; i--) {
-                assCode += assExpr.get(i).codeGeneration() + "\n";
+                assCode += assExpr.get(i).codeGeneration();
                 assCode += "push $a0\n";
             }
         }
 
-        for (int i = 0; i < nl - entry.getNestinglevel(); i++)
+        for (int i = 0; i <= nl - entry.getNestinglevel(); i++)
             getAR += "lw $al 0($al)\n";
 
-        return "push $fp\n" +
-                parCode +
+        return "sw $fp 0($sp)\n" +
                 assCode +
+                parCode +
                 "move $al $fp\n" +
                 getAR +
                 "push $al\n" +

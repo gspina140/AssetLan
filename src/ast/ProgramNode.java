@@ -156,6 +156,7 @@ public class ProgramNode implements Node {
     public String codeGeneration(){
         String decs = "";
         int k = 4; //k is the memory of the static scope, starts from 4 to allocate the $ra of initcall!
+        //int k = 0;
 
         for (Node f : fieldlist){
             decs += f.codeGeneration();
@@ -165,15 +166,23 @@ public class ProgramNode implements Node {
                 k+=1;
         }
 
+        // Problem: for move to work properly, i need to instantiate assets at 0
+        String adecs = "";
+        for (Node a : assetlist) {
+            adecs += a.codeGeneration();
+        }
+
         k+= 4* assetlist.size();
 
         for(Node fn : functionlist)
             fn.codeGeneration();
 
-        return  "move $fp $sp\n"+
-                "addi $sp $sp -"+k +"\n"+
-                "li $s0 0\n"+  //Register s0 is the wallet, i.e. the count of asset values stransfered
+        return  //"move $fp $sp\n"+
+                "li $s0 0\n"+               // Register s0 is the wallet, i.e. the count of asset values stransfered
+                "addi $sp $sp -"+k +"\n"+   // Memory allocation for global variables and assets
+                "move $fp $sp\n"+
                 decs+
+                adecs+
                 initcall.codeGeneration()+
                 "addi $sp $sp "+k+"\n"+
                 "halt\n"+

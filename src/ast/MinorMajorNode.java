@@ -91,7 +91,7 @@ public class MinorMajorNode implements Node{
                 "push $a0\n"+
                 eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
-                "blt $t1 $a0"+ trueL+"\n"+
+                "blt $t1 $a0 "+ trueL+"\n"+
                 "li $a0 0\n"+
                 "b "+endL+"\n"+
                 trueL +":\n"+
@@ -106,7 +106,7 @@ public class MinorMajorNode implements Node{
                 "push $a0\n"+
                 eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
-                "ble $t1 $a0"+ trueL+"\n"+
+                "ble $t1 $a0 "+ trueL+"\n"+
                 "li $a0 0\n"+
                 "b "+endL+"\n"+
                 trueL +":\n"+
@@ -120,7 +120,7 @@ public class MinorMajorNode implements Node{
                 "push $a0\n"+
                 eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
-                "blt $t1 $a0"+ falseL+"\n"+
+                "blt $t1 $a0 "+ falseL+"\n"+
                 "li $a0 1\n"+
                 "b "+endL+"\n"+
                 falseL +":\n"+
@@ -134,7 +134,7 @@ public class MinorMajorNode implements Node{
                 "push $a0\n"+
                 eR.codeGeneration()+
                 "lw $t1 0($sp)\n"+
-                "ble $t1 $a0"+ falseL+"\n"+
+                "ble $t1 $a0 "+ falseL+"\n"+
                 "li $a0 1\n"+
                 "b "+endL+"\n"+
                 falseL +":\n"+

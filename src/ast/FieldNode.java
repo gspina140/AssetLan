@@ -13,8 +13,6 @@ public class FieldNode implements Node {
      */
     private Node type;
 
-    private int nl;
-
     /**
      * The id of the field declaration
      */
@@ -83,8 +81,6 @@ public class FieldNode implements Node {
         // If there is an expression, delegate semantic check of expression to relative node
         if(exp != null)
             res.addAll(exp.checkSemantics(env));
-        
-        nl = env.getNestingLevel();
 
         return res;
     }
@@ -115,5 +111,5 @@ public class FieldNode implements Node {
         }
 
         return res;
-}
+    }
 }

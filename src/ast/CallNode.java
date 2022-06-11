@@ -200,8 +200,8 @@ public class CallNode implements Node {
         }
 
         for(int i=aentries.size()-1; i>=0;i--){
-            System.out.println("DIREI CHE : "+idlist.get(i)+"\n");
-            for(int j=0; j< nl-aentries.get(i).getNestinglevel();j++)
+            //System.out.println("DIREI CHE : "+idlist.get(i)+"\n");
+            for(int j=0; j< nl-aentries.get(i).getNestinglevel(); j++)
                 assCode+="lw $al 0($al)\n";
             assCode+="lw $a0 "+aentries.get(i).getOffset()+"($al)\n"+
                     "push $a0\n"+
@@ -209,7 +209,7 @@ public class CallNode implements Node {
                     "sw $t1 "+aentries.get(i).getOffset()+"($al)\n";
         }
 
-        for(int i=0; i<nl-entry.getNestinglevel();i++) 
+        for(int i=0; i<=nl-entry.getNestinglevel();i++) 
             getAR+="lw $al 0($al)\n";
 
         return "push $fp\n"+

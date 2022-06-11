@@ -14,6 +14,8 @@ public class AssetNode implements Node {
 
     private Node type;
 
+    private STentry entry;
+
     /**
      * The class constructor; it take as argument the asset id
      * @param i the asset id
@@ -63,6 +65,7 @@ public class AssetNode implements Node {
         if (env.addEntry(type, id) != null)
         res.add(new SemanticError("Error when declaring asset of id " + id +"\n" +
                                   "Id already used for declaration in the same scope"));
+        entry = env.lookup(id);
         return res;
     }
 
@@ -78,5 +81,9 @@ public class AssetNode implements Node {
     }
 
     @Override
-    public String codeGeneration(){return "";}
+    public String codeGeneration(){
+
+        return "li $t1 0\n" +
+               "sw $t1 " + entry.getOffset() + "($fp)\n";
+    }
 }

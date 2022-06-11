@@ -1,11 +1,13 @@
-move $fp $sp
-addi $sp $sp -8
 li $s0 0
-push $fp
+addi $sp $sp -8
+move $fp $sp
+li $t1 0
+sw $t1 4($fp)
+sw $fp 0($sp)
 li $a0 1
-
 push $a0
 move $al $fp
+lw $al 0($al)
 push $al
 jal function_main
 addi $sp $sp 8
@@ -15,11 +17,11 @@ function_f:
 move $fp $sp
 push $ra
 move $al $fp
-lw $a0 0($al)
+lw $a0 4($al)
 push $a0
 li $a0 0
 lw $t1 0($sp)
-beq $t1 $a0label2
+beq $t1 $a0 label2
 li $a0 0
 b label3
 label2:
@@ -29,31 +31,16 @@ pop
 li $t1 0
 beq $a0 $t1 label0
 move $al $fp
-lw $a0 4($al)
+lw $a0 8($al)
 push $a0
 li $t1 0
-sw $t1 4($al)
+sw $t1 8($al)
 move $al $fp
 lw $al 0($al)
-lw $a0 0($al)
-lw $t1 0($sp)
-add $a0 $a0 $t1
-sw $a0 0($al)
-pop
-
-b label1
-label0:
-move $al $fp
 lw $a0 4($al)
-push $a0
-li $t1 0
-sw $t1 4($al)
-move $al $fp
-lw $al 0($al)
-lw $a0 0($al)
 lw $t1 0($sp)
 add $a0 $a0 $t1
-sw $a0 0($al)
+sw $a0 4($al)
 pop
 
 move $al $fp
@@ -63,15 +50,30 @@ li $t1 0
 sw $t1 8($al)
 move $al $fp
 lw $al 0($al)
-lw $a0 0($al)
+lw $a0 4($al)
 lw $t1 0($sp)
 add $a0 $a0 $t1
-sw $a0 0($al)
+sw $a0 4($al)
 pop
 
+move $al $fp
+lw $a0 12($al)
+push $a0
+li $t1 0
+sw $t1 12($al)
+move $al $fp
+lw $al 0($al)
+lw $a0 4($al)
+lw $t1 0($sp)
+add $a0 $a0 $t1
+sw $a0 4($al)
+pop
+
+b label1
+label0:
 label1:
 lw $ra 0($sp)
-addi $sp $sp 16
+addi $sp $sp 20
 lw $fp 0($sp)
 pop
 jr $ra
@@ -84,26 +86,27 @@ li $a0 0
 
 push $a0
 move $al $fp
-lw $a0 0($al)
+lw $a0 4($al)
 push $a0
 li $t1 0
-sw $t1 0($al)
-lw $a0 0($al)
+sw $t1 4($al)
+lw $a0 4($al)
 push $a0
 li $t1 0
-sw $t1 0($al)
+sw $t1 4($al)
 move $al $fp
+lw $al 0($al)
 lw $al 0($al)
 push $al
 jal function_f
 move $al $fp
 lw $al 0($al)
-lw $a0 0($al)
+lw $a0 4($al)
 add $s0 $s0 $a0
 li $t1 0
-sw $t1 0($al)
+sw $t1 4($al)
 lw $ra 0($sp)
-addi $sp $sp 8
+addi $sp $sp 12
 lw $fp 0($sp)
 pop
 jr $ra

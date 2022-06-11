@@ -71,7 +71,7 @@ public class DerExpNode implements Node{
     public String codeGeneration(){
         String getAR = "";
 
-        for(int i=0; i<nl-entry.getNestinglevel();i++)
+        for(int i = 0; i < nl-entry.getNestinglevel(); i++)
             getAR+="lw $al 0($al)\n";
 
         if(entry.getType() instanceof IntTypeNode || entry.getType() instanceof AssetTypeNode){
@@ -80,8 +80,8 @@ public class DerExpNode implements Node{
                     "lw $a0 "+entry.getOffset()+"($al)\n";
         }else{
             return "move $al $fp\n"+
-            getAR+
-            "lb $a0 "+entry.getOffset()+"($al)\n";
+                   getAR+
+                   "lb $a0 "+entry.getOffset()+"($al)\n";
         }
     }
 }

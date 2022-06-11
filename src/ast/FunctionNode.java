@@ -392,7 +392,7 @@ public class FunctionNode implements Node {
                             allocateDec+
                             stmCode+
                             "lw $ra 0($sp)\n"+
-                            "addi $sp $sp "+(k+kIn)+"\n"+  // (k+kIn) is the length of AR
+                            "addi $sp $sp "+(k+kIn+4)+"\n"+  // (k+kIn+4) is the length of AR, + 4 for ra
                             "lw $fp 0($sp)\n"+
                             "pop\n"+
                             ret+

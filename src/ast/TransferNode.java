@@ -85,7 +85,7 @@ public class TransferNode implements Node{
     public String codeGeneration(){
         String getAR = "";
 
-        for(int i= 0; i< nl-entry.getNestinglevel(); i++)
+        for(int i = 0; i < nl-entry.getNestinglevel(); i++)
             getAR += "lw $al 0($al)\n";
 
         return "move $al $fp\n"+

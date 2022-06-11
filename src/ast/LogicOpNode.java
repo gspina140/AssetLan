@@ -99,10 +99,10 @@ public class LogicOpNode implements Node{
             String endL = AssetLanlib.freshLabel();
             return eL.codeGeneration() +
                 "li $t1 1\n"+
-                "beq $a0 $t1" + trueL +"\n"+
+                "beq $a0 $t1 " + trueL +"\n"+
                 eR.codeGeneration()+
                 "li $t1 1\n"+
-                "beq $a0 $t1" + trueL +"\n"+
+                "beq $a0 $t1 " + trueL +"\n"+
                 "li $a0 0\n"+
                 "b "+ endL + "\n"+
                 trueL + ":\n"+

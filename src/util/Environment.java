@@ -59,7 +59,7 @@ public class Environment {
 	 */
 	public void enterScope() {
 		nestingLevel++;
-        offset = 0;
+        offset = 4;	// cause of al
 		HashMap<String, STentry> hm = new HashMap<String, STentry>();
 		symTable.add(hm);
 	}

@@ -54,10 +54,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
         }
         return null;
     }
-
-    /**
-     * TODO: aggiornare con le istruzioni di cui abbiamo bisogno
-     */
+    
     @Override
     public Void visitInstruction(AVMParser.InstructionContext ctx) {
         switch (ctx.getStart().getType()) {

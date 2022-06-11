@@ -16,17 +16,13 @@ public class ExecuteVM {
 
     private int ip = 0; // Program counter
     private int hp = 0; // Heap pointer
-    private int rv;
+    //private int rv;
 
     public ExecuteVM(int[] code) {
         this.code = code;
-        registers[5] = MEMSIZE-1;// sp
-        registers[4] = MEMSIZE-1;// fp
+        registers[5] = MEMSIZE-1;   // sp
     }
-
-    /**
-     * TODO: aggiorna rispettivamente alla nostra codegen
-     */
+    
     public void cpu() {
         while (true) {
             if (hp + 1 >= registers[5]) {
@@ -53,8 +49,9 @@ public class ExecuteVM {
                         break;
                     case AVMParser.ADD:
                         v1 = registers[code[ip++]];
-                        v2 = registers[code[ip++]] + v1;
-                        registers[code[ip++]] = v2;
+                        v2 = registers[code[ip++]];
+                        registers[code[ip++]] = v1 + v2;
+                        //System.out.println(("Register["+code[ip-1]+"]="+(v1+v2)));  // DEBUG
                         break;
                     case AVMParser.MULT:
                         v1 = registers[code[ip++]];
@@ -73,10 +70,10 @@ public class ExecuteVM {
                         break;
                     case AVMParser.STOREW: //
 
-                        v1 = registers[code[ip++]];
-                        v2 = code[ip++];
+                        v1 = registers[code[ip++]]; // source register value
+                        v2 = code[ip++];    // n
                         // registers[v2+code[ip++]]=v1;
-                        memory[v2 + code[ip++]] = v1;
+                        memory[v2 + registers[code[ip++]]] = v1;
                         break;
                     case AVMParser.LOADW: //
                         // check if object address where we take the method label
@@ -117,8 +114,20 @@ public class ExecuteVM {
                             ip = address;
                         break;
                     case AVMParser.JAL:
-                        registers[3] = ip + 2; // return address
-                        ip = code[ip+1];
+                        /**
+                         * DEBUG
+                         */
+                        /*System.out.println("Sp="+registers[5]+"\n");
+                        for (int i = MEMSIZE - 1 - 28; i < MEMSIZE; i+=4) {
+                            System.out.println("Stack["+i+"]="+memory[i]+"\n");
+                        }
+                        System.exit(0);
+                        /**
+                         * DEBUG
+                        */
+
+                        registers[3] = ip + 1; // return address
+                        ip = code[ip];
                         break;
                     case AVMParser.PRINT:
                         System.out.println(registers[code[ip++]]);
@@ -126,6 +135,22 @@ public class ExecuteVM {
                     case AVMParser.HALT:
                         // to print the result
                         System.out.println("\nResult, the wallet is: " + registers[2] + "\n");
+
+                        /**
+                         * DEBUG
+                         */
+                        /*
+                        for (int i = 0; i < 8; i++) {
+                            System.out.println("Register["+i+"]="+registers[i]+"\n");
+                        }
+                        for (int i = MEMSIZE - 1 - 28; i < MEMSIZE; i+=4) {
+                            System.out.println("Stack["+i+"]="+memory[i]+"\n");
+                        }
+                        System.exit(0);
+                        /**
+                         * DEBUG
+                        */
+
                         return;
                     case AVMParser.MOVE:
                         v1 = registers[code[ip++]];
