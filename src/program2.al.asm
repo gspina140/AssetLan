@@ -11,7 +11,6 @@ push $a0
 li $a0 1
 push $a0
 move $al $fp
-lw $al 0($al)
 push $al
 jal function_f
 addi $sp $sp 16
@@ -67,6 +66,8 @@ pop
 push $fp
 move $al $fp
 move $al $fp
+move $al $fp
+lw $al 0($al)
 lw $al 0($al)
 push $al
 jal function_g

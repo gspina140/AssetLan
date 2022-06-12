@@ -186,7 +186,7 @@ public class InitCallNode implements Node {
             }
         }
 
-        for (int i = 0; i <= nl - entry.getNestinglevel(); i++)
+        for (int i = 0; i < nl - entry.getNestinglevel(); i++)
             getAR += "lw $al 0($al)\n";
 
         return "sw $fp 0($sp)\n" +

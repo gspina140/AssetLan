@@ -117,11 +117,11 @@ public class ExecuteVM {
                         /**
                          * DEBUG
                          */
-                        /*System.out.println("Sp="+registers[5]+"\n");
+                        System.out.println("Sp="+registers[5]+"\n");
                         for (int i = MEMSIZE - 1 - 28; i < MEMSIZE; i+=4) {
                             System.out.println("Stack["+i+"]="+memory[i]+"\n");
                         }
-                        System.exit(0);
+                        //System.exit(0);
                         /**
                          * DEBUG
                         */

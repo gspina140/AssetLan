@@ -191,6 +191,7 @@ public class FunctionNode implements Node {
                     res.addAll(s.checkSemantics(env));
                 } catch (NullPointerException e) {
                     System.err.println("Warning: could not resolve statement\n");
+                    System.err.println(s);
                 }
             }
             

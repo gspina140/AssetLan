@@ -106,10 +106,10 @@ public class MoveNode implements Node {
         String getAR1="";
         String getAR2="";
         
-        for(int i = 0; i< nl-entry1.getNestinglevel(); i++)
+        for(int i = 0; i < nl-entry1.getNestinglevel(); i++)
             getAR1+="lw $al 0($al)\n";
 
-        for(int i = 0; i< nl-entry2.getNestinglevel(); i++)
+        for(int i = 0; i < nl-entry2.getNestinglevel(); i++)
             getAR2+="lw $al 0($al)\n";
 
         return "move $al $fp\n"+

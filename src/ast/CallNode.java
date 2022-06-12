@@ -102,12 +102,14 @@ public class CallNode implements Node {
 
         // Look-up for the function id
         entry = env.lookup(id);
+
         if (entry == null)
             // The id has not been found and an error should be provided
-            res.add(new SemanticError("Function " + id + " han not been declared"));
+            res.add(new SemanticError("Function " + id + " has not been declared"));
 
-        // Delegate semantic check of expressions that define the parameters to relative nodes
-        res.addAll(expressions.checkSemantics(env));
+        if (expressions != null)
+            // Delegate semantic check of expressions that define the parameters to relative nodes
+            res.addAll(expressions.checkSemantics(env));
         
         // Look-up for each asset id
         for (String a : idlist) {
@@ -120,6 +122,9 @@ public class CallNode implements Node {
             
             aentries.add(aentry);
         }
+
+        System.out.println("Function " + id + "\t Aentries.size: " + aentries.size() + "\n"); // DEBUG
+
 
         nl = env.getNestingLevel();
 
@@ -163,6 +168,9 @@ public class CallNode implements Node {
                 System.exit(0);
             }
 
+            System.out.println("Function " + id + "\t Aentries.size: " + aentries.size() + "\n"); // DEBUG
+
+
             for (int i = 0; i < aentries.size(); i++) {
                 if (! (aentries.get(i).getType() instanceof AssetTypeNode) ) {
                     System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
@@ -199,23 +207,38 @@ public class CallNode implements Node {
            }
         }
 
-        for(int i=aentries.size()-1; i>=0;i--){
+
+
+
+        System.out.println("Function " + id + "\t Aentries.size: " + aentries.size() + "\n"); // DEBUG
+
+        if (aentries.size() > 0)
+            assCode += "addi $sp $sp -" + aentries.size()*4 + "\n";
+
+        // Assets order problem
+        for(int i = 0; i < aentries.size(); i++) {
             //System.out.println("DIREI CHE : "+idlist.get(i)+"\n");
-            for(int j=0; j< nl-aentries.get(i).getNestinglevel(); j++)
+            for(int j = 0; j< nl-aentries.get(i).getNestinglevel(); j++)
                 assCode+="lw $al 0($al)\n";
             assCode+="lw $a0 "+aentries.get(i).getOffset()+"($al)\n"+
-                    "push $a0\n"+
+                    "sw $a0 " + (i*4) +"($sp)\n"+
                     "li $t1 0\n"+
                     "sw $t1 "+aentries.get(i).getOffset()+"($al)\n";
         }
 
-        for(int i=0; i<=nl-entry.getNestinglevel();i++) 
-            getAR+="lw $al 0($al)\n";
+        System.out.println("Function " + id + "\t Nesting level: " + nl + "\t Entry nl: " + entry.getNestinglevel() + "\n"); // DEBUG
+
+        // Juest here, I iterate once more because I consider the nesting level of the body of the function, not its id
+        for(int i = 0; i <= nl - entry.getNestinglevel(); i++) { 
+            System.out.println("Adding getAR instruction\n");
+            getAR += "lw $al 0($al)\n";
+        }
 
         return "push $fp\n"+
-                parCode+
                 "move $al $fp\n"+
                 assCode+
+                "move $al $fp\n"+
+                parCode+
                 "move $al $fp\n"+
                 getAR+
                 "push $al\n"+
