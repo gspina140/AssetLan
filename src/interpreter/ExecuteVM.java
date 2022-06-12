@@ -194,6 +194,10 @@ public class ExecuteVM {
 
     private void push(int v) {
         registers[5]-=4;
+        if(registers[5] < 0){
+            System.out.println("\nError: Out of memory");
+            return;
+        }
         memory[registers[5]] = v;
     }
 

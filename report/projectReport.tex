@@ -231,14 +231,6 @@ The following exercises were used as guidelines/objectives for the design of the
 \end{itemize} 
 \end{enumerate}
 
-\subsection{Codes to verify / discuss}
-\lstinputlisting{program1.al}
-\lstinputlisting{program2.al}
-\lstinputlisting{program3.al}
-\lstinputlisting{program4.al}
-\lstinputlisting{program5.al}
-\lstinputlisting{program6.al}
-
 \subsection{Lexical Errors}
 In order to redirect the errors of the lexer to an output (log) file, one should override the base error handling strategy of ANTLR, which, by default, redirects the errors to the standard error (i.e., the console). To change the destination and, eventually, the content of error messages, one should provide an implementation of an \textsc{ANTLRErrorListener} subclass; Figure~\ref{fig:err} shows the structure of the classes involved in the error handling phase.
 \begin{figure}
@@ -361,6 +353,8 @@ You had: 2 errors:
 \end{enumerate}
 
 \subsection{Type Checking}
+To implement type management, the semantic rules for managing and verifying the environment are shown below. After the implementation of the conditions imposed by the inference rules on the individual nodes, a test phase has been executed.
+
 \subsubsection{Inference Rules}
 Each entry of the symbol table ($ \Gamma $) will be of one of those forms:
 
@@ -612,7 +606,7 @@ m = | \Gamma(Id)[2] | \\ \Gamma \models Ae1: \: int \cdots \Gamma \models Ae_m :
 
 \medskip
 
-Now it follows the rules to check the effects:
+Now it follows the rules to check the effects on asset variables:
 
 \medskip
 
@@ -620,15 +614,11 @@ Now it follows the rules to check the effects:
 \inferrule*[right=(Asset)]
 {\\}
 {\Sigma \models asset \: Id : \: \Sigma \triangleright [Id \rightarrow \bot] }
-\]
-
-\medskip
-
-\[
 \inferrule*[right=(A-Dec)]
 {\Sigma \models A : \Sigma' \\ \Sigma'\models A': \Sigma''}
 {\Sigma \models A A': \: \Sigma''}
 \]
+\captionof*{figure}{Rules for asset declaration, multiple declarations}
 
 \medskip
 
@@ -637,7 +627,7 @@ Now it follows the rules to check the effects:
 {\Sigma(Id_1)= B \\ \Sigma(Id_2) =B_1  }
 {\Sigma \models Id_1 \: -o \: Id_2 : \: \Sigma \triangleright [Id_1 \rightarrow \bot, Id_2 \rightarrow Id_1 \odot Id_2]}
 \]
-\captionof*{figure}{Rule for move operation, $\odot$ is the abstract move operation~\ref{tab:abstMove}}
+\captionof*{figure}{Rule for move operation, $\odot$ is the abstract move operation defined here~\ref{tab:abstMove}}
 
 \medskip
 
@@ -662,6 +652,7 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 {\\}
 {\Sigma \models transfer \: Id : \: \Sigma \triangleright [Id\rightarrow \bot]}
 \]
+\captionof*{figure}{Rule for transfer operation}
 
 \medskip
 
@@ -685,7 +676,9 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 
 \[
 \inferrule*[right=(Call)]
-{\Sigma' =\Sigma \triangleright [Y_1 \rightarrow \bot, \cdots, Y_m \rightarrow \bot]}
+{\inferrule*[right=(Fun)]
+{\cdots}
+{Id(D)[Y_1,\cdots,Y_m]\{D_1 S\}: \Sigma''} \\ \Sigma' =\Sigma \triangleright [Y_1 \rightarrow \bot, \cdots, Y_m \rightarrow \bot]}
 {\Sigma \models Id(E_1,\cdots,E_n)[Y_1,\cdots,Y_m]: \: \Sigma'}
 \]
 \captionof*{figure}{Call rule}
@@ -694,15 +687,41 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 
 \[
 \inferrule*[right=(InitCall)]
-{\\}
+{\inferrule*[right=(Fun)]
+{\cdots}
+{Id(D)[Ae_1,\cdots,Ae_n]\{D_1 S\}: \Sigma''}
+}
 {\Sigma \models Id(E_1,\cdots,E_n)[Ae_1,\cdots,Ae_m]}
 \]
-\captionof*{figure}{Initialization Call rule}
+\captionof*{figure}{Initialization Call rule (All the asset expression ($Ae_i$) are integers according to the other rules)}
 
+\[
+\inferrule*[right=(Prg)]
+{[\:] \models Ad: \Sigma \\ \Sigma \models Initc : \Sigma'}
+{[\:] \models F*Ad*Fn*InitC: \Sigma'}
+\]
+\captionof*{figure}{Program rule}
 
 \medskip
 
 At the end of the execution of each function (condition 1 for liquidity) and at the end of the execution of a program (condition 2 for liquidity), if all assets variable in the related $\Sigma$ are $\bot$ the program is liquid; if at least one is $f$ but they are all $\neq$ to $\top$ then it is not liquid; if there is some $\top$ value it is not possible to define whether is liquid or not.
+
+\subsubsection{Tests for the Examples}
+\lstinputlisting{program1.al}
+\lstinputlisting{program2.al}
+\lstinputlisting{program3.al}
+\lstinputlisting{program4.al}
+\lstinputlisting{program5.al}
+\lstinputlisting{program6.al}
+
+
+\subsection{Code Generation and Interpreter}
+Follows the phase of the execution of the code, so an intermediate bytecode language (AVM) will be defined and then the related interpreter to execute the programs.
+
+\subsubsection{Code Generation}
+
+
+\subsubsection{Interpreter}
 
 \section{Conclusion}
 In this report, the implementation choices for the development of a compiler for the Asset Language have been discussed.

@@ -43,6 +43,8 @@ add $a0 $a0 $t1
 sw $a0 4($al)
 pop
 
+b label1
+label0:
 move $al $fp
 lw $a0 8($al)
 push $a0
@@ -69,8 +71,6 @@ add $a0 $a0 $t1
 sw $a0 4($al)
 pop
 
-b label1
-label0:
 label1:
 lw $ra 0($sp)
 addi $sp $sp 20

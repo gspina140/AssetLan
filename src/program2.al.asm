@@ -53,13 +53,11 @@ move $al $fp
 lw $al 0($al)
 sw $a0 8($al)
 move $al $fp
-lw $al 0($al)
 lw $a0 8($al)
 push $a0
 li $t1 0
 sw $t1 8($al)
 move $al $fp
-lw $al 0($al)
 lw $al 0($al)
 lw $a0 12($al)
 lw $t1 0($sp)
