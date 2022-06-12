@@ -32,7 +32,7 @@
 \usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
 \usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
 % These packages are all incorporated in the memoir class to one degree or another...
-\usepackage{listings}
+\usepackage{listings,multicol}
 \usepackage{caption}
 
 \usepackage{graphicx}
@@ -379,8 +379,6 @@ To handle the effects of the liquidity, it has been used the $\Sigma$ environmen
 \text{ where, } \mathcal{B} =\{ \bot, f , \top \}
 \]
 The analysis of the effects is performed only on assets, when it is empty is $\bot$, when filled up is $f$(full), and when is undefinable is $\top$. That is, at the end of a program you can check if all the assets variables are $\bot$; so the program can be defined as liquid.
- \\
-\ES{SPIEGARE LA STORIE DELLE MOVE, TRANSFER ASTRATTE.\\SPIEGARE MEGLIO L'ARROW TYPE NODE}
 
 \medskip
 
@@ -402,7 +400,7 @@ The analysis of the effects is performed only on assets, when it is empty is $\b
 \Gamma \models Exp : T \lor A \quad \text{Expression} \\
 \end{split}
 \end{equation}
-\captionof*{figure}{Queste sono le regole base!}
+\captionof*{figure}{There are the base rules}
 
 \medskip 
 
@@ -459,16 +457,22 @@ Id \notin Dom(\Gamma) \\
 \medskip
 
 \[
+\inferrule*[right=(Dec-i)]
+{Id \notin Dom(\top(\Gamma)) \\ \Gamma \models E : \: int}
+{\Gamma, n \models int \: Id = E; : \: \Gamma[Id\rightarrow(int, n)], n+4}
 \inferrule*[right=(D-Dec)]
 {\Gamma,n \models D : \Gamma'',n'' \\
  \Gamma'',n'' \models D': \: \Gamma',n'}
 {\Gamma,n \models D D' : \: \Gamma',n'}
 \]
-\captionof*{figure}{Rule for multiple declarations (Dec in the grammar)}
+\captionof*{figure}{Rule for multiple declarations (Dec in the grammar, rule for bool is immediate to retrieve)}
 
 \medskip
 
 \[
+\inferrule*[right=(A)]
+{Id \notin Dom(\top(\Gamma)) }
+{\Gamma, n \models asset \: Id ; : \: \Gamma[Id\rightarrow(A, n)], n+4}
 \inferrule*[right=(A-Dec)]
 {\Gamma,n \models A : \Gamma'',n'' \\
  \Gamma'',n'' \models A': \: \Gamma',n'}
@@ -485,8 +489,8 @@ Id \notin Dom(\Gamma) \\
 \]
 \[
 \inferrule*[right=(S-Stm)]
-{\Gamma,n \models S : \: T \\ \Gamma,n \models S' : \: T1\\ }
-{\Gamma,n \models S S' }
+{\Gamma,n \models S : \: T \\ \Gamma,n \models S' : \: T_1\\ }
+{\Gamma,n \models S S' :\:T_1}
 \]
 \captionof*{figure}{Rule for statement, multiple statements}
 
@@ -508,7 +512,7 @@ Id \notin Dom(\Gamma) \\
 {\Gamma \models Id_1 -o \: Id_2 }
 \]
 \captionof*{figure}{Move operation rule}
-go up the chain of frame pointers up to the nesting level at which the variable is declared
+
 \medskip
 
 \[
@@ -624,7 +628,7 @@ Now it follows the rules to check the effects on asset variables:
 
 \[
 \inferrule*[right=(Mv)]
-{\Sigma(Id_1)= B \\ \Sigma(Id_2) =B_1  }
+{\\}
 {\Sigma \models Id_1 \: -o \: Id_2 : \: \Sigma \triangleright [Id_1 \rightarrow \bot, Id_2 \rightarrow Id_1 \odot Id_2]}
 \]
 \captionof*{figure}{Rule for move operation, $\odot$ is the abstract move operation defined here~\ref{tab:abstMove}}
@@ -673,7 +677,7 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 {\Sigma \models A : \Sigma' \\ \Sigma'\models A':\Sigma'' }
 {\Sigma \models A A' : \Sigma''}
 \]
-\captionof*{figure}{Auxiliary rule to fill assets}
+\captionof*{figure}{Auxiliary rules to fill assets}
 
 \medskip
 
@@ -685,13 +689,13 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 {\Sigma \models A : \Sigma' \\ \Sigma'\models A':\Sigma'' }
 {\Sigma \models A \: A' : \Sigma''}
 \]
-\captionof*{figure}{}
+\captionof*{figure}{Auxiliary rules to copy the value of an asset into another one}
 
 \medskip
 
 \[
 \inferrule*[right=(FunC)]{ 
-\Sigma \bullet [\:] \models A : \: \Sigma' \\ 
+\Sigma \bullet [\:] \models A_1 : \: \Sigma' \\ 
 \inferrule*[right=(CopyA-A)]{\cdots}{\Sigma'\models A_1 A_2 : \Sigma''}
  \\ \Sigma'' \models S : \Sigma'''}
 {\Sigma \models T \: Id (D ) [A_1 \: A_2] \{D_1  \: S \}: \Sigma''' }
@@ -741,20 +745,18 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 At the end of the execution of each function (condition 1 for liquidity) and at the end of the execution of a program (condition 2 for liquidity), if all assets variable in the related $\Sigma$ are $\bot$ the program is liquid; if at least one is $f$ but they are all $\neq$ to $\top$ then it is not liquid; if there is some $\top$ value it is not possible to define whether is liquid or not.
 
 \subsubsection{Tests for the Examples}
+\label{ssec:Test}
 In that section some tests on example's code are illustrated:
 \begin{enumerate}
 \item \textsc{program1.al}	\lstinputlisting{program1.al}
-Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is not liquid. 
+Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is not liquid. The program is clearly not liquid, it can be deduced at first by the fact that there are not \verb|transfer| operation. In that specific case the asset variables \verb|x| and \verb|y| are filled with the moves in \verb|main| and \verb|f| function, but never empty. The function \verb|main| is neither liquid because the asset \verb|v| is never empty, the function \verb|f| instead is liquid.
 \item \textsc{program2.al}	\lstinputlisting{program2.al}
-Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is liquid. 
+Executing that program the compiler does not find any type problem and says that the return type for the program is void and that the program is liquid. The function \verb|g| is obviously liquid as does not have asset parameters, and the function \verb|f| is liquid because the parameter \verb|y| is empty after the move at line 9. Regarding the entire program, it is liquid because the only asset field defined is transferred in function \verb|g| called at the end of function \verb|f| which is the initialization call.
 \item \textsc{program3.al}	\lstinputlisting{program3.al}
-Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is liquid. 
+Executing that program the compiler does not find any type problem and says that the return type for the program is void and that the program is liquid. There is a case of a recursive function, \verb|f| calls itself, and the program generates a loop execution. In that cases the handling of liquidity is performed using a fixpoint operator on the environment $\Sigma$, i.e., when a successive call to the function does not modify anymore the assets with respect to the previous one, the fixed point is reached. Here comes the decision about the liquidity of the related function, so it is possible to say if a program is liquid even if its execution does not terminate. In that program, the values of the 3 assets involved in the two functions are accumulated in the \verb|x| field by function \verb|f|, one at a time. So after 3 recursive calls to \verb|f|, all the parameters (\verb|u,v,w|) are empty and the following execution will be the fixpoint. Then in function main there is the transfer of \verb|x| granting liquidity to all the programs.
 \item \textsc{program4.al}   \lstinputlisting{program4.al}
-Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is liquid. Perform a call to a function with the same asset variable as input more than once, will assign the value at parameter in first position, so the variable is set to empty and the value of the parameter in the second position will be also empty and so on.
+Executing that program the compiler does not find any type problem and says that the return type for the program is void and that the program is liquid. Perform a call to a function with the same asset variable as input more than once, will assign the value at the parameter of the function in the first position, so the variable is set to empty and the value of the parameter in the second position will be also empty and so on. The program results as liquid since function \verb|f| is liquid because the parameter \verb|v| is not filled when the function is called and the \verb|u| is emptied with the move operation, that is performed in both branches of the if-then-else. Regarding function \verb|main|, its only asset \verb|a| is emptied by calling \verb|f| so it is liquid. The whole program is also liquid thanks to the transfer on the only asset field performed by main after calling \verb|f|.
 \end{enumerate}
-%\lstinputlisting{program5.al}
-%\lstinputlisting{program6.al}
-
 
 \subsection{Code Generation and Interpreter}
 Follows the phase of the execution of the code, so an intermediate bytecode language (AVM) will be defined and then the related interpreter to execute the programs.
@@ -762,7 +764,7 @@ Follows the phase of the execution of the code, so an intermediate bytecode lang
 \subsubsection{Code Generation}
 The bytecode language AVM is defined in Antlr as follows:
 \lstinputlisting{avm.g4}
-The language is more or less a classic assembly language, with the instructions needed to handle the programs written in AssetLan. The implementation for the execution the code will be a stack machine with the usage of registers, so in the grammar is defined the REGISTER token, that identifies the $8$ registers  necessary for this implementation. The register \$a0 is the accumulator, i.e., there is memorized the value of the last instruction calculated. The register \$s0 is the "wallet", i.e., the register ad-hoc to achieve the total of the asset values transfered during the execution.
+The language is more or less a classic assembly language, with the instructions needed to handle the programs written in AssetLan. The implementation for the execution of the code will be a stack machine with the usage of registers, so in the grammar is defined the REGISTER token, that identifies the $8$ registers  necessary for this implementation. The register \$a0 is the accumulator, i.e., there is memorized the value of the last instruction calculated. The register \$s0 is the "wallet", i.e., the register ad-hoc to achieve the total of the asset values transferred during the execution. The register \$v0 is another specific register where the return value of a function is stored at the end of its execution.
 
 \medskip
 
@@ -772,15 +774,54 @@ A function \textsc{codeGeneration()} is implemented in every node and executed v
 
 There is an example for the if-then-else \textsc{iteNode.java}:
 \lstinputlisting{codeite.java}
-To handle the labels, in the class \textsc{AssetLanlib} are defined some methods that avoid to get labels with the same name. There are two strings for the statements in the then branch and the else one, constructed statement by statement calling its \textsc{codeGeneration()} method. The return code is nothing more than a check on the condition to branch in the right side of the if-then-else.  
+To handle the labels, in the class \textsc{AssetLanlib} are defined some methods that avoid to get labels with the same name. There are two strings for the statements, one for the then branch and one for the else one, constructed statement by statement calling its \textsc{codeGeneration()} method. The return code is nothing more than a check on the condition to branch in the right side of the if-then-else.  
 
 \medskip
 
 Follows a second example for the move operation \textsc{moveNode.java}:
 \lstinputlisting{codeMove.java}
-The two strings \verb|getAR1| and \verb|getAR2| are related to the two variables involved in the operation; in the string, there is the code to go up the chain of frame pointers up to the nesting level at which the variable is declared (a sequence of instructions \verb|lw $al 0($al)|). The code returned is composed by a \verb|move $al $fp| to initialize the activation link before the \verb|getAR1| and then for the \verb|getAR2|. The implementation of the \textsc{move} operation consist in empty the first variable involved and sum its value to the second one. To access the variables is necessary to retrieve the offset from the Symbol Table, there is no \textsc{lookup(id)} operation as in the Node there is stored in \verb|entry1| the \textsc{STentry} related to the variables involved.
+The two strings \verb|getAR1| and \verb|getAR2| are related to the two variables involved in the operation; in the string, there is the code to go up the chain of frame pointers up to the nesting level at which the variable is declared (a sequence of instructions \verb|lw $al 0($al)|). The code returned is composed by a \verb|move $al $fp| to initialize the activation link before the \verb|getAR1| and then for the \verb|getAR2|. The implementation of the \textsc{move} operation consists in empty the first variable involved and summing its value to the second one. To access the variables is necessary to retrieve the offset from the Symbol Table, there is no \textsc{lookup(id)} operation as in the Node there is stored in \verb|entry1| the \textsc{STentry} related to the variables involved.
+
+\medskip
+
+The execution of the compiler now produces an output file that is the bytecode to be interpreted, for example, \textsc{program1.al} produces in output \textsc{program1.asm}:
+\lstinputlisting[multicols=3]{program1.al.asm}
+The code of the functions will be at the end, to be called with \verb|jal function_name| instruction.
 
 \subsubsection{Interpreter}
+The interpreter is composed as a starting point by \textsc{AVMVisitorImpl.java}, a custom implementation for the base visitor of the bytecode grammar. In this visitor is constructed the array of integers \verb|code| in which are stored the integers references to the lexical tokens to identify the instructions. Each instruction got a specific number of "parameters" (registers, integers, or labels), in the \verb|code| array after the instruction number, there are codified registers with integers. When there is a label in the array is stored in the position in the code where the label is defined, so the order of execution of instructions can be altered in the correct way.
+
+\medskip
+
+The interpreter's focal point is the \textsc{ExecuteVM.java} class that uses the array \verb|code| built during the visit and fetches the instructions according to the order defined during the visit. Here is the array for the stack memory (\verb|memory[MEMSIZE]|) and the content of the registers (\verb|registers[8]|).
+
+\medskip
+
+There is an example, the duality between the visit and the execution can be observed. Below there is the code for branch if equal \verb|beq r1 r2 label| instruction. In the visitor the array is filled, in order, with instruction reference (taken from the parser), label definition address (the place in the code were to jump), first register involved in the control, and second register involved. In the execution, the information is respectively retrieved to implement the jump if the values of the registers in the operation are equal (\verb|v1| and \verb|v2| are auxiliary variables that are used to perform the operation in a more comprehensible way).
+\lstinputlisting[caption=Visitor]{execBranch.java} 
+\lstinputlisting[caption=Execute]{execBranch1.java} 
+
+\medskip
+
+At the end of the execution, i.e., the \verb|halt| instruction, the content of the wallet is printed.
+
+\subsubsection{Testing}
+Tests performed on two programs, in addition to the previous ones in Section~\ref{ssec:Test}:
+\begin{enumerate}
+\item \textsc{program1.al}
+prints the result value in the wallet (i.e. \$s0), it is $0$
+\item \textsc{program2.al}
+prints the result value in the wallet , it is $2$
+\item \textsc{program3.al}
+as already said in Section~\ref{ssec:Test} this programs leads to a loop, in terms of execution it goes out of memory for that reason 
+\item \textsc{program4.al}
+prints the result value in the wallet , it is $1$
+\item \textsc{program5.al} \lstinputlisting{program5.al}
+That program implements the factorial of \verb|n| in input and prints the result. In this case for input $10$ it prints $3628800$. There are no assets involved so the program is liquid, obviously the wallet value at the end is $0$.
+\item \textsc{program6.al} \lstinputlisting{program6.al}
+Regarding the liquidity of the program, in this case, is undefined, the reason is that in function \verb|f| the if-then-else statement brings to two different situations in the environment $\Sigma$, so the static control is not enough to give an answer. If the then branch is executed the function is not liquid, otherwise if the else is executed the function is liquid. It prints the value of \verb|x| after the call of \verb|f|, in this case, $1$ because the then branch of the if-then-else is executed, so the value of \verb|v|, $1$, is moved into x. The wallet value at the end is also $1$ because the transfer operation on \verb|x| is performed just one time subsequently the print.
+\end{enumerate}
+
 
 \section{Conclusion}
 In this report, the implementation choices for the development of a compiler for the Asset Language have been discussed.
@@ -791,11 +832,21 @@ Regarding the lexical error handling strategy, a common lexical error regards th
 
 \medskip
 
-There are several ways to improve the given solutions. Among these, one could add information about the line where an identifier has been declared to the symbol table, in order to improve the error message. In this version, the symbol table is implemented in a way that does not handle type checking, so the look-up operation for an identifier does not take into account the type of the variable / function or the kind of operation in which it is involved.
+There are several ways to improve the given solutions. Among these, one could add information about the line where an identifier has been declared to the symbol table, in order to improve the error message. %In this version, the symbol table is implemented in a way that does not handle type checking, so the look-up operation for an identifier does not take into account the type of the variable / function or the kind of operation in which it is involved.
 
 \medskip
 
-Also, the bytecode generation and relative interpreter are missing.
+Successively the symbol table is constructed and the checks for multiple declarations or undeclared functions and variables can be performed. Moreover, with the inference rules the correctness of the types and the liquidity of the program. 
+
+\medskip
+
+In the phase of code generation, the input program in AssetLan is traduced in the bytecode language AVM, then the code is parsed and interpreted in order to execute it.
+
+\medskip
+
+The testing phases, compared to a "manual execution" of the programs,  did not lead to incorrect results. From that follows the last proof for the correctness, with respect to the specifics in this report, of the compiler developed.
+
+%Also, the bytecode generation and relative interpreter are missing.
 
 \clearpage
 
