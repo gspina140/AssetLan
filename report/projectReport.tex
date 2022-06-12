@@ -508,7 +508,7 @@ Id \notin Dom(\Gamma) \\
 {\Gamma \models Id_1 -o \: Id_2 }
 \]
 \captionof*{figure}{Move operation rule}
-
+go up the chain of frame pointers up to the nesting level at which the variable is declared
 \medskip
 
 \[
@@ -762,7 +762,23 @@ Follows the phase of the execution of the code, so an intermediate bytecode lang
 \subsubsection{Code Generation}
 The bytecode language AVM is defined in Antlr as follows:
 \lstinputlisting{avm.g4}
-The language is more or less a classic assembly language, with the instructions needed to handle the programs written in AssetLan. The implementation for the execution the code will be a stack machine with the usage of registers, so in the grammar is defined the REGISTER token, that identifies the $8$ registers  necessary for this implementation.
+The language is more or less a classic assembly language, with the instructions needed to handle the programs written in AssetLan. The implementation for the execution the code will be a stack machine with the usage of registers, so in the grammar is defined the REGISTER token, that identifies the $8$ registers  necessary for this implementation. The register \$a0 is the accumulator, i.e., there is memorized the value of the last instruction calculated. The register \$s0 is the "wallet", i.e., the register ad-hoc to achieve the total of the asset values transfered during the execution.
+
+\medskip
+
+A function \textsc{codeGeneration()} is implemented in every node and executed visiting the AST, the result will be a \textsc{String} containing the bytecode generated for the input program. 
+
+\medskip
+
+There is an example for the if-then-else \textsc{iteNode.java}:
+\lstinputlisting{codeite.java}
+To handle the labels, in the class \textsc{AssetLanlib} are defined some methods that avoid to get labels with the same name. There are two strings for the statements in the then branch and the else one, constructed statement by statement calling its \textsc{codeGeneration()} method. The return code is nothing more than a check on the condition to branch in the right side of the if-then-else.  
+
+\medskip
+
+Follows a second example for the move operation \textsc{moveNode.java}:
+\lstinputlisting{codeMove.java}
+The two strings \verb|getAR1| and \verb|getAR2| are related to the two variables involved in the operation; in the string, there is the code to go up the chain of frame pointers up to the nesting level at which the variable is declared (a sequence of instructions \verb|lw $al 0($al)|). The code returned is composed by a \verb|move $al $fp| to initialize the activation link before the \verb|getAR1| and then for the \verb|getAR2|. The implementation of the \textsc{move} operation consist in empty the first variable involved and sum its value to the second one. To access the variables is necessary to retrieve the offset from the Symbol Table, there is no \textsc{lookup(id)} operation as in the Node there is stored in \verb|entry1| the \textsc{STentry} related to the variables involved.
 
 \subsubsection{Interpreter}
 

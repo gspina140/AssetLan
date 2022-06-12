@@ -116,7 +116,7 @@ public class ExecuteVM {
                     case AVMParser.JAL:
                         /**
                          * DEBUG
-                         */
+                         
                         System.out.println("Sp="+registers[5]+"\n");
                         for (int i = MEMSIZE - 1 - 28; i < MEMSIZE; i+=4) {
                             System.out.println("Stack["+i+"]="+memory[i]+"\n");
