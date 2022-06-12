@@ -84,7 +84,7 @@ public class MoveNode implements Node {
         return null;
     }
 
-    public Boolean checkLiquidity(Environment sigma) {
+    public Boolean checkLiquidity(Environment sigma, int verbosity) {
         STentry leftAsset = sigma.lookup(id1);
         STentry rightAsset = sigma.lookup(id2);
 
@@ -93,10 +93,10 @@ public class MoveNode implements Node {
             ((AssetTypeNode)rightAsset.getType()).fill();
         }
 
-        /** DEBUG */
-        System.out.println("Move: " + id1 + " empty: " + ((AssetTypeNode)sigma.lookup(id1).getType()).isEmpty() + "\n");
-        System.out.println("Move: " + id2 + " empty: " + ((AssetTypeNode)sigma.lookup(id2).getType()).isEmpty() + "\n");
-        /** DEBUG */
+        if (verbosity > 1) {
+            System.out.println("Move: " + id1 + " empty: " + ((AssetTypeNode)sigma.lookup(id1).getType()).isEmpty());
+            System.out.println("Move: " + id2 + " empty: " + ((AssetTypeNode)sigma.lookup(id2).getType()).isEmpty());
+        }
 
         return true;
     }

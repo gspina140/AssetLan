@@ -1,24 +1,27 @@
 package mainpackage;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.*;
+import java.io.FileWriter;
 
 import java.util.ArrayList;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 
-import ast.*;
+import ast.AssetLanVisitorImpl;
+import ast.AVMVisitorImpl;
+import ast.Node;
+import ast.ProgramNode;
 
 import interpreter.ExecuteVM;
 
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
-import parser.AVMParser;
 import parser.AVMLexer;
+import parser.AVMParser;
 
 import util.Environment;
 import util.SemanticError;
@@ -28,16 +31,19 @@ public class Test {
     /**
      *--------------------------------------------------------------------------------------
      * Main function, entry point of the compiler
-     * SYNAPSIS:    java mainpackage/Test [filename]
+     * SYNAPSIS:    java mainpackage.Test "filename" ["verbosity"]
      *--------------------------------------------------------------------------------------
-     * It takes as only argument the name of a file with '.al' extension to be analyzed
+     * It takes as first argument the name of a file with '.al' extension to be analyzed.
      * We suggest to place it in the src directory with a proper name (e.g., 'input.al')
      * and to execute the program as follows:
-     *  java mainpackage/Test input.al
-     * Not providing an argument, or if the file does not exist or have the wrong extension
-     * will cause an error, and the program will exit
-     * Providing more than one argument will provide a warning and only the first argument
-     * will be used (the execution will not be stopped)
+     *  java mainpackage.Test input.al
+     * Not providing an argument, or if the file does not exist or have the wrong extension,
+     * will cause an error, and the program will exit.
+     * Providing more than two arguments will provide a warning and only the first two
+     * arguments will be used (the execution will not be stopped).
+     * UPDATE: now a second (optional) parameter is provided to specify the verbosity of
+     * the output (if greater than 0, it will visualize the AST; if greater than 1, it will
+     * also print a stack trace of the assets, e.g., when they are filled or emptied).
      *--------------------------------------------------------------------------------------
      * @param String the name of the file with '.al' extension to be analyzed (and compiled)
      * @return void
@@ -52,9 +58,9 @@ public class Test {
                                "(launching from console from AssetLan/src directory)\n" +
                                "Exiting.\n");
             return;
-        } else if (args.length > 1) {
-            System.err.println("Warning:\tmore than one argument found; only one required\n" +
-                               "Only the first argument will be kept, while the others will be discarded\n");
+        } else if (args.length > 2) {
+            System.err.println("Warning:\tmore than two arguments found; only two required\n" +
+                               "Only the first two arguments will be kept, while the others will be discarded\n");
         }
 
         /* The name of the file to be analyzed */
@@ -71,6 +77,22 @@ public class Test {
             return;
         }
 
+        /* Verbosity of the output */
+        int verbosity = 0;
+
+        /* Chek verbosity */
+        try {
+            if (args.length > 1)
+                verbosity = Integer.parseInt(args[1]);
+        } catch (Exception e) {
+            System.err.println("Wrong argument provided for verbosity: " + e +
+                               "\nOnly integers are supported.\n" +
+                               "\tVerbosity=1: visualize AST\n" +
+                               "\tVerbosity=2: visualize AST and stack trace of the assets\n" +
+                               "Exiting.\n"); 
+            System.exit(0);
+        }
+
         /* Setting the stream */
 		FileInputStream is = new FileInputStream(fileName);         // Program to compile is in a file
         CharStream input = CharStreams.fromStream(is);              // From Antlr4.6 ANTLRInputStream is deprecated, CharStream is recommended instead
@@ -84,8 +106,8 @@ public class Test {
         /* Parser */
         AssetLanParser parser = new AssetLanParser(tokens);         // Instantiate Parser; parser errors will still be printed to console as default
         
-        /* */
-        System.out.println("\n\nAssetLan compilation\n\n");
+        /* Communicate that the compilation has started */
+        System.out.println("\n\nAssetLan compilation\n");
 
         /* Visitor (semantic analysis) */
 		AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();    // Use custom visitor
@@ -93,27 +115,38 @@ public class Test {
         
         /* Visit the AST to find semantic errors (e.g., multiply declared variables or undeclared variables) */
         Environment env = new Environment();
-        Environment sigma = new Environment();  // Effects analysis on liquidity
+        Environment sigma = new Environment();                      // Effects analysis on liquidity
 
-        ArrayList<SemanticError> err = ast.checkSemantics(env);
-        System.out.println("\n\n\nATTTENTI: " + env.getSymTable().size() +"\n\n");
-        if(err.size()>0) {
+        System.out.println("Running check semantics...");
+        ArrayList<SemanticError> err = ast.checkSemantics(env);     // Running semantic evaluation
+
+        if(err.size() > 0) {
+            /* At least an error has occured: print the errors and stop the compilation */
             System.out.println("You had: " + err.size() + " errors:");
             for (SemanticError e : err)
                 System.out.println("\t" + e);
-        }else{
-            System.out.println("\n ###################### \n\nVisualizing AST... \n");
-            System.out.println(ast.toPrint(""));
+        } else {
+            System.out.println("Semantic check was successful!");
+            /* If verbosity > 0, visualize the AST */
+            if (verbosity > 0) {
+                System.out.println("\n######################\n" +
+                                   "\n# Visualizing AST... #\n" +
+                                   ast.toPrint("") +
+                                   "\n######################\n");
+            }
 
-            System.out.println("\n ###################### \n\nStarting type checking... \n");
-            Node type = ast.typeCheck(); //type-checking bottom-up 
+            /* Visit the AST to find type errors */
+            System.out.println("Running type checking...");
+            Node type = ast.typeCheck();                            // Running type checking 
             
+            /* At this point, if type check found an error, the execution has already been stopped */
             if(type == null) 
-                System.out.println("Type checking ok! Type of the program is: Void");
+                System.out.println("Type checking was successful!\nThe initcall of the program is of type: Void");
             else
-                System.out.println(type.toPrint("Type checking ok! Type of the program is: "));
+                System.out.println(type.toPrint("Type checking was successful!\nThe initcall of theprogram is of type: "));
 
-            Boolean isLiquid = ((ProgramNode)ast).checkLiquidity(sigma);  // Effects analysis on liquidity
+            /* Visit the AST to check if the program is liquid */
+            Boolean isLiquid = ((ProgramNode)ast).checkLiquidity(sigma, verbosity);  // Effects analysis on liquidity
 
             if(isLiquid == null)
                 System.out.println("\nCould not define if the program was liquid or not.\n");

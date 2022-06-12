@@ -129,13 +129,14 @@ public class ProgramNode implements Node {
         return initcall.typeCheck();
     }
 
-    public Boolean checkLiquidity(Environment sigma) {
+    public Boolean checkLiquidity(Environment sigma, int verbosity) {
         sigma.enterScope();
         for (Node asset:assetlist) {
-            System.out.println("Inserisco asset in Sigma!\n");   // DEBUG   
-            ((AssetNode)asset).checkLiquidity(sigma);         
+            if (verbosity > 1)
+                System.out.println("Inserisco asset in Sigma!\n");  
+            ((AssetNode)asset).checkLiquidity(sigma, verbosity);         
         }
-        Boolean isLiquid = ((InitCallNode)initcall).checkLiquidity(sigma);
+        Boolean isLiquid = ((InitCallNode)initcall).checkLiquidity(sigma, verbosity);
         if(isLiquid == null)
             return null;
         else if (isLiquid) {

@@ -238,14 +238,14 @@ public class FunctionNode implements Node {
         return null;
     }
 
-    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<String> parlist, ArrayList<Node> oldAss) {
+    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<String> parlist, ArrayList<Node> oldAss, int verbosity) {
         Boolean isLiquid = true;
         sigma.enterScope();
 
         ArrayList<Node> ass = null;
 
         if (assets != null) {
-            ((AdecNode)assets).checkLiquidity(sigma);
+            ((AdecNode)assets).checkLiquidity(sigma, verbosity);
 
             ass = new ArrayList<Node>();
 
@@ -270,24 +270,22 @@ public class FunctionNode implements Node {
                 }
             }
 
-            /** DEBUG */
-            //ArrayList<String> assetsIds = ((AdecNode)assets).getIds();
-            for (String aid : assetsIds) {
-                System.out.println("Asset " + aid + " empty: " + ((AssetTypeNode)sigma.lookup(aid).getType()).isEmpty() + "\n");
-            }
-            /** DEBUG */
+            if (verbosity > 1)
+                for (String aid : assetsIds) {
+                    System.out.println("Asset " + aid + " empty: " + ((AssetTypeNode)sigma.lookup(aid).getType()).isEmpty() + "\n");
+                }
         } 
 
         for(Node statement : statementlist){
             //System.out.println(statement.getClass().getName()+ "\n");
             if(statement instanceof MoveNode)
-                ((MoveNode)statement).checkLiquidity(sigma);
+                ((MoveNode)statement).checkLiquidity(sigma, verbosity);
 
             if(statement instanceof TransferNode)
-                ((TransferNode)statement).checkLiquidity(sigma);
+                ((TransferNode)statement).checkLiquidity(sigma, verbosity);
 
             if(statement instanceof IteNode){
-                if (((IteNode)statement).checkLiquidity(sigma,id,ass) == null)
+                if (((IteNode)statement).checkLiquidity(sigma,id,ass, verbosity) == null)
                     return null;
             }
 
@@ -315,12 +313,12 @@ public class FunctionNode implements Node {
                     }
 
                     //Call
-                    if(!((CallNode)statement).checkLiquidity(sigma,ass))
+                    if(!((CallNode)statement).checkLiquidity(sigma,ass, verbosity))
                         isLiquid = false;
 
                     //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
                 } else{
-                    Boolean temp =((CallNode)statement).checkLiquidity(sigma,null);
+                    Boolean temp =((CallNode)statement).checkLiquidity(sigma,null, verbosity);
                     if(temp == null)
                         return null;
                     else if(temp == false)

@@ -114,10 +114,12 @@ public class AdecNode implements Node{
         return null;
     }
 
-    public Boolean checkLiquidity(Environment sigma) {
+    public Boolean checkLiquidity(Environment sigma, int verbosity) {
         for (String id : ids) {
             sigma.addEntry(new AssetTypeNode(), id);
-            System.out.println("Inserito asset " + id + " in Sigma, empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");  // DEBUG
+
+            if (verbosity > 1)
+                System.out.println("Inserito asset " + id + " in Sigma, empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty());
         }
         return true;
     }

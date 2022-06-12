@@ -145,7 +145,7 @@ public class IteNode implements Node {
         return null;
     }
 
-    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<Node> oldAss){
+    public Boolean checkLiquidity(Environment sigma, String id, ArrayList<Node> oldAss, int verbosity){
         //un array per then, un array per else !!! chi mi dice che modficano le stesse var??
         //ambiente  ambiente1  - ambiente  ambiente2
         Environment sigma1 = new Environment(sigma);
@@ -153,32 +153,32 @@ public class IteNode implements Node {
 
         for (Node statement:thenStsL){
             if(statement instanceof MoveNode){
-                ((MoveNode)statement).checkLiquidity(sigma1);
+                ((MoveNode)statement).checkLiquidity(sigma1, verbosity);
             }
             if(statement instanceof TransferNode)
-                ((TransferNode)statement).checkLiquidity(sigma1);
+                ((TransferNode)statement).checkLiquidity(sigma1, verbosity);
             if(statement instanceof CallNode)
                 if( ((CallNode)statement).getId().equals(id) )
-                    ((CallNode)statement).checkLiquidity(sigma1,oldAss);
+                    ((CallNode)statement).checkLiquidity(sigma1,oldAss, verbosity);
                 else 
-                    ((CallNode)statement).checkLiquidity(sigma1,null);
+                    ((CallNode)statement).checkLiquidity(sigma1,null, verbosity);
             if(statement instanceof IteNode)
-                ((IteNode)statement).checkLiquidity(sigma1,id,oldAss);
+                ((IteNode)statement).checkLiquidity(sigma1,id,oldAss, verbosity);
         }
 
         for (Node statement:elseStsL){
             if(statement instanceof MoveNode){
-                ((MoveNode)statement).checkLiquidity(sigma2);
+                ((MoveNode)statement).checkLiquidity(sigma2, verbosity);
             }
             if(statement instanceof TransferNode)
-                ((TransferNode)statement).checkLiquidity(sigma2);
+                ((TransferNode)statement).checkLiquidity(sigma2, verbosity);
             if(statement instanceof CallNode)
                 if( ((CallNode)statement).getId().equals(id) )
-                    ((CallNode)statement).checkLiquidity(sigma2,oldAss);
+                    ((CallNode)statement).checkLiquidity(sigma2,oldAss, verbosity);
                 else 
-                    ((CallNode)statement).checkLiquidity(sigma2,null);
+                    ((CallNode)statement).checkLiquidity(sigma2,null, verbosity);
             if(statement instanceof IteNode)
-                ((IteNode)statement).checkLiquidity(sigma2,id,oldAss);
+                ((IteNode)statement).checkLiquidity(sigma2,id,oldAss, verbosity);
         }
 
         ArrayList<HashMap<String,STentry>> symTable1 = sigma1.getSymTable();

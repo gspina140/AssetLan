@@ -70,13 +70,12 @@ public class TransferNode implements Node{
         return null;
     }
 
-    public Boolean checkLiquidity(Environment sigma){
+    public Boolean checkLiquidity(Environment sigma, int verbosity){
         STentry asset = sigma.lookup(id);
         ((AssetTypeNode)asset.getType()).empty();
 
-        /** DEBUG */
-        System.out.println("Transfer: " + id + "empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");
-        /** DEBUG */
+        if (verbosity > 1)
+            System.out.println("Transfer: " + id + "empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");
 
         return true;
     }

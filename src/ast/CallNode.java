@@ -123,9 +123,6 @@ public class CallNode implements Node {
             aentries.add(aentry);
         }
 
-        System.out.println("Function " + id + "\t Aentries.size: " + aentries.size() + "\n"); // DEBUG
-
-
         nl = env.getNestingLevel();
 
         return res;
@@ -168,9 +165,6 @@ public class CallNode implements Node {
                 System.exit(0);
             }
 
-            System.out.println("Function " + id + "\t Aentries.size: " + aentries.size() + "\n"); // DEBUG
-
-
             for (int i = 0; i < aentries.size(); i++) {
                 if (! (aentries.get(i).getType() instanceof AssetTypeNode) ) {
                     System.out.println("Type error: " + idlist.get(i) + " is not of an asset");
@@ -182,14 +176,14 @@ public class CallNode implements Node {
         return t.getRet();
     }
 
-    public Boolean checkLiquidity(Environment sigma, ArrayList<Node> oldAss) {
+    public Boolean checkLiquidity(Environment sigma, ArrayList<Node> oldAss, int verbosity) {
         // Look-up for each asset id
         // for (String a : idlist) {
         //     STentry aentry = sigma.lookup(a);
         //     ((AssetTypeNode)aentry.getType()).empty();
         // }
 
-        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, idlist, oldAss);    
+        return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, idlist, oldAss, verbosity);    
     } 
 
     @Override
@@ -207,11 +201,6 @@ public class CallNode implements Node {
            }
         }
 
-
-
-
-        System.out.println("Function " + id + "\t Aentries.size: " + aentries.size() + "\n"); // DEBUG
-
         if (aentries.size() > 0)
             assCode += "addi $sp $sp -" + aentries.size()*4 + "\n";
 
@@ -225,8 +214,6 @@ public class CallNode implements Node {
                     "li $t1 0\n"+
                     "sw $t1 "+aentries.get(i).getOffset()+"($al)\n";
         }
-
-        System.out.println("Function " + id + "\t Nesting level: " + nl + "\t Entry nl: " + entry.getNestinglevel() + "\n"); // DEBUG
 
         // Juest here, I iterate once more because I consider the nesting level of the body of the function, not its id
         for(int i = 0; i <= nl - entry.getNestinglevel(); i++) { 
