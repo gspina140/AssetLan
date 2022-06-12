@@ -120,7 +120,7 @@ public class AdecNode implements Node{
             sigma.addEntry(new AssetTypeNode(), id);
 
             if (verbosity > 1)
-                System.out.println("Inserito asset " + id + " in Sigma, empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty());
+                System.out.println("New asset " + id + " inserted in Sigma, empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty());
         }
         return true;
     }

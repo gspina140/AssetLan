@@ -16,7 +16,6 @@ public class ExecuteVM {
 
     private int ip = 0; // Program counter
     private int hp = 0; // Heap pointer
-    //private int rv;
 
     public ExecuteVM(int[] code) {
         this.code = code;
@@ -50,7 +49,6 @@ public class ExecuteVM {
                         v1 = registers[code[ip++]];
                         v2 = registers[code[ip++]];
                         registers[code[ip++]] = v1 + v2;
-                        //System.out.println(("Register["+code[ip-1]+"]="+(v1+v2)));  // DEBUG
                         break;
                     case AVMParser.MULT:
                         v1 = registers[code[ip++]];
@@ -67,14 +65,12 @@ public class ExecuteVM {
                         v2 = registers[code[ip++]];
                         registers[code[ip++]] = v1 - v2;
                         break;
-                    case AVMParser.STOREW: //
-
+                    case AVMParser.STOREW:
                         v1 = registers[code[ip++]]; // source register value
-                        v2 = code[ip++];    // n
-                        // registers[v2+code[ip++]]=v1;
+                        v2 = code[ip++];            // n
                         memory[v2 + registers[code[ip++]]] = v1;
                         break;
-                    case AVMParser.LOADW: //
+                    case AVMParser.LOADW:
                         // check if object address where we take the method label
                         // is null value (-10000)
                         if (memory[registers[5]] == -10000) {
@@ -148,11 +144,9 @@ public class ExecuteVM {
                         v2 = code[ip++];
                         registers[code[ip++]] = memory[v1 + v2];
                         break;
-                    case AVMParser.STOREB: //
-
+                    case AVMParser.STOREB:
                         v1 = registers[code[ip++]];
                         v2 = code[ip++];
-                        // registers[v2+code[ip++]]=v1;
                         memory[v2 + code[ip++]] = v1;
                         break;
                 }

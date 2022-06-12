@@ -41,7 +41,6 @@ lw $t1 0($sp)
 add $a0 $a0 $t1
 sw $a0 4($al)
 pop
-
 b label1
 label0:
 move $al $fp
@@ -56,7 +55,6 @@ lw $t1 0($sp)
 add $a0 $a0 $t1
 sw $a0 4($al)
 pop
-
 move $al $fp
 lw $a0 12($al)
 push $a0
@@ -69,7 +67,6 @@ lw $t1 0($sp)
 add $a0 $a0 $t1
 sw $a0 4($al)
 pop
-
 label1:
 lw $ra 0($sp)
 addi $sp $sp 20

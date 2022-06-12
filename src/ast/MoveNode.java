@@ -68,15 +68,20 @@ public class MoveNode implements Node {
         return res;
     }
 
+    /**
+     * Override of the typeCheck function
+     * It checks if both entries have type Asset
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return the type of the node
+     */
     @Override
     public Node typeCheck() {
-        if(! (entry1.getType() instanceof AssetTypeNode) ) {
+        if(! (entry1.getType() instanceof AssetTypeNode)) {
             System.out.println("Left id of operation move must be an asset");
             System.exit(0);
         }
 
-
-        if(! (entry2.getType() instanceof AssetTypeNode) ) {
+        if(! (entry2.getType() instanceof AssetTypeNode)) {
             System.out.println("Right id of operation move must be an asset");
             System.exit(0);
         }
@@ -84,11 +89,17 @@ public class MoveNode implements Node {
         return null;
     }
 
+    /**
+     * Function for liquidity checking
+     * @param sigma the environment in which the check takes place (it contains the symTable)
+     * @param verbosity parameter for output verbosity; if > 1 it prints the assets stack trace
+     * @return if local liquidity is respected
+     */
     public Boolean checkLiquidity(Environment sigma, int verbosity) {
         STentry leftAsset = sigma.lookup(id1);
         STentry rightAsset = sigma.lookup(id2);
 
-        if (! ((AssetTypeNode)leftAsset.getType()).isEmpty() ) {
+        if (!((AssetTypeNode)leftAsset.getType()).isEmpty()) {
             ((AssetTypeNode)leftAsset.getType()).empty();
             ((AssetTypeNode)rightAsset.getType()).fill();
         }
@@ -101,6 +112,11 @@ public class MoveNode implements Node {
         return true;
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
     public String codeGeneration(){
         String getAR1="";
@@ -126,4 +142,5 @@ public class MoveNode implements Node {
                 "sw $a0 "+entry2.getOffset()+"($al)\n"+
                 "pop\n";
     }
+
 }

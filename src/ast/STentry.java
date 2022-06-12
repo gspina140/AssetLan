@@ -1,6 +1,5 @@
 package ast;
 
-
 public class STentry {
  
 	/**
@@ -42,6 +41,11 @@ public class STentry {
 		offset = os;
 	}
 
+	/**
+	 * Another class constructor cloning another STentry
+	 * @param e an STentry
+	 * @return a copy of the original STentry (by value)
+	 */
     public STentry(STentry e){
         this.nl = e.getNestinglevel();
         if(e.getType() instanceof IntTypeNode)
@@ -100,4 +104,5 @@ public class STentry {
 			   type.toPrint(s + "  ") + 
 			   s + "STentry: offset " + Integer.toString(offset) + "\n";
 	}
+
 }  

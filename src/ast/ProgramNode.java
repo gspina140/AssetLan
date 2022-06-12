@@ -118,6 +118,12 @@ public class ProgramNode implements Node {
         return res;
     }
 
+    /**
+     * Function for type checking
+     * It basically delegates everything to the sub-nodes (this is the root of the AST)
+     * @param void
+     * @return null
+     */
     @Override
     public Node typeCheck () {
         for (Node field:fieldlist)
@@ -129,11 +135,17 @@ public class ProgramNode implements Node {
         return initcall.typeCheck();
     }
 
+    /**
+     * Function for liquidity checking
+     * @param sigma the environment in which the check takes place (it contains the symTable)
+     * @param verbosity parameter for output verbosity; if > 1 it prints the assets stack trace
+     * @return if local liquidity is respected
+     */
     public Boolean checkLiquidity(Environment sigma, int verbosity) {
         sigma.enterScope();
         for (Node asset:assetlist) {
             if (verbosity > 1)
-                System.out.println("Inserisco asset in Sigma!\n");  
+                System.out.println("Inserting new asset in Sigma!\n");  
             ((AssetNode)asset).checkLiquidity(sigma, verbosity);         
         }
         Boolean isLiquid = ((InitCallNode)initcall).checkLiquidity(sigma, verbosity);
@@ -154,10 +166,14 @@ public class ProgramNode implements Node {
         return isLiquid;
     }
 
-    public String codeGeneration(){
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
+    public String codeGeneration() {
         String decs = "";
-        int k = 4; //k is the memory of the static scope, starts from 4 to allocate the $ra of initcall!
-        //int k = 0;
+        int k = 4;              // k is the memory of the static scope
 
         for (Node f : fieldlist){
             decs += f.codeGeneration();
@@ -167,7 +183,7 @@ public class ProgramNode implements Node {
                 k+=1;
         }
 
-        // Problem: for move to work properly, i need to instantiate assets at 0
+        // For move to work properly, assets must be instantiated at 0 (memory could be dirty!)
         String adecs = "";
         for (Node a : assetlist) {
             adecs += a.codeGeneration();
@@ -178,16 +194,15 @@ public class ProgramNode implements Node {
         for(Node fn : functionlist)
             fn.codeGeneration();
 
-        return  //"move $fp $sp\n"+
-                "li $s0 0\n"+               // Register s0 is the wallet, i.e. the count of asset values stransfered
-                "addi $sp $sp -"+k +"\n"+   // Memory allocation for global variables and assets
-                "move $fp $sp\n"+
-                decs+
-                adecs+
-                initcall.codeGeneration()+
-                "addi $sp $sp "+k+"\n"+
-                "halt\n"+
-                AssetLanlib.getCode(); 
+        return "li $s0 0\n" +               // Register s0 is the wallet, i.e. the count of asset values transfered
+               "addi $sp $sp -"+ k +"\n" +  // Memory allocation for global variables and assets
+               "move $fp $sp\n" +
+               decs +
+               adecs +
+               initcall.codeGeneration() +
+               "addi $sp $sp " + k + "\n" +
+               "halt\n" +
+               AssetLanlib.getCode(); 
     }
 
 }

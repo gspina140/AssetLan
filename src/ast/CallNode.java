@@ -128,6 +128,12 @@ public class CallNode implements Node {
         return res;
     }
 
+    /**
+     * Override of the typeCheck function
+     * It checks type correctness for parameters and assets in the call
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return the type of the function
+     */
     @Override
     public Node typeCheck() {
 
@@ -176,21 +182,27 @@ public class CallNode implements Node {
         return t.getRet();
     }
 
+    /**
+     * Function for liquidity checking
+     * @param sigma the environment in which the check takes place (it contains the symTable)
+     * @param oldAss the old Assets (used for minimum-fixpoint had been reached)
+     * @param verbosity parameter for output verbosity; if > 1 it prints the assets stack trace
+     * @return if local liquidity is respected
+     */
     public Boolean checkLiquidity(Environment sigma, ArrayList<Node> oldAss, int verbosity) {
-        // Look-up for each asset id
-        // for (String a : idlist) {
-        //     STentry aentry = sigma.lookup(a);
-        //     ((AssetTypeNode)aentry.getType()).empty();
-        // }
-
         return ((ArrowTypeNode)entry.getType()).getFunction().checkLiquidity(sigma, id, idlist, oldAss, verbosity);    
     } 
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
-    public String codeGeneration(){
+    public String codeGeneration() {
         String parCode = "";
         String assCode = "";
-        String getAR   = ""; //AR where the fun is defined (is always 0)
+        String getAR   = "";    // AR where the fun is defined
 
         if(expressions != null){
            ArrayList<Node> expr = ((ExpListNode)expressions).getExps();
@@ -204,30 +216,29 @@ public class CallNode implements Node {
         if (aentries.size() > 0)
             assCode += "addi $sp $sp -" + aentries.size()*4 + "\n";
 
-        // Assets order problem
+        // Watch out for the assets order!
         for(int i = 0; i < aentries.size(); i++) {
-            //System.out.println("DIREI CHE : "+idlist.get(i)+"\n");
             for(int j = 0; j< nl-aentries.get(i).getNestinglevel(); j++)
-                assCode+="lw $al 0($al)\n";
-            assCode+="lw $a0 "+aentries.get(i).getOffset()+"($al)\n"+
-                    "sw $a0 " + (i*4) +"($sp)\n"+
-                    "li $t1 0\n"+
-                    "sw $t1 "+aentries.get(i).getOffset()+"($al)\n";
+                assCode += "lw $al 0($al)\n";
+            assCode += "lw $a0 "+aentries.get(i).getOffset()+"($al)\n"+
+                       "sw $a0 " + (i*4) +"($sp)\n"+
+                       "li $t1 0\n"+
+                       "sw $t1 "+aentries.get(i).getOffset()+"($al)\n";
         }
 
-        // Juest here, I iterate once more because I consider the nesting level of the body of the function, not its id
+        // Only here, we iterate once more because we consider the nesting level of the body of the function, not its id
         for(int i = 0; i <= nl - entry.getNestinglevel(); i++) {
             getAR += "lw $al 0($al)\n";
         }
 
         return "push $fp\n"+
-                "move $al $fp\n"+
-                assCode+
-                "move $al $fp\n"+
-                parCode+
-                "move $al $fp\n"+
-                getAR+
-                "push $al\n"+
-                "jal function_"+id+"\n";
+               "move $al $fp\n"+
+               assCode+
+               "move $al $fp\n"+
+               parCode+
+               "move $al $fp\n"+
+               getAR+
+               "push $al\n"+
+               "jal function_"+id+"\n";
     }
 }

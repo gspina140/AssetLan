@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class NegExpNode implements Node{
+public class NegExpNode implements Node {
 
     /**
      * A node containing the expression to be negated
@@ -17,7 +17,7 @@ public class NegExpNode implements Node{
      * @param e a node containing the expression to be negated
      * @return an object of type NegExpNode
      */
-    public NegExpNode(Node e){
+    public NegExpNode(Node e) {
         exp = e;
     }
 
@@ -41,7 +41,7 @@ public class NegExpNode implements Node{
      * @return a list of semantic errors (can be empty)
      */
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env){
+    public ArrayList<SemanticError> checkSemantics(Environment env) {
         
         // Declare resulting list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
@@ -52,10 +52,16 @@ public class NegExpNode implements Node{
         return res;
     }
     
+    /**
+     * Override of the typeCheck function
+     * It checks if the type of the expression is correct (i.e., integer)
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return the type of the expression
+     */
     @Override
     public Node typeCheck() {
 
-        if(! (exp.typeCheck() instanceof IntTypeNode)){
+        if(! (exp.typeCheck() instanceof IntTypeNode)) {
             System.out.println("Error: cannot negate a non-integer expression");
             System.exit(0);
         }
@@ -63,9 +69,14 @@ public class NegExpNode implements Node{
         return null;
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
-    public String codeGeneration(){
-        return exp.codeGeneration()+
+    public String codeGeneration() {
+        return exp.codeGeneration() +
         "li $t1 0\nsub $a0 $t1 $a0\n";
     }
 }

@@ -53,10 +53,16 @@ public class NotExpNode implements Node{
         return res;
     }
 
+    /**
+     * Override of the typeCheck function
+     * It checks if the type of the expression is correct (i.e., boolean)
+     * @param env the environment in which the check takes place (it contains the symTable)
+     * @return the type of the expression
+     */
     @Override
-    public Node typeCheck() {   //We are checking that the expression to be applyied the not operator is boolean (maybe it could be an integer??)
+    public Node typeCheck() {
 
-        if(! (exp.typeCheck() instanceof BoolTypeNode)){
+        if(! (exp.typeCheck() instanceof BoolTypeNode)) {
             System.out.println("Error: cannot apply not operator (!) to a non-boolean expression");
             System.exit(0);
         }
@@ -64,8 +70,13 @@ public class NotExpNode implements Node{
         return null;
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
-    public String codeGeneration(){
+    public String codeGeneration() {
         String trueL = AssetLanlib.freshLabel();
         String endL = AssetLanlib.freshLabel();
 

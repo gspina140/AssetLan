@@ -221,6 +221,11 @@ public class IteNode implements Node {
         return true; 
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
     public String codeGeneration(){
         String falseL = AssetLanlib.freshLabel();
@@ -230,10 +235,10 @@ public class IteNode implements Node {
         String elseCode = "";
 
         for(Node t : thenStsL)
-            thenCode+=t.codeGeneration()+"\n";
+            thenCode+=t.codeGeneration();
 
         for(Node e : elseStsL)
-            elseCode+=e.codeGeneration()+"\n";
+            elseCode+=e.codeGeneration();
 
         return cond.codeGeneration()+
                 "li $t1 0\n"+

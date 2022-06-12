@@ -27,7 +27,19 @@ public interface Node {
      */
     ArrayList<SemanticError> checkSemantics(Environment env);
 
+    /**
+     * checkSemantics method
+     * Method to check the type correctness of the program
+     * @param void
+     * @return a (Type)Node
+     */
     Node typeCheck();
 
+    /**
+     * codeGeneration method
+     * Method to generate the intermidiate code
+     * @param void
+     * @return the string containing the generated code
+     */
     public String codeGeneration();
 }

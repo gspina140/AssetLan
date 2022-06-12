@@ -13,15 +13,19 @@ public class PlusMinusNode implements Node{
      */
     private Node eL, eR;
 
+    /**
+     * Boolean to discriminate between Sum and Sub operation
+     */
     private Boolean isSum;
 
     /**
      * Class constructor; it takes as parameters both the expression nodes
      * @param e1 the node containing the expression on the left side of the operator
      * @param e2 the node containing the expression on the right side of the operator
+     * @param kind the kind of operation (sum or sub)
      * @return an object of type BinExpNode
      */
-    public PlusMinusNode(Node e1, Node e2, Boolean kind){
+    public PlusMinusNode(Node e1, Node e2, Boolean kind) {
         eL = e1;
         eR = e2;
         isSum = kind;
@@ -35,7 +39,7 @@ public class PlusMinusNode implements Node{
      * @return the string containing the message
      */
     @Override
-    public String toPrint(String s){
+    public String toPrint(String s) {
         return s + "Expression:\tLeft side," + eL.toPrint(s) +
                                     "\tRight side," + eR.toPrint(s); 
     }
@@ -49,7 +53,7 @@ public class PlusMinusNode implements Node{
      * @return a list of semantic errors (can be empty)
      */
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env){
+    public ArrayList<SemanticError> checkSemantics(Environment env) {
 
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
@@ -70,7 +74,7 @@ public class PlusMinusNode implements Node{
     @Override
     public Node typeCheck(){
 
-        if (! (AssetLanlib.isSubtype(eL.typeCheck(), new IntTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new IntTypeNode()))){
+        if (!(AssetLanlib.isSubtype(eL.typeCheck(), new IntTypeNode()) && AssetLanlib.isSubtype(eR.typeCheck(), new IntTypeNode()))) {
             System.out.println("Both operator of sum or subtraction must be of type int");
             System.exit(0);
         }
@@ -78,16 +82,21 @@ public class PlusMinusNode implements Node{
         return new IntTypeNode();
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
-    public String codeGeneration(){
-        if(isSum){
+    public String codeGeneration() {
+        if (isSum) {
             return eL.codeGeneration()+
             "push $a0\n"+
             eR.codeGeneration()+
             "lw $t1 0($sp)\n"+
             "add $a0 $t1 $a0\n"+
             "pop\n";
-        }else{
+        } else {
             return eL.codeGeneration()+
             "push $a0\n"+
             eR.codeGeneration()+
@@ -96,4 +105,5 @@ public class PlusMinusNode implements Node{
             "pop\n";
         }
     }
+
 }

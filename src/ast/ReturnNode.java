@@ -52,6 +52,12 @@ public class ReturnNode implements Node {
         }
     }
 
+    /**
+     * Function for type checking
+     * It baically delegates to the expression node
+     * @param void
+     * @return the result of exp.typecheck() if it exists, null otherwise
+     */
     @Override
     public Node typeCheck() {
         if(exp != null) 
@@ -60,6 +66,11 @@ public class ReturnNode implements Node {
             return null;
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
     public String codeGeneration(){
         return exp.codeGeneration()+

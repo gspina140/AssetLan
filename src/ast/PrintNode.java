@@ -51,14 +51,25 @@ public class PrintNode implements Node {
         return res;
     }
 
+    /**
+     * Function for type checking
+     * @param void
+     * @return the result of the type checking on the expression
+     */
     @Override
     public Node typeCheck() {
         return exp.typeCheck();
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
     public String codeGeneration(){
         return exp.codeGeneration()+
                 "print $a0\n";
     }
+    
 }
