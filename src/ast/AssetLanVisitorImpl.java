@@ -209,7 +209,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         // If there are other assets declarations, add them to the list
         for(int i=1; i < idList.size(); i++) {
             res.addId(idList.get(i));
-            //res.addAss(new AssetTypeNode());
         }
 
         return res;
@@ -426,6 +425,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
         return res;
     }
 
+    /**
+     * Override of the visit of a Explist node
+     * @param ctx the context of the visit, containing information about the node
+     * @return the corresponding ExplistNode
+     */
     @Override
     public Node visitExplist(ExplistContext ctx){
 
@@ -442,7 +446,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node> {
 
         return res;
     }
-
 
     /**
      * Override of the visit of a Base Expression node

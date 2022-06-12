@@ -41,13 +41,23 @@ public class ValExpNode implements Node{
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
         return new ArrayList<SemanticError>();
-    }     
+    }
 
+    /**
+     * Function for type checking
+     * @param void
+     * @return an IntTypeNode (this can be considered as a leaf node of the AST)
+     */
     @Override
     public Node typeCheck() {
         return new IntTypeNode();
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
     public String codeGeneration() {
         return "li $a0 " + val + "\n";

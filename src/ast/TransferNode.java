@@ -11,8 +11,15 @@ public class TransferNode implements Node{
      */
     private String id;
 
+    /**
+     * Entry of the asset in the symTable; stored for liquidity check and codegeneration
+     * (it contains information about the offset and the nesting level of the asset in the symTable)
+     */
     private STentry entry;
 
+    /**
+     * Current nesting level (used for lookups in codegeneration)
+     */
     private int nl;
     
     /**
@@ -55,11 +62,18 @@ public class TransferNode implements Node{
             // The id has not been found and an error should be provided
             res.add(new SemanticError("Asset " + id + " han not been declared"));
 
-        nl= env.getNestingLevel();
+        // Store current nesting level for lookups in code generation
+        nl = env.getNestingLevel();
 
         return res;
     }
 
+    /**
+     * Function for type checking
+     * It checks that the id corresponds to an asset in the symTable
+     * @param void
+     * @return null
+     */
     @Override
     public Node typeCheck() {
         if (! (entry.getType() instanceof AssetTypeNode)) {
@@ -70,16 +84,27 @@ public class TransferNode implements Node{
         return null;
     }
 
+    /**
+     * Function for liquidity checking
+     * @param sigma the environment in which the check takes place (it contains the symTable)
+     * @param verbosity parameter for output verbosity; if > 1 it prints the assets stack trace
+     * @return if local liquidity is respected
+     */
     public Boolean checkLiquidity(Environment sigma, int verbosity){
         STentry asset = sigma.lookup(id);
         ((AssetTypeNode)asset.getType()).empty();
 
         if (verbosity > 1)
-            System.out.println("Transfer: " + id + "empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty() + "\n");
+            System.out.println("Transfer: " + id + "empty: " + ((AssetTypeNode)sigma.lookup(id).getType()).isEmpty());
 
         return true;
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return the string containing the generated code
+     */
     @Override
     public String codeGeneration(){
         String getAR = "";
