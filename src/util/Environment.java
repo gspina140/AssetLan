@@ -28,10 +28,20 @@ public class Environment {
 	 */
 	private int offset = 0;
 
+	/**
+	 * Default constructor of an Environment
+	 * @param void
+	 * @return a new object of type environment
+	 */
 	public Environment() {
 		this.symTable = new ArrayList<HashMap<String,STentry>>();
 	}
-	 
+
+	/**
+	* Alternative constructor of an Environment which creates a copy of another environment
+	* @param env the source environment to copy
+	* @return a new environment copy of the first one
+	*/
 	public Environment(Environment env) {
         this.symTable = new ArrayList<HashMap<String,STentry>>();
 
@@ -44,10 +54,13 @@ public class Environment {
             this.symTable.add(newhm);
         }
         this.nestingLevel = env.getNestingLevel();
-//		this.symTable = new ArrayList<HashMap<String,STentry>>(env.getSymTable());
- //       Collections.copy(this.symTable, env.getSymTable());
 	}
 
+	/**
+	 * Getter of the symTable
+	 * @param void
+	 * @return the symTable
+	 */
 	public ArrayList<HashMap<String,STentry>> getSymTable() {
 		return this.symTable;
 	}
@@ -70,23 +83,20 @@ public class Environment {
 	 * @return void
 	 */
 	public void exitScope() {  
-	    symTable.remove(nestingLevel--);  
-        //offset (backtrack)
+	    symTable.remove(nestingLevel--);
         
         int x = 0;
-        //int lastDeclared=0;
         if(nestingLevel != -1){
-        for (Map.Entry<String, STentry> set : symTable.get(nestingLevel).entrySet()) {
-            if(x >= set.getValue().getOffset()){
-                x=set.getValue().getOffset();
-                if(set.getValue().getType() instanceof IntTypeNode || set.getValue().getType() instanceof AssetTypeNode)
-                    x+=4;
-                else
-                    x+=1;
-            }
-        }
-    }
-    
+			for (Map.Entry<String, STentry> set : symTable.get(nestingLevel).entrySet()) {
+				if(x >= set.getValue().getOffset()){
+					x=set.getValue().getOffset();
+					if(set.getValue().getType() instanceof IntTypeNode || set.getValue().getType() instanceof AssetTypeNode)
+						x+=4;
+					else
+						x+=1;
+				}
+        	}
+		}    
     
         offset = x;
 	}
@@ -156,7 +166,7 @@ public class Environment {
 	/**
 	 * Look-up for the declaration of a given id in the current scope or in an enclosing one
 	 * Useful when we found the use of an id to check if it has been declared or not
-	 * In a program, every di must be declared before use in the current scope or an enclosing one
+	 * In a program, every id must be declared before use in the current scope or an enclosing one
 	 * @param id the id to be searched
 	 * @return the STentry if the id has been found, null otherwise
 	 */
@@ -183,10 +193,14 @@ public class Environment {
 		return null;
 	}
 
+	/**
+	 * Look-up for the declaration of a given id in the specified scope or in an enclosing one
+	 * Useful when we found the use of an id to check if it has been declared or not
+	 * In a program, every id must be declared before use in the current scope or an enclosing one
+	 * @param id the id to be searched
+	 * @return the STentry if the id has been found, null otherwise
+	 */
     public STentry lookup(String id, int nl) {
-
-		// Get current nesting level
-        //int nl = getNestingLevel();
 
         // Look-up for the id
 		while(nl >= 0){
@@ -205,4 +219,5 @@ public class Environment {
         // If this point is reached, it means that the id has not been found
 		return null;
 	}
+
 }

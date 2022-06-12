@@ -5,6 +5,7 @@ import ast.*;
 public class AssetLanlib {
 
     private static int labCount=0;
+    
     private static int funLabCount=0;
 
     private static String funCode=""; 

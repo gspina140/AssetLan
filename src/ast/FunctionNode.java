@@ -280,7 +280,6 @@ public class FunctionNode implements Node {
         } 
 
         for(Node statement : statementlist){
-            //System.out.println(statement.getClass().getName()+ "\n");
             if(statement instanceof MoveNode)
                 ((MoveNode)statement).checkLiquidity(sigma, verbosity);
 
@@ -297,7 +296,6 @@ public class FunctionNode implements Node {
                     if(oldAss != null){
                         //controllo di aver raggiunto il punto fisso
                         for(int i=0; i < oldAss.size(); i++){
-                            //System.out.println("\n\n " + ((AssetTypeNode)ass.get(i)).isEmpty() + "\n");
                             if( ((AssetTypeNode)ass.get(i)).isEmpty() ^ ((AssetTypeNode)oldAss.get(i)).isEmpty() )
                                 break;
 
@@ -305,8 +303,7 @@ public class FunctionNode implements Node {
                                 System.out.println("Fixpoint reached\n\n"); //punto fisso
                                 //check
                                 for(Node a : ass){
-
-                                //System.out.println("\nAsset\n" + ((AssetTypeNode)a).isEmpty() + "\n");  
+                                     
                                     if(! ((AssetTypeNode)a).isEmpty())
                                         return false;
                                 }
