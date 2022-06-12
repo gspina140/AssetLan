@@ -31,7 +31,6 @@ public class ExecuteVM {
             } else {
                 // String String String int String
                 // Instruction $r1 $r2 offset Label
-               // System.out.println(code[294]);
                 int bytecode = code[ip++]; // fetch
                 int v1, v2;
                 int address;
@@ -55,18 +54,18 @@ public class ExecuteVM {
                         break;
                     case AVMParser.MULT:
                         v1 = registers[code[ip++]];
-                        v2 = registers[code[ip++]] * v1;
-                        registers[code[ip++]] = v2;
+                        v2 = registers[code[ip++]];
+                        registers[code[ip++]] = v1 * v2;
                         break;
                     case AVMParser.DIV:
                         v1 = registers[code[ip++]];
-                        v2 = registers[code[ip++]] / v1;
-                        registers[code[ip++]] = v2;
+                        v2 = registers[code[ip++]];
+                        registers[code[ip++]] = v1 / v2;
                         break;
                     case AVMParser.SUB:
                         v1 = registers[code[ip++]];
-                        v2 = registers[code[ip++]] - v1;
-                        registers[code[ip++]] = v2;
+                        v2 = registers[code[ip++]];
+                        registers[code[ip++]] = v1 - v2;
                         break;
                     case AVMParser.STOREW: //
 
@@ -85,7 +84,6 @@ public class ExecuteVM {
                         
                         v1 = registers[code[ip++]];
                         v2 = code[ip++];
-                        //System.out.println("V1- "+v1+" V2- "+v2+"\n");
                         registers[code[ip++]] = memory[v1 + v2];
                         break;
                     case AVMParser.BRANCH:
@@ -96,8 +94,9 @@ public class ExecuteVM {
                         address = code[ip++];
                         v1 = registers[code[ip++]];
                         v2 = registers[code[ip++]];
-                        if (v2 == v1)
+                        if (v2 == v1) {
                             ip = address;
+                        }
                         break;
                     case AVMParser.BRANCHLESSEQ:
                         address = code[ip++];
@@ -114,18 +113,6 @@ public class ExecuteVM {
                             ip = address;
                         break;
                     case AVMParser.JAL:
-                        /**
-                         * DEBUG
-                         
-                        System.out.println("Sp="+registers[5]+"\n");
-                        for (int i = MEMSIZE - 1 - 28; i < MEMSIZE; i+=4) {
-                            System.out.println("Stack["+i+"]="+memory[i]+"\n");
-                        }
-                        //System.exit(0);
-                        /**
-                         * DEBUG
-                        */
-
                         registers[3] = ip + 1; // return address
                         ip = code[ip];
                         break;
@@ -135,21 +122,6 @@ public class ExecuteVM {
                     case AVMParser.HALT:
                         // to print the result
                         System.out.println("\nResult, the wallet is: " + registers[2] + "\n");
-
-                        /**
-                         * DEBUG
-                         */
-                        /*
-                        for (int i = 0; i < 8; i++) {
-                            System.out.println("Register["+i+"]="+registers[i]+"\n");
-                        }
-                        for (int i = MEMSIZE - 1 - 28; i < MEMSIZE; i+=4) {
-                            System.out.println("Stack["+i+"]="+memory[i]+"\n");
-                        }
-                        System.exit(0);
-                        /**
-                         * DEBUG
-                        */
 
                         return;
                     case AVMParser.MOVE:
@@ -195,7 +167,7 @@ public class ExecuteVM {
     private void push(int v) {
         registers[5]-=4;
         if(registers[5] < 0){
-            System.out.println("\nError: Out of memory");
+            System.out.println("\nError: Out of memory; sp = " + registers[5]);
             return;
         }
         memory[registers[5]] = v;

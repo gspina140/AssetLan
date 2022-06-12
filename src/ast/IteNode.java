@@ -158,9 +158,12 @@ public class IteNode implements Node {
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma1, verbosity);
             if(statement instanceof CallNode)
-                if( ((CallNode)statement).getId().equals(id) )
-                    ((CallNode)statement).checkLiquidity(sigma1,oldAss, verbosity);
-                else 
+                if( ((CallNode)statement).getId().equals(id) ) {
+                    if (oldAss != null)
+                        ((CallNode)statement).checkLiquidity(sigma1,oldAss, verbosity);
+                    else
+                        return true;
+                } else 
                     ((CallNode)statement).checkLiquidity(sigma1,null, verbosity);
             if(statement instanceof IteNode)
                 ((IteNode)statement).checkLiquidity(sigma1,id,oldAss, verbosity);
@@ -173,9 +176,12 @@ public class IteNode implements Node {
             if(statement instanceof TransferNode)
                 ((TransferNode)statement).checkLiquidity(sigma2, verbosity);
             if(statement instanceof CallNode)
-                if( ((CallNode)statement).getId().equals(id) )
-                    ((CallNode)statement).checkLiquidity(sigma2,oldAss, verbosity);
-                else 
+                if( ((CallNode)statement).getId().equals(id) ) {
+                    if (oldAss != null)
+                        ((CallNode)statement).checkLiquidity(sigma2,oldAss, verbosity);
+                    else
+                        return true;
+                } else 
                     ((CallNode)statement).checkLiquidity(sigma2,null, verbosity);
             if(statement instanceof IteNode)
                 ((IteNode)statement).checkLiquidity(sigma2,id,oldAss, verbosity);

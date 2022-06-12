@@ -92,7 +92,7 @@ sw $a0 4($sp)
 li $t1 0
 sw $t1 4($al)
 move $al $fp
-li $a0 0
+li $a0 2
 
 push $a0
 move $al $fp

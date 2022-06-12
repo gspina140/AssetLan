@@ -312,10 +312,13 @@ public class FunctionNode implements Node {
                         }
                     }
 
-                    //Call
-                    if(!((CallNode)statement).checkLiquidity(sigma,ass, verbosity))
-                        isLiquid = false;
-
+                    if (ass != null)
+                        //Call
+                        if(!((CallNode)statement).checkLiquidity(sigma,ass, verbosity))
+                            isLiquid = false;
+                    else
+                        return true;
+                        
                     //f -> .... f-> chechliq -> f [0..0] -> f [0..0]
                 } else{
                     Boolean temp =((CallNode)statement).checkLiquidity(sigma,null, verbosity);
