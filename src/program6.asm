@@ -4,6 +4,8 @@ move $fp $sp
 li $t1 0
 sw $t1 4($fp)
 sw $fp 0($sp)
+li $a0 2
+push $a0
 li $a0 1
 push $a0
 move $al $fp
@@ -87,10 +89,10 @@ lw $a0 4($al)
 sw $a0 0($sp)
 li $t1 0
 sw $t1 4($al)
-lw $a0 4($al)
+lw $a0 8($al)
 sw $a0 4($sp)
 li $t1 0
-sw $t1 4($al)
+sw $t1 8($al)
 move $al $fp
 li $a0 0
 
@@ -103,11 +105,15 @@ jal function_f
 move $al $fp
 lw $al 0($al)
 lw $a0 4($al)
+print $a0
+move $al $fp
+lw $al 0($al)
+lw $a0 4($al)
 add $s0 $s0 $a0
 li $t1 0
 sw $t1 4($al)
 lw $ra 0($sp)
-addi $sp $sp 12
+addi $sp $sp 16
 lw $fp 0($sp)
 pop
 jr $ra

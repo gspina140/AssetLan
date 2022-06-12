@@ -216,8 +216,7 @@ public class CallNode implements Node {
         }
 
         // Juest here, I iterate once more because I consider the nesting level of the body of the function, not its id
-        for(int i = 0; i <= nl - entry.getNestinglevel(); i++) { 
-            System.out.println("Adding getAR instruction\n");
+        for(int i = 0; i <= nl - entry.getNestinglevel(); i++) {
             getAR += "lw $al 0($al)\n";
         }
 

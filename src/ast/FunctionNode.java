@@ -174,7 +174,10 @@ public class FunctionNode implements Node {
             // Delegate asset declarations semantic check to respective node
             if(assets != null) {
                 res.addAll(assets.checkSemantics(env));
-                assetL = ((AdecNode)assets).getAsslist();
+                for (String aid : ((AdecNode)assets).getIds())
+                    assetL.add(new AssetTypeNode());
+
+
                 noa = ((AdecNode)assets).getNumberOfAssets();
             }
 

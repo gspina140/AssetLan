@@ -11,8 +11,6 @@ public class AdecNode implements Node{
      * The list of ids (it contains at least one element)
      */
     private ArrayList<String> ids;
-    
-    private ArrayList<Node> asslist;
 
     /**
      * Class constructor using the first id (it is always present)
@@ -22,9 +20,6 @@ public class AdecNode implements Node{
     public AdecNode (String id) {
         ids = new ArrayList<String>();
         addId(id);
-
-        asslist = new ArrayList<Node>();
-        addAss(new AssetTypeNode());
     }
     
     /**
@@ -32,12 +27,8 @@ public class AdecNode implements Node{
      * @param id a string containing the id to be added
      * @return void
      */
-    public void addId(String id){
+    public void addId(String id) {
         ids.add(id);
-    }
-
-    public void addAss(Node ass){
-        asslist.add(ass);
     }
 
     /**
@@ -45,14 +36,15 @@ public class AdecNode implements Node{
      * @param void
      * @return the list of ids (which is an ArrayList of Strings)
      */
-    public ArrayList<String> getIds(){
+    public ArrayList<String> getIds() {
         return ids;
     }
 
-    public ArrayList<Node> getAsslist(){
-        return asslist;
-    }
-
+    /**
+     * Returns the number of asset declarations in a function
+     * @param void
+     * @return the number of asset declarations in a function
+     */
     public int getNumberOfAssets() {
         return ids.size();
     }
@@ -65,13 +57,13 @@ public class AdecNode implements Node{
      * @return the string containing the message
      */
     @Override
-    public String toPrint(String s){
+    public String toPrint(String s) {
 
         // String containing the message
         String res = "";
 
         // String of asset ids separated by tabs
-        for(String id:ids)
+        for(String id : ids)
             res += id + " "; 
 
     	return s+"Asset(s) declaration(s): " + res; 
@@ -85,7 +77,7 @@ public class AdecNode implements Node{
      * @return a list of semantic errors (can be empty)
      */
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env){
+    public ArrayList<SemanticError> checkSemantics(Environment env) {
 
         // Create result list
         ArrayList<SemanticError> res = new ArrayList<SemanticError>();
@@ -102,18 +94,27 @@ public class AdecNode implements Node{
                 res.add(new SemanticError("Error when declaring asset of id " + id +"\n" +
                                           "Id already used for declaration in the same scope"));
             }
-
-            addAss(env.lookup(id).getType());
         }
 
         return res;
     }
 
+    /**
+     * Function for type checking
+     * @param void
+     * @return void
+     */
     @Override
     public Node typeCheck() {
         return null;
     }
 
+    /**
+     * Function for liquidity checking
+     * @param sigma the environment in which the check takes place (it contains the symTable)
+     * @param verbosity parameter for output verbosity; if > 1 it prints the assets stack trace
+     * @return if local liquidity is respected
+     */
     public Boolean checkLiquidity(Environment sigma, int verbosity) {
         for (String id : ids) {
             sigma.addEntry(new AssetTypeNode(), id);
@@ -124,6 +125,14 @@ public class AdecNode implements Node{
         return true;
     }
 
+    /**
+     * Function for code generation
+     * @param void
+     * @return void
+     */
     @Override
-    public String codeGeneration(){return "";}
+    public String codeGeneration() {
+        return "";
+    }
+
 }

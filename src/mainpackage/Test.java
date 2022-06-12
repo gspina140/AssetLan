@@ -146,41 +146,44 @@ public class Test {
                 System.out.println(type.toPrint("Type checking was successful!\nThe initcall of theprogram is of type: "));
 
             /* Visit the AST to check if the program is liquid */
+            System.out.println("Running liquidity checking...");
             Boolean isLiquid = ((ProgramNode)ast).checkLiquidity(sigma, verbosity);  // Effects analysis on liquidity
 
             if(isLiquid == null)
-                System.out.println("\nCould not define if the program was liquid or not.\n");
+                System.out.println("Could not define if the program was liquid or not.");
             else if (isLiquid)
-                System.out.println("\nThe program is liquid.\n");
+                System.out.println("The program is liquid.");
             else
-                System.out.println("\nThe program is not liquid.\n");
+                System.out.println("The program is not liquid.");
 
-            // CODE GENERATION  prova.AssetLan.asm
+            /* Code generation */
             String code=ast.codeGeneration(); 
-            BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName.replace(".al",".asm"))); 
             out.write(code);
             out.close(); 
-            System.out.println("Code generated! Assembling and running generated code.");
+            System.out.println("Code generated! Assembling and running generated code.");            
 
-            
-
+            /* Setting the stream for intermidiate code */
             FileInputStream isASM = new FileInputStream(fileName+".asm");
-            //ANTLRInputStream inputASM = new ANTLRInputStream(isASM);
             CharStream inputASM = CharStreams.fromStream(isASM); 
             
+            /* Lexer for intermidiate code */
             AVMLexer lexerASM = new AVMLexer(inputASM);
             CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
             AVMParser parserASM = new AVMParser(tokensASM);
-
-            //parserASM.assembly();
             
+            /* Parser for intermidiate code */
             AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
             visitorAVM.visit(parserASM.assembly()); 
 
-            System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.");
-            if (lexerASM.lexicalErrors>0 || parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
+            /* If verbosity > 0 print lexical errors for intermidiate code (used for debugging) */
+            if (verbosity > 0) {
+                System.out.println("\nYou had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.");
+                if (lexerASM.lexicalErrors>0 || parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
+            }
 
-            System.out.println("Starting Virtual Machine...");
+            /* Executing intermidiate code */
+            System.out.println("\nStarting Virtual Machine...");
             ExecuteVM vm = new ExecuteVM(visitorAVM.code);
             vm.cpu();
         }
