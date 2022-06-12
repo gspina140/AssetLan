@@ -183,4 +183,26 @@ public class Environment {
 		return null;
 	}
 
+    public STentry lookup(String id, int nl) {
+
+		// Get current nesting level
+        //int nl = getNestingLevel();
+
+        // Look-up for the id
+		while(nl >= 0){
+			STentry tmp = checkDeclaration(id, nl);
+            if(tmp != null){
+                // Id found
+                return tmp;
+            } else {
+                // Could not find the id in the current scope
+                // Try searching in the enclosing scopes
+				// (iteratively decrease the nesting level and check them)
+                nl--;
+            }
+        }
+
+        // If this point is reached, it means that the id has not been found
+		return null;
+	}
 }

@@ -257,7 +257,7 @@ public class FunctionNode implements Node {
             if(parlist != null) {
                 AssetTypeNode aux = null;
                 for(int i=0; i < parlist.size(); i++){
-                    aux = (AssetTypeNode)sigma.lookup(parlist.get(i)).getType();
+                    aux = (AssetTypeNode)sigma.lookup(parlist.get(i), sigma.getNestingLevel()-1).getType();
                     
                     if(! (aux.isEmpty())){
                         aux.empty();
