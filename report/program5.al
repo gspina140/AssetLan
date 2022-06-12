@@ -1,6 +1,3 @@
-// Esercizio 4
-// Programma 1
-
 int x = 1;
 void f(int n)[]{
 		if (n == 0) { print(x) ; }

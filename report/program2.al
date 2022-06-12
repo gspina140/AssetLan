@@ -1,6 +1,3 @@
-// Esercizio 3
-// Programma 2
-
 int a ; int b = 0 ;
 asset z ;
 void g()[]{

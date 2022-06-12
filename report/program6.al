@@ -1,9 +1,6 @@
-// Esercizio 4
-// Programma 2 (Esercizio 3, programma 4, ma con main aggiornato)
-
 asset x ;
 void f(int n)[asset u, asset v]{
-	if (n == 0) u -o x ;
+	if (n == 0) {u -o x} ;
 	else { u -o x ; v -o x ; }
 }
 void main()[asset a, asset b]{

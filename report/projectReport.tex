@@ -666,34 +666,68 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 \medskip
 
 \[
-\inferrule*[right=(Fun)]{ 
-\Sigma \bullet [\:] \models A : \: \Sigma' \\ \Sigma' \models S : \Sigma''}
-{\Sigma \models T \: Id (D ) [A ] \{D_1  \: S \}: \Sigma'' }
+\inferrule*[right=(FillA)]
+{Id \in Dom(\Sigma)}
+{\Sigma \models Id : \Sigma \triangleright [Id\rightarrow f]}
+\inferrule*[right=(FillA-A)]
+{\Sigma \models A : \Sigma' \\ \Sigma'\models A':\Sigma'' }
+{\Sigma \models A A' : \Sigma''}
 \]
-\captionof*{figure}{Rule for Function Declaration}
+\captionof*{figure}{Auxiliary rule to fill assets}
+
+\medskip
+
+\[
+\inferrule*[right=(CopyA)]
+{Id_1 \in Dom(\Sigma) \\ Id_2 \in Dom(\Sigma)}
+{\Sigma \models Id_1, Id_2 : \Sigma \triangleright [Id_1\rightarrow \Sigma(Id_2)]}
+\inferrule*[right=(CopyA-A)]
+{\Sigma \models A : \Sigma' \\ \Sigma'\models A':\Sigma'' }
+{\Sigma \models A \: A' : \Sigma''}
+\]
+\captionof*{figure}{}
+
+\medskip
+
+\[
+\inferrule*[right=(FunC)]{ 
+\Sigma \bullet [\:] \models A : \: \Sigma' \\ 
+\inferrule*[right=(CopyA-A)]{\cdots}{\Sigma'\models A_1 A_2 : \Sigma''}
+ \\ \Sigma'' \models S : \Sigma'''}
+{\Sigma \models T \: Id (D ) [A_1 \: A_2] \{D_1  \: S \}: \Sigma''' }
+\]
+\captionof*{figure}{Rule for Function Call ($A_1$ is the list of asset variables of the function, $A_2$ the list of passed asset variables)}
+
+
+\[
+\inferrule*[right=(FunI)]{ 
+\Sigma \bullet [\:] \models A : \: \Sigma' \\ \inferrule*[right=(FillA-A)]{\cdots}{\Sigma' \models A: \Sigma''} \\ \Sigma'' \models S : \Sigma'''}
+{\Sigma \models T \: Id (D ) [A ] \{D_1  \: S \}: \Sigma''' }
+\]
+\captionof*{figure}{Rule for Function InitCall}
 
 \medskip
 
 \[
 \inferrule*[right=(Call)]
-{\inferrule*[right=(Fun)]
+{\inferrule*[right=(FunC)]
 {\cdots}
-{Id(D)[Y_1,\cdots,Y_m]\{D_1 S\}: \Sigma''} \\ \Sigma' =\Sigma \triangleright [Y_1 \rightarrow \bot, \cdots, Y_m \rightarrow \bot]}
+{Id(D)[A \: Y_1,\cdots,Y_m]\{D_1 S\}: \Sigma''} \\ \Sigma' =\Sigma \triangleright [Y_1 \rightarrow \bot, \cdots, Y_m \rightarrow \bot]}
 {\Sigma \models Id(E_1,\cdots,E_n)[Y_1,\cdots,Y_m]: \: \Sigma'}
 \]
-\captionof*{figure}{Call rule}
+\captionof*{figure}{Call rule (When the rule (FunC) is used, $A$ stands for the asset variable of the function, the $Y_1, \cdots,Y_m$ will form the list of passed assets, $A_2$ in the rule)}
 
 \medskip
 
 \[
 \inferrule*[right=(InitCall)]
-{\inferrule*[right=(Fun)]
+{\inferrule*[right=(FunI)]
 {\cdots}
-{Id(D)[Ae_1,\cdots,Ae_n]\{D_1 S\}: \Sigma''}
+{Id(D)[A]\{D_1 S\}: \Sigma''}
 }
 {\Sigma \models Id(E_1,\cdots,E_n)[Ae_1,\cdots,Ae_m]}
 \]
-\captionof*{figure}{Initialization Call rule (All the asset expression ($Ae_i$) are integers according to the other rules)}
+\captionof*{figure}{Initialization Call rule (All the asset expression ($Ae_i$) are integers according to the other rules, when the rule (FunI) is used, A stands for the asset variable of the function)}
 
 \[
 \inferrule*[right=(Prg)]
@@ -707,19 +741,28 @@ $Id_2$ &1                    & 1   & 1   & $\top$                \\
 At the end of the execution of each function (condition 1 for liquidity) and at the end of the execution of a program (condition 2 for liquidity), if all assets variable in the related $\Sigma$ are $\bot$ the program is liquid; if at least one is $f$ but they are all $\neq$ to $\top$ then it is not liquid; if there is some $\top$ value it is not possible to define whether is liquid or not.
 
 \subsubsection{Tests for the Examples}
-\lstinputlisting{program1.al}
-\lstinputlisting{program2.al}
-\lstinputlisting{program3.al}
-\lstinputlisting{program4.al}
-\lstinputlisting{program5.al}
-\lstinputlisting{program6.al}
+In that section some tests on example's code are illustrated:
+\begin{enumerate}
+\item \textsc{program1.al}	\lstinputlisting{program1.al}
+Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is not liquid. 
+\item \textsc{program2.al}	\lstinputlisting{program2.al}
+Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is liquid. 
+\item \textsc{program3.al}	\lstinputlisting{program3.al}
+Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is liquid. 
+\item \textsc{program4.al}   \lstinputlisting{program4.al}
+Executing that program the compiler does not find any type problem, says that the return type for the program is void and that the program is liquid. Perform a call to a function with the same asset variable as input more than once, will assign the value at parameter in first position, so the variable is set to empty and the value of the parameter in the second position will be also empty and so on.
+\end{enumerate}
+%\lstinputlisting{program5.al}
+%\lstinputlisting{program6.al}
 
 
 \subsection{Code Generation and Interpreter}
 Follows the phase of the execution of the code, so an intermediate bytecode language (AVM) will be defined and then the related interpreter to execute the programs.
 
 \subsubsection{Code Generation}
-
+The bytecode language AVM is defined in Antlr as follows:
+\lstinputlisting{avm.g4}
+The language is more or less a classic assembly language, with the instructions needed to handle the programs written in AssetLan. The implementation for the execution the code will be a stack machine with the usage of registers, so in the grammar is defined the REGISTER token, that identifies the $8$ registers  necessary for this implementation.
 
 \subsubsection{Interpreter}
 
