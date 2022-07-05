@@ -164,7 +164,7 @@ public class Test {
             System.out.println("Code generated! Assembling and running generated code.");            
 
             /* Setting the stream for intermidiate code */
-            FileInputStream isASM = new FileInputStream(fileName+".asm");
+            FileInputStream isASM = new FileInputStream(fileName.replace(".al",".asm"));
             CharStream inputASM = CharStreams.fromStream(isASM); 
             
             /* Lexer for intermidiate code */

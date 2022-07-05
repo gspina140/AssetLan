@@ -33,7 +33,6 @@ move $al $fp
 lw $al 0($al)
 lw $a0 4($al)
 print $a0
-
 b label1
 label0:
 move $al $fp
@@ -48,7 +47,6 @@ pop
 move $al $fp
 lw $al 0($al)
 sw $a0 4($al)
-
 push $fp
 move $al $fp
 move $al $fp
@@ -66,7 +64,6 @@ lw $al 0($al)
 lw $al 0($al)
 push $al
 jal function_f
-
 label1:
 lw $ra 0($sp)
 addi $sp $sp 12
